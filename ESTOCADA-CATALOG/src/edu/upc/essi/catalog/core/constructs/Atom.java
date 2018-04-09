@@ -4,15 +4,32 @@ import edu.upc.essi.catalog.enums.AtomTypeEnum;
 
 public class Atom implements Element {
 
-	public Atom() {
-		// TODO Auto-generated constructor stub
-	}
-
 	private AtomTypeEnum type;
 	private String name;
 	private String dataType;
 
-	@Override
+	public Atom() {}
+	/**
+	 * @param name
+	 * @param dataType
+	 *            For attributes
+	 */
+	public Atom(String name, String dataType) {
+		this.name = name;
+		this.dataType = dataType;
+		this.type = AtomTypeEnum.Attribute;
+	}
+
+	/**
+	 * @param name
+	 *            For class
+	 */
+	public Atom(String name) {
+		this.name = name;
+		this.type = AtomTypeEnum.Class;
+
+	}
+
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;

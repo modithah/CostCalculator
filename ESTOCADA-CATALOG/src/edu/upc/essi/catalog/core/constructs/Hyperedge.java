@@ -7,6 +7,7 @@ import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
 public class Hyperedge extends HGPlainLink implements Element{
 
+	public Hyperedge() {}
 	private String name;
 	private HyperedgeTypeEnum type;
 

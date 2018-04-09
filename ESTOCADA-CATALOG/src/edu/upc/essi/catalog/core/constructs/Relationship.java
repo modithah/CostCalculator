@@ -5,6 +5,7 @@ import org.hypergraphdb.HGPlainLink;
 
 public class Relationship extends HGPlainLink {
 
+	public Relationship() {}
 	private String IRI;
 
 	public Relationship(String iRI, HGHandle... targets) throws Exception {
@@ -25,4 +26,11 @@ public class Relationship extends HGPlainLink {
 	public void setIRI(String iRI) {
 		IRI = iRI;
 	}
+
+
+	public String toString() {
+		// TODO Auto-generated method stub
+		return IRI+ super.toString();
+	}
+	
 }
