@@ -20,7 +20,6 @@ public final class Graphoperations {
 	public static Hyperedge getDBHyperedgebyType(HyperedgeTypeEnum type) {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
 		List<Object> r = hg.getAll(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", type)));
-		System.out.println(r.get(0).getClass());
 		graph.close();
 		return (Hyperedge) r.get(0);
 	}
