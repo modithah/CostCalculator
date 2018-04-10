@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.indexing.ByPartIndexer;
 
@@ -16,7 +17,10 @@ import com.google.common.collect.Table;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
+import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
+import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
+import edu.upc.essi.catalog.ops.Graphoperations;
 
 public class CreateGraph {
 
@@ -44,7 +48,7 @@ public class CreateGraph {
 		// Station
 		logger.info("Creating Atoms");
 
-		Atom station = new Atom("Station");
+		Atom station = new Atom("Sid");
 		atoms.add(station);
 		atomHandles.add(graph.add(station));
 		Atom sname = new Atom("Sname", String.class.getName());
@@ -56,7 +60,7 @@ public class CreateGraph {
 
 		// Line
 
-		Atom line = new Atom("Line");
+		Atom line = new Atom("Lid");
 		atoms.add(line);
 		atomHandles.add(graph.add(line));
 		Atom lname = new Atom("lname");
@@ -64,7 +68,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(lname));
 
 		// Bus
-		Atom bus = new Atom("Bus");
+		Atom bus = new Atom("Bid");
 		atoms.add(bus);
 		atomHandles.add(graph.add(bus));
 		Atom bname = new Atom("bname");
@@ -72,7 +76,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(bname));
 
 		// Train
-		Atom train = new Atom("Train");
+		Atom train = new Atom("Tid");
 		atoms.add(train);
 		atomHandles.add(graph.add(train));
 		Atom rname = new Atom("rname");
@@ -88,7 +92,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(tname));
 
 		// Metro
-		Atom metro = new Atom("Metro");
+		Atom metro = new Atom("Mid");
 		atoms.add(metro);
 		atomHandles.add(graph.add(metro));
 		Atom mname = new Atom("mname");
@@ -98,8 +102,8 @@ public class CreateGraph {
 		logger.info("Atoms Created Succesfully !");
 
 		//
-		// --------------- Creating Relationsips ---------------//
-		// Station
+		// --------------- Creating Relationships ---------------//
+		//
 		try {
 			logger.info("Creating Relationships");
 			// Station
@@ -122,14 +126,25 @@ public class CreateGraph {
 			// Metro
 			relHandles.put(metro, tname, graph.add(new Relationship("hasName", atomHandles.get(atoms.indexOf(metro)),
 					atomHandles.get(atoms.indexOf(mname)))));
+			logger.info("Relationships Created Succesfully !");
+
+			// ----------- Creating hyperedges ---------//
+			// Train
+			HGHandle trainSecondHandle = graph
+					.add(new Hyperedge("Train", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
+							atomHandles.get(atoms.indexOf(rname)), relHandles.get(train, rname)));
+			HGHandle trainFirstHandle = graph
+					.add(new Hyperedge("Train", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
+			graph.add(new Hyperedge("PostgrSQL", HyperedgeTypeEnum.Database_Rel, trainFirstHandle));
+
+			graph.close();
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error(e.toString());
+			// logger.error(e.toString());
 		}
 
-		logger.info("Relationships Created Succesfully !");
-		//
 	}
 
 	private static HGHandle getRelationHandle(Atom a1, Atom a2, Table t) {

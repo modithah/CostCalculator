@@ -1,5 +1,5 @@
 package edu.upc.essi.catalog.enums;
 
 public enum HyperedgeTypeEnum {
-	Database, FirstLevel, SecondLevel, Set, Struct
+	Database_Rel, Database_Col, Database_Doc, FirstLevel, SecondLevel, Set, Struct
 }
