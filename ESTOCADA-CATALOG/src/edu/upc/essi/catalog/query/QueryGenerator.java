@@ -10,12 +10,22 @@ import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Triple;
+import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import edu.upc.essi.catalog.query.prefixsuffix.DocumentPrefixSuffix;
+import edu.upc.essi.catalog.query.prefixsuffix.IPrefixSuffix;
+import edu.upc.essi.catalog.query.prefixsuffix.RelationalPrefixSuffix;
 
 public class QueryGenerator {
 
+	IPrefixSuffix PrefixSuffix;
+
 	public QueryGenerator() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public Triple GetPrefixSuffix(Element node, String path) {
+		return PrefixSuffix.GetprefixSuffix(node, path);
 	}
 
 	// Relational
@@ -49,6 +59,24 @@ public class QueryGenerator {
 		t.setSuffix(suffix);
 		t.setPath(p);
 		return t;
+	}
+
+	public String CreateQuery(Element node, String path, HyperedgeTypeEnum type) {
+
+		switch (type) {
+		case Database_Col:
+
+			break;
+		case Database_Rel:
+			PrefixSuffix = new RelationalPrefixSuffix();
+			break;
+		case Database_Doc:
+			PrefixSuffix = new DocumentPrefixSuffix();
+			break;
+		default:
+			break;
+		}
+		return CreateQuery(node, path);
 	}
 
 	public String CreateQuery(Element node, String path) {

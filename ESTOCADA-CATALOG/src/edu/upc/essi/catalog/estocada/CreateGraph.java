@@ -146,10 +146,10 @@ public class CreateGraph {
 			// ----------- Creating hyperedges ---------//
 			// Train
 			HGHandle trainSecondHandle = graph
-					.add(new Hyperedge("Train-1", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
+					.add(new Hyperedge("Train", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
 							atomHandles.get(atoms.indexOf(rname)), relHandles.get(train, rname)));
 			HGHandle trainFirstHandle = graph
-					.add(new Hyperedge("Train-2", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
+					.add(new Hyperedge("Train", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
 
 			
 			// Metro
