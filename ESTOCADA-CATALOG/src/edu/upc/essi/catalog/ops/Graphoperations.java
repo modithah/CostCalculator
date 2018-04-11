@@ -1,11 +1,16 @@
 package edu.upc.essi.catalog.ops;
 
 import java.util.List;
+import java.util.PriorityQueue;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.IncidenceSet;
+
 import edu.upc.essi.catalog.constants.Const;
+import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
@@ -23,11 +28,66 @@ public final class Graphoperations {
 		graph.close();
 		return (Hyperedge) r.get(0);
 	}
-	
+
 	public static Element getElementbyHandle(HGHandle handle) {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
-		Element el= graph.get(handle);
+		Element el = graph.get(handle);
+		graph.close();
 		return el;
 	}
 
+	public static AdjacencyList makeHashmap(String atomName) {
+		AdjacencyList l = new AdjacencyList();
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
+		HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
+
+		IncidenceSet incidence = graph.getIncidenceSet(atom);
+
+		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
+
+		for (HGHandle hgHandle : incidence) {
+			q.add(Pair.of(hgHandle, atom));
+		}
+
+		while (!q.isEmpty()) {
+			Pair<HGHandle, HGHandle> tmp = q.poll();
+			Object parent = graph.get(tmp.getLeft());
+			Object child = graph.get(tmp.getRight());
+			if (parent instanceof Hyperedge) {
+				l.AddToSet((Element) parent, (Element) child);
+				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
+					q.add(Pair.of(hgHandle, tmp.getLeft()));
+				}
+			}
+		}
+		graph.close();
+		return l;
+	}
+
+	public static AdjacencyList makeHashmap(String... atomNames) {
+		AdjacencyList l = new AdjacencyList();
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
+		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
+
+		for (String atomName : atomNames) {
+			HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
+			IncidenceSet incidence = graph.getIncidenceSet(atom);
+			for (HGHandle hgHandle : incidence) {
+				q.add(Pair.of(hgHandle, atom));
+			}
+		}
+		while (!q.isEmpty()) {
+			Pair<HGHandle, HGHandle> tmp = q.poll();
+			Object parent = graph.get(tmp.getLeft());
+			Object child = graph.get(tmp.getRight());
+			if (parent instanceof Hyperedge) {
+				l.AddToSet((Element) parent, (Element) child);
+				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
+					q.add(Pair.of(hgHandle, tmp.getLeft()));
+				}
+			}
+		}
+		graph.close();
+		return l;
+	}
 }

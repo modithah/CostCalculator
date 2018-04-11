@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.indexing.ByPartIndexer;
@@ -122,20 +123,60 @@ public class CreateGraph {
 					atomHandles.get(atoms.indexOf(rname)))));
 			// Tram
 			relHandles.put(tram, tname, graph.add(new Relationship("hasName", atomHandles.get(atoms.indexOf(tram)),
-					atomHandles.get(atoms.indexOf(mname)))));
+					atomHandles.get(atoms.indexOf(tname)))));
 			// Metro
-			relHandles.put(metro, tname, graph.add(new Relationship("hasName", atomHandles.get(atoms.indexOf(metro)),
+			relHandles.put(metro, mname, graph.add(new Relationship("hasName", atomHandles.get(atoms.indexOf(metro)),
 					atomHandles.get(atoms.indexOf(mname)))));
+
+			// Forign keys
+			relHandles.put(bus, line, graph.add(new Relationship("hasLine", atomHandles.get(atoms.indexOf(bus)),
+					atomHandles.get(atoms.indexOf(line)))));
+			relHandles.put(train, line, graph.add(new Relationship("hasLine", atomHandles.get(atoms.indexOf(train)),
+					atomHandles.get(atoms.indexOf(line)))));
+			relHandles.put(tram, line, graph.add(new Relationship("hasLine", atomHandles.get(atoms.indexOf(tram)),
+					atomHandles.get(atoms.indexOf(line)))));
+			relHandles.put(metro, line, graph.add(new Relationship("hasLine", atomHandles.get(atoms.indexOf(metro)),
+					atomHandles.get(atoms.indexOf(line)))));
+
+			relHandles.put(station, line, graph.add(new Relationship("hasStation", atomHandles.get(atoms.indexOf(line)),
+					atomHandles.get(atoms.indexOf(station)))));
+
 			logger.info("Relationships Created Succesfully !");
 
 			// ----------- Creating hyperedges ---------//
 			// Train
 			HGHandle trainSecondHandle = graph
-					.add(new Hyperedge("Train", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
+					.add(new Hyperedge("Train-1", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
 							atomHandles.get(atoms.indexOf(rname)), relHandles.get(train, rname)));
 			HGHandle trainFirstHandle = graph
-					.add(new Hyperedge("Train", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
-			graph.add(new Hyperedge("PostgrSQL", HyperedgeTypeEnum.Database_Rel, trainFirstHandle));
+					.add(new Hyperedge("Train-2", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
+
+			
+			// Metro
+			HGHandle metroSecondHandle = graph
+					.add(new Hyperedge("Metro", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(metro)),
+							atomHandles.get(atoms.indexOf(mname)), relHandles.get(metro, mname)));
+			HGPlainLink l;
+			
+			HGHandle metroFirstHandle = graph
+					.add(new Hyperedge("Metro", HyperedgeTypeEnum.FirstLevel, metroSecondHandle));
+
+			// Station
+			HGHandle stationSecondHandle = graph.add(
+					new Hyperedge("Station", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(station)),
+							atomHandles.get(atoms.indexOf(sname)), atomHandles.get(atoms.indexOf(spos)),
+							relHandles.get(station, sname), relHandles.get(station, spos)));
+			HGHandle stationFirstHandle = graph
+					.add(new Hyperedge("Station", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
+
+			// Line
+			HGHandle lineSecondHandle = graph
+					.add(new Hyperedge("Line", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(line)),
+							atomHandles.get(atoms.indexOf(lname)), atomHandles.get(atoms.indexOf(station)),
+							relHandles.get(line, lname), relHandles.get(station, line)));
+			HGHandle lineFirstHandle = graph.add(new Hyperedge("Line", HyperedgeTypeEnum.FirstLevel, lineSecondHandle));
+			graph.add(new Hyperedge("PostgrSQL", HyperedgeTypeEnum.Database_Rel, trainFirstHandle, metroFirstHandle,
+					stationFirstHandle, lineFirstHandle));
 
 			graph.close();
 

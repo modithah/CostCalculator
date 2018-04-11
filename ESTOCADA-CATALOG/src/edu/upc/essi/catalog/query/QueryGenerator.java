@@ -1,9 +1,11 @@
 package edu.upc.essi.catalog.query;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.hypergraphdb.HGHandle;
 
+import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
@@ -61,11 +63,28 @@ public class QueryGenerator {
 				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(x.next()), pair.getPath());
 			}
 		}
-		// for (Node n : node.getChildren()) {
-		// Q = Q + CreateQuery(n, pair.path);
-		// }
 		Q = Q + pair.getSuffix();
+		Q = Q.replaceAll(",~", "");
 
+		return Q;
+	}
+
+	public String CreateQueryFromMap(Element node, String path, AdjacencyList l) {
+
+		// System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
+		String Q = "";
+
+		Triple pair = GetprefixSuffix(node, path);
+		Q = Q + pair.getPrefix();
+
+		LinkedHashSet<Element> children = l.getAjadacencyList(node);
+
+		if (children != null) {
+			for (Element element : children) {
+				Q = Q + CreateQueryFromMap(element, pair.getPath(), l);
+			}
+		}
+		Q = Q + pair.getSuffix();
 		Q = Q.replaceAll(",~", "");
 		return Q;
 	}
