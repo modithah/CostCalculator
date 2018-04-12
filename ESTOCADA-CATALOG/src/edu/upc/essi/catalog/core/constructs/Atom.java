@@ -2,13 +2,15 @@ package edu.upc.essi.catalog.core.constructs;
 
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 
-public class Atom implements Element {
+public class Atom implements Element, Comparable<Atom> {
 
 	private AtomTypeEnum type;
 	private String name;
 	private String dataType;
 
-	public Atom() {}
+	public Atom() {
+	}
+
 	/**
 	 * @param name
 	 * @param dataType
@@ -53,6 +55,12 @@ public class Atom implements Element {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public int compareTo(Atom arg0) {
+		// TODO Auto-generated method stub
+		return this.name.compareTo(arg0.name);
 	}
 
 }

@@ -2,6 +2,7 @@ package edu.upc.essi.catalog.ops;
 
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
@@ -22,6 +23,12 @@ public final class Graphoperations {
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * Returns all hyperedges of a specific type
+	 * 
+	 * @param type
+	 * @return
+	 */
 	public static Hyperedge getDBHyperedgebyType(HyperedgeTypeEnum type) {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
 		List<Object> r = hg.getAll(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", type)));
@@ -29,6 +36,12 @@ public final class Graphoperations {
 		return (Hyperedge) r.get(0);
 	}
 
+	/**
+	 * Returns the element by a hgHandle
+	 * 
+	 * @param handle
+	 * @return
+	 */
 	public static Element getElementbyHandle(HGHandle handle) {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
 		Element el = graph.get(handle);
@@ -36,6 +49,12 @@ public final class Graphoperations {
 		return el;
 	}
 
+	/**
+	 * Legacy code for a single atom
+	 * 
+	 * @param atomName
+	 * @return
+	 */
 	public static AdjacencyList makeHashmap(String atomName) {
 		AdjacencyList l = new AdjacencyList();
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
@@ -64,6 +83,13 @@ public final class Graphoperations {
 		return l;
 	}
 
+	/**
+	 * Algorithm 1 in the paper
+	 * 
+	 * @param atomNames
+	 *            - queried atoms
+	 * @return adjacency list of hyperedges corresponding to the queries
+	 */
 	public static AdjacencyList makeHashmap(String... atomNames) {
 		AdjacencyList l = new AdjacencyList();
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
@@ -71,9 +97,11 @@ public final class Graphoperations {
 
 		for (String atomName : atomNames) {
 			HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
-			IncidenceSet incidence = graph.getIncidenceSet(atom);
-			for (HGHandle hgHandle : incidence) {
-				q.add(Pair.of(hgHandle, atom));
+			if (atom != null) {
+				IncidenceSet incidence = graph.getIncidenceSet(atom);
+				for (HGHandle hgHandle : incidence) {
+					q.add(Pair.of(hgHandle, atom));
+				}
 			}
 		}
 		while (!q.isEmpty()) {
@@ -89,5 +117,16 @@ public final class Graphoperations {
 		}
 		graph.close();
 		return l;
+	}
+
+	/**
+	 * 
+	 * @return list of all atom names in the catalog
+	 */
+	public static List<String> getAllAtoms() {
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION);
+		List<Atom> atoms = graph.getAll(hg.type(Atom.class));
+		graph.close();
+		return atoms.stream().sorted().map(Atom::getName).collect(Collectors.toList());
 	}
 }

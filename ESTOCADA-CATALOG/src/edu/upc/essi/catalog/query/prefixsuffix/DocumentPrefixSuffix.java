@@ -34,9 +34,9 @@ public class DocumentPrefixSuffix implements IPrefixSuffix {
 				suffix = " })";
 				break;
 			case Struct:
-				prefix = "\"";
+				prefix = "";
 				suffix = "";
-				p = path + node.getName() + ".";
+				p = node.getName().isEmpty() ? path : path + node.getName() + ".";
 				break;
 			case Set:
 				prefix = "";

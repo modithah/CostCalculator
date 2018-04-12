@@ -29,39 +29,39 @@ public class QueryGenerator {
 	}
 
 	// Relational
-	public Triple GetprefixSuffix(Element node, String path) {
-		Triple t = new Triple();
-		String prefix = "";
-		String suffix = "";
-		String p = "";
+	// public Triple GetprefixSuffix(Element node, String path) {
+	// Triple t = new Triple();
+	// String prefix = "";
+	// String suffix = "";
+	// String p = "";
+	//
+	// if (node instanceof Atom) {
+	// prefix = node.getName();
+	// suffix = ",";
+	// } else if (node instanceof Hyperedge) {
+	// switch (((Hyperedge) node).getType()) {
+	// case FirstLevel:
+	// suffix = " FROM " + node.getName();
+	// break;
+	//
+	// case SecondLevel:
+	// prefix = "SELECT ";
+	// suffix = "~";
+	// break;
+	//
+	// default:
+	// break;
+	//
+	// }
+	// }
+	//
+	// t.setPrefix(prefix);
+	// t.setSuffix(suffix);
+	// t.setPath(p);
+	// return t;
+	// }
 
-		if (node instanceof Atom) {
-			prefix = node.getName();
-			suffix = ",";
-		} else if (node instanceof Hyperedge) {
-			switch (((Hyperedge) node).getType()) {
-			case FirstLevel:
-				suffix = " FROM " + node.getName();
-				break;
-
-			case SecondLevel:
-				prefix = "SELECT ";
-				suffix = "~";
-				break;
-
-			default:
-				break;
-
-			}
-		}
-
-		t.setPrefix(prefix);
-		t.setSuffix(suffix);
-		t.setPath(p);
-		return t;
-	}
-
-	public String CreateQuery(Element node, String path, HyperedgeTypeEnum type) {
+	public void CreateQueryFromMap(Element node, String path, AdjacencyList l, HyperedgeTypeEnum type) {
 
 		switch (type) {
 		case Database_Col:
@@ -76,13 +76,17 @@ public class QueryGenerator {
 		default:
 			break;
 		}
-		return CreateQuery(node, path);
+
+		for (Element element : l.getAjadacencyList(node)) {
+			System.out.println(CreateQueryFromMap(element, path, l));
+		}
+		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
 
 	public String CreateQuery(Element node, String path) {
 		String Q = "";
 
-		Triple pair = GetprefixSuffix(node, path);
+		Triple pair = GetPrefixSuffix(node, path);
 		Q = Q + pair.getPrefix();
 
 		if (node instanceof Hyperedge) {
@@ -102,7 +106,7 @@ public class QueryGenerator {
 		// System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
 		String Q = "";
 
-		Triple pair = GetprefixSuffix(node, path);
+		Triple pair = GetPrefixSuffix(node, path);
 		Q = Q + pair.getPrefix();
 
 		LinkedHashSet<Element> children = l.getAjadacencyList(node);

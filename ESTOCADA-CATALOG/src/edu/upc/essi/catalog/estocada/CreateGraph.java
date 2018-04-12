@@ -49,10 +49,10 @@ public class CreateGraph {
 		// Station
 		logger.info("Creating Atoms");
 
-		Atom station = new Atom("Sid");
+		Atom station = new Atom("sid");
 		atoms.add(station);
 		atomHandles.add(graph.add(station));
-		Atom sname = new Atom("Sname", String.class.getName());
+		Atom sname = new Atom("sname", String.class.getName());
 		atoms.add(sname);
 		atomHandles.add(graph.add(sname));
 		Atom spos = new Atom("pos", Integer.class.getName());
@@ -61,7 +61,7 @@ public class CreateGraph {
 
 		// Line
 
-		Atom line = new Atom("Lid");
+		Atom line = new Atom("lid");
 		atoms.add(line);
 		atomHandles.add(graph.add(line));
 		Atom lname = new Atom("lname");
@@ -69,7 +69,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(lname));
 
 		// Bus
-		Atom bus = new Atom("Bid");
+		Atom bus = new Atom("bid");
 		atoms.add(bus);
 		atomHandles.add(graph.add(bus));
 		Atom bname = new Atom("bname");
@@ -77,7 +77,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(bname));
 
 		// Train
-		Atom train = new Atom("Tid");
+		Atom train = new Atom("rid");
 		atoms.add(train);
 		atomHandles.add(graph.add(train));
 		Atom rname = new Atom("rname");
@@ -85,7 +85,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(rname));
 
 		// Tram
-		Atom tram = new Atom("Tram");
+		Atom tram = new Atom("tid");
 		atoms.add(tram);
 		atomHandles.add(graph.add(tram));
 		Atom tname = new Atom("tname");
@@ -93,7 +93,7 @@ public class CreateGraph {
 		atomHandles.add(graph.add(tname));
 
 		// Metro
-		Atom metro = new Atom("Mid");
+		Atom metro = new Atom("mid");
 		atoms.add(metro);
 		atomHandles.add(graph.add(metro));
 		Atom mname = new Atom("mname");
@@ -144,6 +144,7 @@ public class CreateGraph {
 			logger.info("Relationships Created Succesfully !");
 
 			// ----------- Creating hyperedges ---------//
+			// -----RDBMS-------//
 			// Train
 			HGHandle trainSecondHandle = graph
 					.add(new Hyperedge("Train", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
@@ -151,21 +152,20 @@ public class CreateGraph {
 			HGHandle trainFirstHandle = graph
 					.add(new Hyperedge("Train", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
 
-			
 			// Metro
 			HGHandle metroSecondHandle = graph
 					.add(new Hyperedge("Metro", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(metro)),
 							atomHandles.get(atoms.indexOf(mname)), relHandles.get(metro, mname)));
 			HGPlainLink l;
-			
+
 			HGHandle metroFirstHandle = graph
 					.add(new Hyperedge("Metro", HyperedgeTypeEnum.FirstLevel, metroSecondHandle));
 
 			// Station
-			HGHandle stationSecondHandle = graph.add(
-					new Hyperedge("Station", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(station)),
-							atomHandles.get(atoms.indexOf(sname)), atomHandles.get(atoms.indexOf(spos)),
-							relHandles.get(station, sname), relHandles.get(station, spos)));
+			HGHandle stationSecondHandle = graph.add(new Hyperedge("Station", HyperedgeTypeEnum.SecondLevel,
+					atomHandles.get(atoms.indexOf(station)), atomHandles.get(atoms.indexOf(sname)),
+					atomHandles.get(atoms.indexOf(spos)), relHandles.get(station, sname), relHandles.get(station, spos),
+					relHandles.get(station, sname)));
 			HGHandle stationFirstHandle = graph
 					.add(new Hyperedge("Station", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
 
@@ -178,6 +178,20 @@ public class CreateGraph {
 			graph.add(new Hyperedge("PostgrSQL", HyperedgeTypeEnum.Database_Rel, trainFirstHandle, metroFirstHandle,
 					stationFirstHandle, lineFirstHandle));
 
+			// -----Document Store-------//
+			HGHandle stationstruct = graph.add(new Hyperedge("", HyperedgeTypeEnum.Struct,
+					atomHandles.get(atoms.indexOf(sname)), atomHandles.get(atoms.indexOf(spos)),
+					atomHandles.get(atoms.indexOf(station)), relHandles.get(station, spos)));
+			HGHandle routeSet = graph.add(new Hyperedge("Route", HyperedgeTypeEnum.Set, stationstruct));
+			HGHandle docSecondLevel = graph.add(
+					new Hyperedge("metros-trams", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(metro)), // atomHandles.get(atoms.indexOf(tname)),
+							atomHandles.get(atoms.indexOf(tram)), // atomHandles.get(atoms.indexOf(mname)),
+							atomHandles.get(atoms.indexOf(line)), // atomHandles.get(atoms.indexOf(lname)),
+							relHandles.get(line, lname), relHandles.get(metro, mname), relHandles.get(tram, tname),
+							relHandles.get(station, line), routeSet));
+			HGHandle docFirstLevel = graph
+					.add(new Hyperedge("metros-trams", HyperedgeTypeEnum.FirstLevel, docSecondLevel));
+			graph.add(new Hyperedge("MongoDB", HyperedgeTypeEnum.Database_Doc, docFirstLevel));
 			graph.close();
 
 		} catch (Exception e) {
@@ -191,7 +205,7 @@ public class CreateGraph {
 	private static HGHandle getRelationHandle(Atom a1, Atom a2, Table t) {
 		HGHandle handle = null;
 		Object o = t.get(a1, a2);
-		if (o == null)
+		if (o.equals(null))
 			handle = (HGHandle) t.get(a2, a1);
 		else
 			handle = (HGHandle) t.get(a1, a2);
