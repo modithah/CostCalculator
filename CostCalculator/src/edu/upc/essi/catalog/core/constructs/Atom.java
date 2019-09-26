@@ -6,9 +6,46 @@ public class Atom implements Element, Comparable<Atom> {
 
 	private AtomTypeEnum type;
 	private String name;
+	
+	/**
+	 * 
+	 *  For class
+	 *  
+	 */
+	private int count;
+	
+	/**
+	 * 
+	 *  For attributes
+	 *  
+	 */
+
 	private String dataType;
+	private int min;
+	private int max;
+	private int average;
+	private int size;
 
 	public Atom() {
+	}
+
+	/**
+	 * For attributes
+	 * @param name
+	 * @param dataType
+	 * @param min
+	 * @param max
+	 * @param average
+	 * @param size
+	 */
+	public Atom(String name, String dataType, int min, int max, int average, int size) {
+		this.name = name;
+		this.dataType = dataType;
+		this.min = min;
+		this.max = max;
+		this.average = average;
+		this.size = size;
+		this.type = AtomTypeEnum.Attribute;
 	}
 
 	/**
@@ -31,11 +68,22 @@ public class Atom implements Element, Comparable<Atom> {
 		this.type = AtomTypeEnum.Class;
 
 	}
+	/**
+	 * @param name
+	 * @param count
+	 *            For class
+	 */
+	public Atom(String name, int count) {
+		this.name=name;
+		this.count=count;
+		this.type = AtomTypeEnum.Class;
+	}
 
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;
 	}
+	
 
 	public AtomTypeEnum getType() {
 		return type;
@@ -63,4 +111,45 @@ public class Atom implements Element, Comparable<Atom> {
 		return this.name.compareTo(arg0.name);
 	}
 
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
+	public int getMin() {
+		return min;
+	}
+
+	public void setMin(int min) {
+		this.min = min;
+	}
+
+	public int getMax() {
+		return max;
+	}
+
+	public void setMax(int max) {
+		this.max = max;
+	}
+
+	public int getAverage() {
+		return average;
+	}
+
+	public void setAverage(int average) {
+		this.average = average;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	
 }

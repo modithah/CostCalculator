@@ -12,6 +12,8 @@ public class Hyperedge extends HGPlainLink implements Element {
 
 	private String name;
 	private HyperedgeTypeEnum type;
+	private int size=1;
+	private int count=1;
 
 	public Hyperedge(String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
 		super(targetSet);
@@ -41,8 +43,9 @@ public class Hyperedge extends HGPlainLink implements Element {
 	}
 
 	public String toString() {
-		return name + "[" + getArity() + "]";
+		return name + "[" + getArity() + "]"+ getCount();
 	}
+	
 
 	@Override
 	public int hashCode() {
@@ -72,6 +75,22 @@ public class Hyperedge extends HGPlainLink implements Element {
 			if (!getTargetAt(i).equals(other.getTargetAt(i)))
 				return false;
 		return true;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
 	}
 
 }

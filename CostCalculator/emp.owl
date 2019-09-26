@@ -1,0 +1,56 @@
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/year>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/joined_Collection> ;
+        rdfs:range   xsd:string .
+
+<http://www.BDIOntology.com/schema/emp/employees>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp> ;
+        rdfs:range   <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw> .
+
+<http://www.BDIOntology.com/schema/emp>
+        a       rdfs:Class .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/lastName>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection> ;
+        rdfs:range   xsd:string .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/firstName>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection> ;
+        rdfs:range   xsd:string .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection> ;
+        rdfs:range   <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/joined_Collection> .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/joined_Collection>
+        a       rdfs:Class .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw>
+        a       rdf:Seq , rdfs:Class .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/RDFSCMP-vy9k70vne8>
+        a            rdf:Property , rdfs:CMP ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw> ;
+        rdfs:range   <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection> .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/day>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/joined_Collection> ;
+        rdfs:range   xsd:integer .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/month>
+        a            rdf:Property ;
+        rdfs:domain  <http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection/joined/joined_Collection> ;
+        rdfs:range   xsd:string .
+
+<http://www.BDIOntology.com/schema/emp/employees/RDFSeq-f38uecrmzw/employees_Collection>
+a rdfs:Class .
