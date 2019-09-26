@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
@@ -20,6 +21,7 @@ import edu.upc.essi.catalog.estocada.CreateGraph;
 import edu.upc.essi.catalog.estocada.CreateGraph2;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import edu.upc.essi.catalog.ops.SchemaOperations;
 import edu.upc.essi.catalog.query.QueryGenerator;
 import edu.upc.essi.catalog.query.QueryGenerator2;
 
@@ -68,11 +70,39 @@ public class run2 {
 				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
-					System.out.print(((Hyperedge) element).getName()+"-->");
+					System.out.print(((Hyperedge) element).getName() + "-->");
 					g.CreateQueryFromMap(element, "", map, ((Hyperedge) element).getType());
 				}
 			}
 		}
+
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+
+		HGHandle atm = Graphoperations.getAtomByName(graph, "A_ID");
+		HGHandle atm2 = Graphoperations.getAtomByName(graph, "AB_ID");
+		ArrayList<HGHandle> p = Graphoperations.getParentHyperesdeofAtom(graph, atm);
+
+		for (HGHandle hgHandle : p) {
+			System.out.println(graph.get(hgHandle).toString());
+		}
+		
+		SchemaOperations.makeReference(graph, atm, atm2, Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm, atm2), p.get(0));
+		
+		map = Graphoperations.makeHashmap(input.split(","));
+
+		keys = map.getMap().keySet();
+
+		for (Element element : keys) {
+			if (element instanceof Hyperedge) {
+				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
+						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
+						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
+					System.out.print(((Hyperedge) element).getName() + "-->");
+					g.CreateQueryFromMap(element, "", map, ((Hyperedge) element).getType());
+				}
+			}
+		}
+
 //			input = scanner.next();
 //		}
 

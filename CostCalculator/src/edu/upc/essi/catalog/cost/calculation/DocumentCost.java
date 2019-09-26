@@ -42,7 +42,7 @@ public class DocumentCost implements ICost {
 				noop = 0;
 				break;
 			case Struct:
-				size = node.getName().isEmpty() ? 0 : node.getName().length();				
+				size = node.getName().isEmpty() ? 0 : node.getName().length();
 				break;
 			case Set:
 				size = node.getName().length();

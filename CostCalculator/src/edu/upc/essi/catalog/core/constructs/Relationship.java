@@ -27,6 +27,7 @@ public class Relationship extends HGPlainLink implements Element {
 		this.IRI = iRI;
 		this.Cardinality = cardinality;
 		this.Multiplicity = multiplicity;
+		System.out.println("MULTO" + multiplicity);
 	}
 
 	public Relationship(HGHandle... targets) {
@@ -74,7 +75,7 @@ public class Relationship extends HGPlainLink implements Element {
 		return Multiplicity;
 	}
 
-	public void setMultiplicity(int multiplicity) {
+	public void setMultiplicity(double multiplicity) {
 		Multiplicity = multiplicity;
 	}
 

@@ -27,6 +27,7 @@ public final class CostOperations {
 		int count = 0;
 		Iterator<HGHandle> iter = hyperedge.iterator();
 		HGHandle parentAtomHandle, childAtomHandle = null;
+		String childName = "";
 		HashMap<Atom, HGHandle> candidateAtoms = new HashMap<>();
 		ArrayList<HGHandle> relationships = new ArrayList<>();
 
@@ -58,6 +59,7 @@ public final class CostOperations {
 			if (atoms.size() == 1) {
 				count = (atoms.get(0)).getCount(); // find the class atom
 				childAtomHandle = candidateAtoms.get(atoms.get(0));
+				childName = atoms.get(0).getName();
 			} else {
 				for (int i = 0; i < atoms.size(); i++) {
 					ArrayList<Boolean> evals = new ArrayList<>();
@@ -77,6 +79,7 @@ public final class CostOperations {
 						if (!evals.contains(false)) {
 							count = (atom1).getCount(); // find the class atom
 							childAtomHandle = candidateAtoms.get(atom1);
+							childName = atom1.getName();
 						}
 					}
 				}
@@ -114,10 +117,14 @@ public final class CostOperations {
 						if (atomobject.getClass().equals(Atom.class)
 								&& ((Atom) atomobject).getType() == AtomTypeEnum.Class) {
 
-							Relationship relationship = hg.getOne(graph,
-									hg.and(hg.type(Relationship.class), hg.orderedLink(hgHandle2, childAtomHandle))); // find
-																														// the
-																														// relationship
+							HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + childName,
+									hgHandle2, childAtomHandle);
+
+							Relationship relationship = graph.get(rel);
+//									hg.getOne(graph,
+//									hg.and(hg.type(Relationship.class), hg.orderedLink(hgHandle2, childAtomHandle))); // find
+							// the
+
 							count = (int) relationship.getMultiplicity();
 							hyperedge.setCount(count);
 						}

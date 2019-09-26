@@ -1,6 +1,8 @@
 package edu.upc.essi.catalog.ops;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
+import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.CardinalityEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
@@ -173,5 +176,74 @@ public final class Graphoperations {
 
 	public static HGHandle addtoGraph(HyperGraph graph, Object obj) {
 		return graph.add(obj);
+	}
+
+	public static ArrayList<HGHandle> getParentHyperesdeofAtom(HyperGraph graph, HGHandle atom) {
+		ArrayList<HGHandle> parents = new ArrayList<>();
+		IncidenceSet incidence = graph.getIncidenceSet(atom);
+		for (HGHandle hgHandle : incidence) {
+//			System.out.println(graph.get(hgHandle).toString());
+			if (isRootofHyperedge(graph, atom, hgHandle))
+				parents.add(hgHandle);
+		}
+		return parents;
+	}
+
+	public static boolean isRootofHyperedge(HyperGraph graph, HGHandle atom, HGHandle hyperedge) {
+		boolean b = false;
+		HashMap<Atom, HGHandle> candidateAtoms = new HashMap<>();
+		ArrayList<HGHandle> relationships = new ArrayList<>();
+		Object hyp = graph.get(hyperedge);
+		Atom target = graph.get(atom);
+		if (hyp.getClass() != Hyperedge.class) {
+			return false;
+		}
+
+		Iterator<HGHandle> seconditer = ((Hyperedge) hyp).iterator();
+		while (seconditer.hasNext()) {
+			HGHandle hgHandle2 = (HGHandle) seconditer.next();
+
+			Object a = graph.get(hgHandle2);
+
+			if (a.getClass().equals(Atom.class) && ((Atom) a).getType() == AtomTypeEnum.Class) {
+
+				candidateAtoms.put((Atom) a, hgHandle2);
+//				System.out.println("child " + ((Atom) a).getName());
+
+			}
+
+			if (a.getClass().equals(Relationship.class)) {
+				relationships.add(hgHandle2);
+			}
+		}
+
+		ArrayList<Atom> atoms = new ArrayList<>();
+		candidateAtoms.keySet().iterator().forEachRemaining(atoms::add);
+
+		if (atoms.size() == 1) {
+			return true;
+		} else {
+
+			ArrayList<Boolean> evals = new ArrayList<>();
+
+			for (int j = 0; j < atoms.size(); j++) {
+				Atom atom2 = atoms.get(j);
+				if (atom2 != target) {
+					HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + atom2.getName(),
+							candidateAtoms.get(target), candidateAtoms.get(atom2));
+					if (rel != null && relationships.contains(rel)) {
+						evals.add(true);
+					} else
+						break;
+				}
+			}
+			if (evals.size() == atoms.size() - 1) {
+				if (!evals.contains(false)) {
+					return true;
+				}
+			}
+
+		}
+		return b;
 	}
 }

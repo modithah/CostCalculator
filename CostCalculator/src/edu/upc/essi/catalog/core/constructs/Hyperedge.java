@@ -5,25 +5,24 @@ import org.hypergraphdb.HGPlainLink;
 
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
-public class Hyperedge extends HGPlainLink implements Element {
+public class Hyperedge extends HGPlainLink2 implements Element {
 
 	public Hyperedge() {
 	}
 
 	private String name;
 	private HyperedgeTypeEnum type;
-	private int size=1;
-	private int count=1;
+	private int size = 1;
+	private int count = 1;
 
 	public Hyperedge(String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
 		super(targetSet);
 		this.name = name;
 		this.type = type;
 	}
-	
-	public Hyperedge(HGHandle...targets)
-	{
-	    super(targets);
+
+	public Hyperedge(HGHandle... targets) {
+		super(targets);
 	}
 
 	public String getName() {
@@ -43,9 +42,8 @@ public class Hyperedge extends HGPlainLink implements Element {
 	}
 
 	public String toString() {
-		return name + "[" + getArity() + "]"+ getCount();
+		return name + "[" + getArity() + "]" + getCount();
 	}
-	
 
 	@Override
 	public int hashCode() {
