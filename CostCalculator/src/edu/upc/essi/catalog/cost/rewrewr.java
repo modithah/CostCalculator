@@ -1,4 +1,4 @@
-package edu.upc.essi.catalog.query;
+package edu.upc.essi.catalog.cost;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -16,11 +16,11 @@ import edu.upc.essi.catalog.query.prefixsuffix.DocumentPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.IPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.RelationalPrefixSuffix;
 
-public class QueryGenerator {
+public class rewrewr{
 
 	IPrefixSuffix PrefixSuffix;
 
-	public QueryGenerator() {
+	public rewrewr() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -83,28 +83,6 @@ public class QueryGenerator {
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
 
-	public void CreateSchemaFromMap(Element node, String path, AdjacencyList l, HyperedgeTypeEnum type) {
-
-		switch (type) {
-		case Database_Col:
-
-			break;
-		case Database_Rel:
-			PrefixSuffix = new RelationalPrefixSuffix();
-			break;
-		case Database_Doc:
-			PrefixSuffix = new DocumentPrefixSuffix(true);
-			break;
-		default:
-			break;
-		}
-
-		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateQueryFromMap(element, path, l));
-		}
-		// return CreateQueryFromMap(node, path, l) + "\n";
-	}
-
 	public String CreateQuery(Element node, String path) {
 		String Q = "";
 
@@ -125,7 +103,7 @@ public class QueryGenerator {
 
 	public String CreateQueryFromMap(Element node, String path, AdjacencyList l) {
 
-//		System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
+		// System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
 		String Q = "";
 
 		Triple pair = GetPrefixSuffix(node, path);

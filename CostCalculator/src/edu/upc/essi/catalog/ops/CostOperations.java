@@ -20,11 +20,12 @@ import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
 public final class CostOperations {
 
-	public static int CalculateCounts(HGHandle hyperedgehandle) {
+	public static double CalculateCounts(HGHandle hyperedgehandle) {
 
 		HyperGraph graph = Const.graph;
+		IncidenceSet incidence = graph.getIncidenceSet(hyperedgehandle);
 		Hyperedge hyperedge = graph.get(hyperedgehandle);
-		int count = 0;
+		double count = 0;
 		Iterator<HGHandle> iter = hyperedge.iterator();
 		HGHandle parentAtomHandle, childAtomHandle = null;
 		String childName = "";
@@ -57,10 +58,12 @@ public final class CostOperations {
 			candidateAtoms.keySet().iterator().forEachRemaining(atoms::add);
 
 			if (atoms.size() == 1) {
+//				System.out.println("OOOOOOOONEEEEEEEEE");
 				count = (atoms.get(0)).getCount(); // find the class atom
 				childAtomHandle = candidateAtoms.get(atoms.get(0));
 				childName = atoms.get(0).getName();
 			} else {
+//				System.out.println("MMMMMMMMMMMMMMMMMOOOOOOOOOOOORRRRRREEEEEEEEEE");
 				for (int i = 0; i < atoms.size(); i++) {
 					ArrayList<Boolean> evals = new ArrayList<>();
 					Atom atom1 = atoms.get(i);
@@ -99,8 +102,9 @@ public final class CostOperations {
 		// in set it has a struct that has a class atom with count
 		case Set:
 			// need to find the parent struct / second level
-			IncidenceSet incidence = graph.getIncidenceSet(hyperedgehandle);
+			
 			for (HGHandle hgHandle : incidence) {
+				//print here to see the parents
 				Object hyper = graph.get(hgHandle);
 				if (hyper.getClass().equals(Hyperedge.class)
 						&& (((Hyperedge) hyper).getType() == HyperedgeTypeEnum.SecondLevel || // found the second level
@@ -116,16 +120,18 @@ public final class CostOperations {
 						// this is to find the atom
 						if (atomobject.getClass().equals(Atom.class)
 								&& ((Atom) atomobject).getType() == AtomTypeEnum.Class) {
-
+//							System.out.println("---------------------------------" + ((Atom) atomobject).getName());
 							HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + childName,
 									hgHandle2, childAtomHandle);
 
 							Relationship relationship = graph.get(rel);
+
+//							System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSS         " + relationship.getMultiplicity());
 //									hg.getOne(graph,
 //									hg.and(hg.type(Relationship.class), hg.orderedLink(hgHandle2, childAtomHandle))); // find
 							// the
 
-							count = (int) relationship.getMultiplicity();
+							count = relationship.getMultiplicity();
 							hyperedge.setCount(count);
 						}
 					}

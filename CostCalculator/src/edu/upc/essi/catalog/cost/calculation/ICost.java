@@ -5,5 +5,5 @@ import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Triple;
 
 public interface ICost {
-	public GenericTriple<Integer, Integer, Integer> GetSize(Element node, String path);
+	public GenericTriple<Double, Double, Double> GetSize(Element node, String path);
 }

@@ -16,6 +16,7 @@ import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
+import edu.upc.essi.catalog.cost.CostGenerator;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.estocada.CreateGraph;
 import edu.upc.essi.catalog.estocada.CreateGraph2;
@@ -23,7 +24,6 @@ import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.SchemaOperations;
 import edu.upc.essi.catalog.query.QueryGenerator;
-import edu.upc.essi.catalog.query.QueryGenerator2;
 
 public class run2 {
 
@@ -50,12 +50,13 @@ public class run2 {
 		System.out.println(
 				"The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
 		// System.out.println(atoms);
-		QueryGenerator2 g = new QueryGenerator2();
+		CostGenerator c = new CostGenerator();
+		QueryGenerator q = new QueryGenerator();
 //		Scanner scanner = new Scanner(System.in);
 //		System.out.print(
 //				"Enter the atom names you want to query seperated by commas (type exit to quit): ");
 
-		String input = "A_ID,B_ID,AB_ID";
+		String input = "A_ID,B_ID,AB_ID,A_NAME,B_NAME";
 //		String input = scanner.next();
 
 //		while (!input.equals("exit")) {
@@ -70,8 +71,8 @@ public class run2 {
 				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
-					System.out.print(((Hyperedge) element).getName() + "-->");
-					g.CreateQueryFromMap(element, "", map, ((Hyperedge) element).getType());
+					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
+					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
 				}
 			}
 		}
@@ -82,12 +83,9 @@ public class run2 {
 		HGHandle atm2 = Graphoperations.getAtomByName(graph, "AB_ID");
 		ArrayList<HGHandle> p = Graphoperations.getParentHyperesdeofAtom(graph, atm);
 
-		for (HGHandle hgHandle : p) {
-			System.out.println(graph.get(hgHandle).toString());
-		}
-		
-		SchemaOperations.makeReference(graph, atm, atm2, Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm, atm2), p.get(0));
-		
+		SchemaOperations.embed(graph, atm, atm2,
+				Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm, atm2), p.get(0));
+
 		map = Graphoperations.makeHashmap(input.split(","));
 
 		keys = map.getMap().keySet();
@@ -97,8 +95,33 @@ public class run2 {
 				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
-					System.out.print(((Hyperedge) element).getName() + "-->");
-					g.CreateQueryFromMap(element, "", map, ((Hyperedge) element).getType());
+					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
+					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
+				}
+			}
+		}
+
+		graph.close();
+
+		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		HGHandle atm3 = Graphoperations.getAtomByName(graph, "B_ID");
+		HGHandle atm4 = Graphoperations.getAtomByName(graph, "AB_ID");
+		p = Graphoperations.getParentHyperesdeofAtom(graph, atm3);
+
+		SchemaOperations.embed(graph, atm3, atm4,
+				Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm3, atm4), p.get(0));
+
+		map = Graphoperations.makeHashmap(input.split(","));
+
+		keys = map.getMap().keySet();
+
+		for (Element element : keys) {
+			if (element instanceof Hyperedge) {
+				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
+						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
+						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
+					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
+					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
 				}
 			}
 		}

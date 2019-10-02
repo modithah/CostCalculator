@@ -2,6 +2,7 @@ package edu.upc.essi.catalog.ops;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
@@ -34,13 +35,44 @@ public class SchemaOperations {
 
 		} else if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_MANY)) {
 			HGHandle struct = Graphoperations.addtoGraph(graph, new Hyperedge("", HyperedgeTypeEnum.Struct, otherAtom));
-			HGHandle set = Graphoperations.addtoGraph(graph,
-					new Hyperedge(child.getName() + "s", HyperedgeTypeEnum.Set, struct));
+			HGHandle set = Graphoperations.addtoGraph(graph, new Hyperedge(
+					child.getName() + "s~" + UUID.randomUUID().toString(), HyperedgeTypeEnum.Set, struct));
 			ArrayList<HGHandle> toAdd = new ArrayList<>();
 			toAdd.add(set);
 			ArrayList<HGHandle> newobjs = makeNewtargets(parent, toAdd);
 			parent.setNewOutgoing(newobjs);
 			graph.update(parent);
+		}
+	}
+
+	public static void embed(HyperGraph graph, HGHandle rootAtom, HGHandle otherAtom, HGHandle relationship,
+			HGHandle parentOfRoot) {
+		Atom root = graph.get(rootAtom);
+		Atom child = graph.get(otherAtom);
+		Relationship rel = graph.get(relationship);
+		Hyperedge parent = graph.get(parentOfRoot);
+
+		if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_ONE)) {
+			HGHandle struct = Graphoperations.addtoGraph(graph,
+					new Hyperedge(child.getName(), HyperedgeTypeEnum.Struct, otherAtom));
+			ArrayList<HGHandle> toAdd = new ArrayList<>();
+			toAdd.add(struct);
+			ArrayList<HGHandle> newobjs = makeNewtargets(parent, toAdd);
+			parent.setNewOutgoing(newobjs);
+			graph.update(parent);
+
+		} else if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_MANY)) {
+//			HGHandle struct = Graphoperations.addtoGraph(graph, new Hyperedge("", HyperedgeTypeEnum.Struct, otherAtom));
+//			HGHandle set = Graphoperations.addtoGraph(graph, new Hyperedge(
+//					child.getName() + "s~" + UUID.randomUUID().toString(), HyperedgeTypeEnum.Set, struct));
+//			ArrayList<HGHandle> toAdd = new ArrayList<>();
+//			toAdd.add(set);
+//			ArrayList<HGHandle> newobjs = makeNewtargets(parent, toAdd); 
+//			parent.setNewOutgoing(newobjs);
+//			graph.update(parent);
+
+			HGHandle firstlevel = Graphoperations.getFirstLevelHyperedgesContainingAtom(graph, otherAtom);
+//			System.out.println(graph.get(firstlevel).toString());
 		}
 	}
 

@@ -16,11 +16,11 @@ public class DocumentCost implements ICost {
 	}
 
 	@Override
-	public GenericTriple<Integer, Integer, Integer> GetSize(Element node, String path) {
+	public GenericTriple<Double,Double,Double> GetSize(Element node, String path) {
 //		System.out.println(node.getName());
-		GenericTriple<Integer, Integer, Integer> t = new GenericTriple<>();
+		GenericTriple<Double, Double, Double> t = new GenericTriple<>();
 		int size = 0;
-		int multiply = 1;
+		double multiply = 1.0;
 		int noop = -1;
 
 		if (node instanceof Atom) {
@@ -42,10 +42,10 @@ public class DocumentCost implements ICost {
 				noop = 0;
 				break;
 			case Struct:
-				size = node.getName().isEmpty() ? 0 : node.getName().length();
+				size = node.getName().split("~")[0].isEmpty() ? 0 : node.getName().split("~")[0].length();
 				break;
 			case Set:
-				size = node.getName().length();
+				size = node.getName().split("~")[0].length();
 				multiply = CostOperations.CalculateCounts(
 						Graphoperations.getHyperedgebyNameType(node.getName(), ((Hyperedge) node).getType()));
 				noop = 0;
@@ -58,9 +58,9 @@ public class DocumentCost implements ICost {
 				break;
 			}
 		}
-		t.setVal1(size);
+		t.setVal1((double) size);
 		t.setVal2(multiply);
-		t.setVal3(noop);
+		t.setVal3((double) noop);
 		return t;
 	}
 

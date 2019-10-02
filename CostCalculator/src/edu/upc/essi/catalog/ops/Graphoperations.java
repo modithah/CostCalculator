@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGLink;
 import org.hypergraphdb.HGQuery.hg;
 
 import com.google.common.collect.Table;
@@ -110,9 +111,9 @@ public final class Graphoperations {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
 
-		System.out.println(graph);
+//		System.out.println(graph);
 		for (String atomName : atomNames) {
-			System.out.println(atomName);
+//			System.out.println(atomName);
 			HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
 			if (atom != null) {
 				IncidenceSet incidence = graph.getIncidenceSet(atom);
@@ -160,9 +161,21 @@ public final class Graphoperations {
 	}
 
 	public static HGHandle getRelationshipByNameAtoms(HyperGraph graph, String name, HGHandle atom1, HGHandle atom2) {
-
-//		System.out.println(name);
 		return hg.findOne(graph, hg.and(hg.type(Relationship.class), hg.eq("IRI", name), hg.orderedLink(atom1, atom2)));
+	}
+
+	public static List<HGHandle> getHyperedgesContainingAtoms(HyperGraph graph, HGHandle... atoms) {
+		return hg.findAll(graph, hg.and(hg.type(Hyperedge.class), hg.link(atoms)));
+	}
+
+	public static HGHandle getFirstLevelHyperedgesContainingAtom(HyperGraph graph, HGHandle atom) {
+
+		HGHandle s = hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.SecondLevel),
+				hg.link(new HGHandle[] { atom })));
+
+		List<HGHandle> x = hg.findAll(graph, hg.and(hg.type(Hyperedge.class), hg.contains(atom)));
+		System.out.println(x.size());
+		return null;
 	}
 
 	public static void makeRelation(HyperGraph graph, HashMap<String, HGHandle> atomHandles,

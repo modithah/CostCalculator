@@ -5,7 +5,7 @@ import org.hypergraphdb.HGPlainLink;
 
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
-public class Hyperedge extends HGPlainLink2 implements Element {
+public class Hyperedge extends HGPlainLink2  implements Element {
 
 	public Hyperedge() {
 	}
@@ -13,7 +13,7 @@ public class Hyperedge extends HGPlainLink2 implements Element {
 	private String name;
 	private HyperedgeTypeEnum type;
 	private int size = 1;
-	private int count = 1;
+	private double count = 1;
 
 	public Hyperedge(String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
 		super(targetSet);
@@ -83,11 +83,11 @@ public class Hyperedge extends HGPlainLink2 implements Element {
 		this.size = size;
 	}
 
-	public int getCount() {
+	public double getCount() {
 		return count;
 	}
 
-	public void setCount(int count) {
+	public void setCount(double count) {
 		this.count = count;
 	}
 

@@ -43,8 +43,9 @@ public class run {
 		while (!input.equals("exit")) {
 			System.out.println("------Queries for selected atoms------");
 
-			AdjacencyList map = Graphoperations.makeHashmap(input.split(","));
-
+			String input1 = "A_ID,B_ID,AB_ID";
+			AdjacencyList map = Graphoperations.makeHashmap(input1.split(","));
+			
 			Set<Element> keys = map.getMap().keySet();
 
 			for (Element element : keys) {
@@ -52,7 +53,7 @@ public class run {
 					if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
 							|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
 							|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
-						g.CreateQueryFromMap(element, "", map, ((Hyperedge) element).getType());
+						g.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
 					}
 				}
 			}

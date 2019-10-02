@@ -12,7 +12,7 @@ public class Relationship extends HGPlainLink implements Element {
 
 	private String IRI;
 	private CardinalityEnum Cardinality = CardinalityEnum.ONE_TO_ONE;
-	private double Multiplicity = 1;
+	private double Multiplicity = 1.0;
 
 	public Relationship(String iRI, HGHandle... targets) throws Exception {
 		super(targets);

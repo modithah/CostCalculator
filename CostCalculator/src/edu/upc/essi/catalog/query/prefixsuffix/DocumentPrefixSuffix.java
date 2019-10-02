@@ -7,8 +7,14 @@ import edu.upc.essi.catalog.core.constructs.Triple;
 
 public class DocumentPrefixSuffix implements IPrefixSuffix {
 
+	private boolean schema = false;
+
 	public DocumentPrefixSuffix() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public DocumentPrefixSuffix(boolean getSchema) {
+		schema = getSchema;
 	}
 
 	@Override
@@ -30,18 +36,18 @@ public class DocumentPrefixSuffix implements IPrefixSuffix {
 		} else if (node instanceof Hyperedge) {
 			switch (((Hyperedge) node).getType()) {
 			case FirstLevel:
-				prefix = "db." + node.getName() + ".find({},{";
-				suffix = " })";
+				prefix = schema ? node.getName() + ":{" : "db." + node.getName() + ".find({},{";
+				suffix = schema ? "}" : " })";
 				break;
 			case Struct:
 				prefix = "";
 				suffix = "";
-				p = node.getName().isEmpty() ? path : path + node.getName() + ".";
+				p = schema ? "" : node.getName().isEmpty() ? path : path + node.getName().split("~")[0] + ".";
 				break;
 			case Set:
-				prefix = "";
-				suffix = "";
-				p = path + node.getName() + ".";
+				prefix = schema ? node.getName().split("~")[0] + ":{" : "";
+				suffix = schema ? "~}," : "";
+				p = schema ? "" : path + node.getName().split("~")[0] + ".";
 				break;
 			case SecondLevel:
 				prefix = "";

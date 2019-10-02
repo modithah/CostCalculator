@@ -180,9 +180,8 @@ public class LoadGraph {
 							System.out.println(attName);
 							HGHandle attributehandle = atomHandles.get(attName);
 							if (attributehandle == null) {
-								atomHandles.put(entity.getString(attributes.getString(i)),
-										Graphoperations.getAtomByName(graph, attName));
-								attributehandle = atomHandles.get(entity.getString(attributes.getString(i)));
+								atomHandles.put(attributes.getString(i), Graphoperations.getAtomByName(graph, attName));
+								attributehandle = atomHandles.get(attributes.getString(i));
 							}
 							list.add(attributehandle);
 
@@ -203,7 +202,6 @@ public class LoadGraph {
 						}
 					}
 
-					
 					HGHandle struct = Graphoperations.addtoGraph(graph,
 							new Hyperedge("", HyperedgeTypeEnum.SecondLevel, list.toArray(new HGHandle[list.size()])));
 					System.out.println(graph.get(struct).toString());
