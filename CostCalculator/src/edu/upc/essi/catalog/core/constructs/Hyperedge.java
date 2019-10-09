@@ -1,11 +1,16 @@
 package edu.upc.essi.catalog.core.constructs;
 
+import java.util.ArrayList;
+
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
+import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.atom.HGSubgraph;
 
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
-public class Hyperedge extends HGPlainLink2  implements Element {
+public class Hyperedge extends HGSubgraph2 implements Element {
 
 	public Hyperedge() {
 	}
@@ -15,14 +20,22 @@ public class Hyperedge extends HGPlainLink2  implements Element {
 	private int size = 1;
 	private double count = 1;
 
-	public Hyperedge(String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
-		super(targetSet);
+	public Hyperedge(HyperGraph graph, HGHandle handle, String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
+		super();
 		this.name = name;
 		this.type = type;
+		setHyperGraph(graph);
+		setAtomHandle(handle);
+		for (int i = 0; i < targetSet.length; i++) {
+			System.out.println(i);
+			add(targetSet[i]);
+		}
 	}
 
 	public Hyperedge(HGHandle... targets) {
-		super(targets);
+		for (int i = 0; i < targets.length; i++) {
+			add(targets[i]);
+		}
 	}
 
 	public String getName() {
@@ -42,7 +55,7 @@ public class Hyperedge extends HGPlainLink2  implements Element {
 	}
 
 	public String toString() {
-		return name + "[" + getArity() + "]" + getCount();
+		return name + "  " + type + "[" + count(hg.memberOf(thisHandle)) + "]" + getCount();
 	}
 
 	@Override
@@ -73,6 +86,16 @@ public class Hyperedge extends HGPlainLink2  implements Element {
 			if (!getTargetAt(i).equals(other.getTargetAt(i)))
 				return false;
 		return true;
+	}
+
+	private Object getTargetAt(int i) {
+		// TODO Auto-generated method stub
+		return outgoingSet.get(i);
+	}
+
+	private int getArity() {
+		// TODO Auto-generated method stub
+		return outgoingSet.size();
 	}
 
 	public int getSize() {

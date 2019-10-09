@@ -42,7 +42,7 @@ public class DocumentPrefixSuffix implements IPrefixSuffix {
 			case Struct:
 				prefix = "";
 				suffix = "";
-				p = schema ? "" : node.getName().isEmpty() ? path : path + node.getName().split("~")[0] + ".";
+				p = schema ? "" : path + node.getName().split("~")[0] + ".";
 				break;
 			case Set:
 				prefix = schema ? node.getName().split("~")[0] + ":{" : "";

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HyperGraph;
 
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
@@ -142,4 +143,25 @@ public class QueryGenerator {
 		Q = Q.replaceAll(",~", "");
 		return Q;
 	}
+	
+//	public String CreateQueryFromMap(HyperGraph g, Element node, String path) {
+//
+//		
+//		String Q = "";
+//
+//		Triple pair = GetPrefixSuffix(node, path);
+//		Q = Q + pair.getPrefix();
+//
+//		LinkedHashSet<Element> children = g.findAll(hg.);  l.getAjadacencyList(node);
+//
+//		if (children != null) {
+//			for (Element element : children) {
+//				Q = Q + CreateQueryFromMap(element, pair.getPath(), l);
+//			}
+//		}
+//		Q = Q + pair.getSuffix();
+//		Q = Q.replaceAll(",~", "");
+//		return Q;
+//	}
+	
 }

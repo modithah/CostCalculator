@@ -64,7 +64,7 @@ public class CostGenerator {
 	}
 
 	public Pair<Double, Double> CreateCostFromMap(Element node, String path, AdjacencyList l) {
-
+//		System.out.println("node -> " + node );
 		Pair<Double, Double> p;
 		double Q = 0;
 		double mult = 1;

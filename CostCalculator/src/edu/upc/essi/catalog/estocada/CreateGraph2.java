@@ -97,16 +97,17 @@ public class CreateGraph2 {
 
 			// -----Document Store-------//
 
-			HGHandle authorStruct = graph.add(new Hyperedge("", HyperedgeTypeEnum.Struct,
+			HGHandle authorStruct = graph.add(new Hyperedge(graph, "", HyperedgeTypeEnum.Struct,
 					atomHandles.get(atoms.indexOf(author)), atomHandles.get(atoms.indexOf(aname))));
-			HGHandle authorSet = graph.add(new Hyperedge("Authors", HyperedgeTypeEnum.Set, authorStruct));
+			HGHandle authorSet = graph.add(new Hyperedge(graph, "Authors", HyperedgeTypeEnum.Set, authorStruct));
 
 			HGHandle booksecondLevel = graph
-					.add(new Hyperedge("", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(book)),
+					.add(new Hyperedge(graph, "", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(book)),
 							atomHandles.get(atoms.indexOf(bname)), atomHandles.get(atoms.indexOf(pages)), authorSet,
 							relHandles.get(book, bname), relHandles.get(book, pages), relHandles.get(book, author)));
 
-			HGHandle bookFirstLevel = graph.add(new Hyperedge("Books", HyperedgeTypeEnum.FirstLevel, booksecondLevel));
+			HGHandle bookFirstLevel = graph
+					.add(new Hyperedge(graph, "Books", HyperedgeTypeEnum.FirstLevel, booksecondLevel));
 
 //			HGHandle docSecondLevel = graph.add(new Hyperedge("metros-trams", HyperedgeTypeEnum.SecondLevel,
 //					atomHandles.get(atoms.indexOf(metro)), atomHandles.get(atoms.indexOf(tname)),
@@ -117,20 +118,21 @@ public class CreateGraph2 {
 //			HGHandle docFirstLevel = graph
 //					.add(new Hyperedge("metros-trams", HyperedgeTypeEnum.FirstLevel, docSecondLevel));
 
-			HGHandle bookStruct = graph.add(new Hyperedge("", HyperedgeTypeEnum.Struct,
+			HGHandle bookStruct = graph.add(new Hyperedge(graph, "", HyperedgeTypeEnum.Struct,
 					atomHandles.get(atoms.indexOf(book)), atomHandles.get(atoms.indexOf(bname)),
 					atomHandles.get(atoms.indexOf(pages)), relHandles.get(book, bname), relHandles.get(book, pages)));
 
-			HGHandle bookSet = graph.add(new Hyperedge("Books", HyperedgeTypeEnum.Set, bookStruct));
+			HGHandle bookSet = graph.add(new Hyperedge(graph, "Books", HyperedgeTypeEnum.Set, bookStruct));
 
 			HGHandle authorSecond = graph
-					.add(new Hyperedge("", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(author)),
+					.add(new Hyperedge(graph, "", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(author)),
 							atomHandles.get(atoms.indexOf(aname)), bookSet, relHandles.get(author, book)));
-			HGHandle authorfirst = graph.add(new Hyperedge("Authors", HyperedgeTypeEnum.FirstLevel, authorSecond));
+			HGHandle authorfirst = graph
+					.add(new Hyperedge(graph, "Authors", HyperedgeTypeEnum.FirstLevel, authorSecond));
 
-			graph.add(new Hyperedge("MongoDB", HyperedgeTypeEnum.Database_Doc, bookFirstLevel));
-			graph.add(new Hyperedge("MongoDB-2", HyperedgeTypeEnum.Database_Doc, authorfirst));
-			
+			graph.add(new Hyperedge(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc, bookFirstLevel));
+			graph.add(new Hyperedge(graph, "MongoDB-2", HyperedgeTypeEnum.Database_Doc, authorfirst));
+
 			graph.close();
 
 		} catch (Exception e) {

@@ -165,19 +165,19 @@ public static void main(String[] args) throws FileNotFoundException {
         	 }
         	 
         	 
-        	 stationSecondHandle = graph.add(new Hyperedge("Station", HyperedgeTypeEnum.SecondLevel,
+        	 stationSecondHandle = graph.add(new Hyperedge(graph,"Station", HyperedgeTypeEnum.SecondLevel,
    					allRel));
         	 
  			HGHandle stationFirstHandle = graph
-  					.add(new Hyperedge("Station", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
+  					.add(new Hyperedge(graph,"Station", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
 //  			
- 			graph.add(new Hyperedge("PostgrSQL", HyperedgeTypeEnum.Database_Rel,stationFirstHandle));
+ 			graph.add(new Hyperedge(graph,"PostgrSQL", HyperedgeTypeEnum.Database_Rel,stationFirstHandle));
  			
  		
  			
 			HGHandle docFirstLevel = graph
-					.add(new Hyperedge("metros-trams", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
-			graph.add(new Hyperedge("MongoDB", HyperedgeTypeEnum.Database_Doc, docFirstLevel));
+					.add(new Hyperedge(graph,"metros-trams", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
+			graph.add(new Hyperedge(graph,"MongoDB", HyperedgeTypeEnum.Database_Doc, docFirstLevel));
  	 
           		logger.info("Relationships Created Succesfully !");
     	

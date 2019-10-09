@@ -146,52 +146,53 @@ public class CreateGraph {
 			// ----------- Creating hyperedges ---------//
 			// -----RDBMS-------//
 			// Train
-			HGHandle trainSecondHandle = graph
-					.add(new Hyperedge("Train", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
+			HGHandle trainSecondHandle = graph.add(
+					new Hyperedge(graph, "Train", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(train)),
 							atomHandles.get(atoms.indexOf(rname)), relHandles.get(train, rname)));
 			HGHandle trainFirstHandle = graph
-					.add(new Hyperedge("Train", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
+					.add(new Hyperedge(graph, "Train", HyperedgeTypeEnum.FirstLevel, trainSecondHandle));
 
 			// Metro
-			HGHandle metroSecondHandle = graph
-					.add(new Hyperedge("Metro", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(metro)),
+			HGHandle metroSecondHandle = graph.add(
+					new Hyperedge(graph, "Metro", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(metro)),
 							atomHandles.get(atoms.indexOf(mname)), relHandles.get(metro, mname)));
 			HGPlainLink l;
 
 			HGHandle metroFirstHandle = graph
-					.add(new Hyperedge("Metro", HyperedgeTypeEnum.FirstLevel, metroSecondHandle));
+					.add(new Hyperedge(graph, "Metro", HyperedgeTypeEnum.FirstLevel, metroSecondHandle));
 
 			// Station
-			HGHandle stationSecondHandle = graph.add(new Hyperedge("Station", HyperedgeTypeEnum.SecondLevel,
+			HGHandle stationSecondHandle = graph.add(new Hyperedge(graph, "Station", HyperedgeTypeEnum.SecondLevel,
 					atomHandles.get(atoms.indexOf(station)), atomHandles.get(atoms.indexOf(sname)),
 					atomHandles.get(atoms.indexOf(spos)), relHandles.get(station, sname), relHandles.get(station, spos),
 					relHandles.get(station, sname)));
 			HGHandle stationFirstHandle = graph
-					.add(new Hyperedge("Station", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
+					.add(new Hyperedge(graph, "Station", HyperedgeTypeEnum.FirstLevel, stationSecondHandle));
 
 			// Line
-			HGHandle lineSecondHandle = graph
-					.add(new Hyperedge("Line", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(line)),
+			HGHandle lineSecondHandle = graph.add(
+					new Hyperedge(graph, "Line", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(line)),
 							atomHandles.get(atoms.indexOf(lname)), atomHandles.get(atoms.indexOf(station)),
 							relHandles.get(line, lname), relHandles.get(station, line)));
-			HGHandle lineFirstHandle = graph.add(new Hyperedge("Line", HyperedgeTypeEnum.FirstLevel, lineSecondHandle));
-			graph.add(new Hyperedge("PostgrSQL", HyperedgeTypeEnum.Database_Rel, trainFirstHandle, metroFirstHandle,
-					stationFirstHandle, lineFirstHandle));
+			HGHandle lineFirstHandle = graph
+					.add(new Hyperedge(graph, "Line", HyperedgeTypeEnum.FirstLevel, lineSecondHandle));
+			graph.add(new Hyperedge(graph, "PostgrSQL", HyperedgeTypeEnum.Database_Rel, trainFirstHandle,
+					metroFirstHandle, stationFirstHandle, lineFirstHandle));
 
 			// -----Document Store-------//
-			HGHandle stationstruct = graph.add(new Hyperedge("", HyperedgeTypeEnum.Struct,
+			HGHandle stationstruct = graph.add(new Hyperedge(graph, "", HyperedgeTypeEnum.Struct,
 					atomHandles.get(atoms.indexOf(sname)), atomHandles.get(atoms.indexOf(spos)),
 					atomHandles.get(atoms.indexOf(station)), relHandles.get(station, spos)));
-			HGHandle routeSet = graph.add(new Hyperedge("Route", HyperedgeTypeEnum.Set, stationstruct));
-			HGHandle docSecondLevel = graph.add(
-					new Hyperedge("metros-trams", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(metro)), // atomHandles.get(atoms.indexOf(tname)),
-							atomHandles.get(atoms.indexOf(tram)), // atomHandles.get(atoms.indexOf(mname)),
-							atomHandles.get(atoms.indexOf(line)), // atomHandles.get(atoms.indexOf(lname)),
-							relHandles.get(line, lname), relHandles.get(metro, mname), relHandles.get(tram, tname),
-							relHandles.get(station, line), routeSet));
+			HGHandle routeSet = graph.add(new Hyperedge(graph, "Route", HyperedgeTypeEnum.Set, stationstruct));
+			HGHandle docSecondLevel = graph.add(new Hyperedge(graph, "metros-trams", HyperedgeTypeEnum.SecondLevel,
+					atomHandles.get(atoms.indexOf(metro)), // atomHandles.get(atoms.indexOf(tname)),
+					atomHandles.get(atoms.indexOf(tram)), // atomHandles.get(atoms.indexOf(mname)),
+					atomHandles.get(atoms.indexOf(line)), // atomHandles.get(atoms.indexOf(lname)),
+					relHandles.get(line, lname), relHandles.get(metro, mname), relHandles.get(tram, tname),
+					relHandles.get(station, line), routeSet));
 			HGHandle docFirstLevel = graph
-					.add(new Hyperedge("metros-trams", HyperedgeTypeEnum.FirstLevel, docSecondLevel));
-			graph.add(new Hyperedge("MongoDB", HyperedgeTypeEnum.Database_Doc, docFirstLevel));
+					.add(new Hyperedge(graph, "metros-trams", HyperedgeTypeEnum.FirstLevel, docSecondLevel));
+			graph.add(new Hyperedge(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc, docFirstLevel));
 			graph.close();
 
 		} catch (Exception e) {

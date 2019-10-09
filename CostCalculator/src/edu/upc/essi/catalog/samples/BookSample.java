@@ -36,7 +36,7 @@ public class BookSample {
 		
 		LoadGraph.LoadBaseFromJSON("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample.json");
 		LoadGraph.LoadDesignFromJSON("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample_design.json");
-		// TODO Auto-generated method stub
+//		 TODO Auto-generated method stub
 //		try {
 //			FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
 //			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);

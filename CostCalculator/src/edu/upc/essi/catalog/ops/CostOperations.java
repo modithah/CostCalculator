@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
 import org.hypergraphdb.atom.HGAtomSet;
@@ -22,11 +24,18 @@ public final class CostOperations {
 
 	public static double CalculateCounts(HGHandle hyperedgehandle) {
 
+//		System.out.println("Handle is sss" + hyperedgehandle);
+
 		HyperGraph graph = Const.graph;
-		IncidenceSet incidence = graph.getIncidenceSet(hyperedgehandle);
+//		IncidenceSet incidence = graph.getIncidenceSet(hyperedgehandle);
+
+		HGSearchResult<Object> incidence = graph.find(hg.contains(hyperedgehandle));
+
 		Hyperedge hyperedge = graph.get(hyperedgehandle);
+
+//		System.out.println(hyperedge);
 		double count = 0;
-		Iterator<HGHandle> iter = hyperedge.iterator();
+		Iterator<HGHandle> iter = hyperedge.findAll().iterator();// findall(hg.anyHandle());
 		HGHandle parentAtomHandle, childAtomHandle = null;
 		String childName = "";
 		HashMap<Atom, HGHandle> candidateAtoms = new HashMap<>();
@@ -34,10 +43,10 @@ public final class CostOperations {
 
 		// go throuhg all the second level/ structs (ideally it should be one)
 		while (iter.hasNext()) {
-			HGHandle hgHandle = (HGHandle) iter.next();
+			HGHandle hgHandle = iter.next();
 			Hyperedge secondlevel = graph.get(hgHandle); // got the struct/second level
-//			System.out.println(secondlevel);
-			Iterator<HGHandle> seconditer = secondlevel.iterator();
+//			System.out.println("XXXXXXXXXX" + secondlevel);
+			Iterator<HGHandle> seconditer = secondlevel.findAll().iterator();
 			while (seconditer.hasNext()) {
 				HGHandle hgHandle2 = (HGHandle) seconditer.next();
 
@@ -72,6 +81,7 @@ public final class CostOperations {
 							Atom atom2 = atoms.get(j);
 							HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + atom2.getName(),
 									candidateAtoms.get(atom1), candidateAtoms.get(atom2));
+//							System.out.println("sssss" + rel);
 							if (rel != null && relationships.contains(rel)) {
 								evals.add(true);
 							} else
@@ -89,6 +99,7 @@ public final class CostOperations {
 			}
 		}
 
+//		System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUU" + hyperedge.getType());
 		switch (hyperedge.getType()) {
 
 		// In first level it contains a second level that has a class that has the count
@@ -102,18 +113,22 @@ public final class CostOperations {
 		// in set it has a struct that has a class atom with count
 		case Set:
 			// need to find the parent struct / second level
-			
-			for (HGHandle hgHandle : incidence) {
-				//print here to see the parents
-				Object hyper = graph.get(hgHandle);
+
+//			for (HGHandle hgHandle : incidence) {
+
+			while (incidence.hasNext()) {
+				// print here to see the parents
+
+				Object hyper = graph.get((HGHandle) incidence.next());
 				if (hyper.getClass().equals(Hyperedge.class)
 						&& (((Hyperedge) hyper).getType() == HyperedgeTypeEnum.SecondLevel || // found the second level
 																								// or
 																								// struct parent
 								((Hyperedge) hyper).getType() == HyperedgeTypeEnum.Struct)) {
 					// check the class atom of the parent
-					Hyperedge secondlevel = graph.get(hgHandle);
-					Iterator<HGHandle> iteratorOfParent = secondlevel.iterator();
+					Hyperedge secondlevel = (Hyperedge) hyper;
+//					System.out.println("LLLLLLLLLLLL" + hyper);
+					Iterator<HGHandle> iteratorOfParent = secondlevel.findAll().iterator();
 					while (iteratorOfParent.hasNext()) {
 						HGHandle hgHandle2 = (HGHandle) iteratorOfParent.next();
 						Object atomobject = graph.get(hgHandle2);

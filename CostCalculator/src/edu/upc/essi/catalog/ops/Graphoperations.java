@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGLink;
+import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.HGSearchResult;
 
 import com.google.common.collect.Table;
 
@@ -113,27 +115,48 @@ public final class Graphoperations {
 
 //		System.out.println(graph);
 		for (String atomName : atomNames) {
-//			System.out.println(atomName);
+
 			HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
 			if (atom != null) {
-				IncidenceSet incidence = graph.getIncidenceSet(atom);
-				for (HGHandle hgHandle : incidence) {
-					q.add(Pair.of(hgHandle, atom));
+//				System.out.println(atomName);
+				HGSearchResult<Object> y = graph.find(hg.contains(atom));
+				while (y.hasNext()) {
+					HGHandle type = (HGHandle) y.next();
+//					System.out.println(type);
+					q.add(Pair.of(type, atom));
 				}
+
+//				IncidenceSet incidence = graph.getIncidenceSet(atom);
+//				for (HGHandle hgHandle : incidence) {
+//					q.add(Pair.of(hgHandle, atom));
+//				}
 			}
 		}
+//		System.out.println("xxxx");
 		while (!q.isEmpty()) {
 			Pair<HGHandle, HGHandle> tmp = q.poll();
 			Object parent = graph.get(tmp.getLeft());
 			Object child = graph.get(tmp.getRight());
 			if (parent instanceof Hyperedge) {
+
+//				System.out.println("addding"+ (Element) parent +"- >"+ (Element) child);
+//				System.out.println(l.getMap().keySet());
 				l.AddToSet((Element) parent, (Element) child);
-				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
-					q.add(Pair.of(hgHandle, tmp.getLeft()));
+
+				HGSearchResult<Object> y = graph.find(hg.contains(tmp.getLeft()));
+//				System.out.println(graph.get(tmp.getLeft()) + "sssssssssss");
+				while (y.hasNext()) {
+					HGHandle type = (HGHandle) y.next();
+//					System.out.println(graph.get(type).toString());
+					q.add(Pair.of(type, tmp.getLeft()));
 				}
+
+//				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
+//					q.add(Pair.of(hgHandle, tmp.getLeft()));
+//				}
 			}
 		}
-		graph.close();
+//		graph.close();
 		return l;
 	}
 
@@ -187,18 +210,23 @@ public final class Graphoperations {
 		System.out.println(id + "->" + "has" + keyn);
 	}
 
-	public static HGHandle addtoGraph(HyperGraph graph, Object obj) {
-		return graph.add(obj);
+	public static HGHandle addHyperedgetoGraph(HyperGraph graph, String name, HyperedgeTypeEnum type,
+			HGHandle... targetSet) {
+		HGHandle handle = graph.add(new Hyperedge());
+		graph.replace(handle, new Hyperedge(graph, handle, name, type, targetSet));
+		return handle;
 	}
 
 	public static ArrayList<HGHandle> getParentHyperesdeofAtom(HyperGraph graph, HGHandle atom) {
 		ArrayList<HGHandle> parents = new ArrayList<>();
-		IncidenceSet incidence = graph.getIncidenceSet(atom);
-		for (HGHandle hgHandle : incidence) {
-//			System.out.println(graph.get(hgHandle).toString());
+		HGSearchResult<Object> incidence = graph.find(hg.contains(atom));
+
+		while (incidence.hasNext()) {
+			HGHandle hgHandle = (HGHandle) incidence.next();
 			if (isRootofHyperedge(graph, atom, hgHandle))
 				parents.add(hgHandle);
 		}
+
 		return parents;
 	}
 
@@ -212,7 +240,7 @@ public final class Graphoperations {
 			return false;
 		}
 
-		Iterator<HGHandle> seconditer = ((Hyperedge) hyp).iterator();
+		Iterator<HGHandle> seconditer = ((Hyperedge) hyp).findAll().iterator();
 		while (seconditer.hasNext()) {
 			HGHandle hgHandle2 = (HGHandle) seconditer.next();
 
@@ -258,5 +286,124 @@ public final class Graphoperations {
 
 		}
 		return b;
+	}
+
+	public static boolean isRootofHyperedge(HyperGraph graph, HGHandle atom, Hyperedge hyp) {
+		boolean b = false;
+		HashMap<Atom, HGHandle> candidateAtoms = new HashMap<>();
+		ArrayList<HGHandle> relationships = new ArrayList<>();
+		Atom target = graph.get(atom);
+		if (hyp.getClass() != Hyperedge.class) {
+			return false;
+		}
+		if (target.getType() != AtomTypeEnum.Class) {
+			return false;
+		}
+
+		Iterator<HGHandle> seconditer = ((Hyperedge) hyp).findAll().iterator();
+		while (seconditer.hasNext()) {
+			HGHandle hgHandle2 = (HGHandle) seconditer.next();
+
+			Object a = graph.get(hgHandle2);
+
+			if (a.getClass().equals(Atom.class) && ((Atom) a).getType() == AtomTypeEnum.Class) {
+
+				candidateAtoms.put((Atom) a, hgHandle2);
+//				System.out.println("child " + ((Atom) a).getName());
+
+			}
+
+			if (a.getClass().equals(Relationship.class)) {
+				relationships.add(hgHandle2);
+			}
+		}
+
+		ArrayList<Atom> atoms = new ArrayList<>();
+		candidateAtoms.keySet().iterator().forEachRemaining(atoms::add);
+
+		if (atoms.size() == 1) {
+			return true;
+		} else {
+
+			ArrayList<Boolean> evals = new ArrayList<>();
+
+			for (int j = 0; j < atoms.size(); j++) {
+				Atom atom2 = atoms.get(j);
+				if (atom2 != target) {
+					HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + atom2.getName(),
+							candidateAtoms.get(target), candidateAtoms.get(atom2));
+					if (rel != null && relationships.contains(rel)) {
+						evals.add(true);
+					} else
+						break;
+				}
+			}
+			if (evals.size() == atoms.size() - 1) {
+				if (!evals.contains(false)) {
+					return true;
+				}
+			}
+
+		}
+		return b;
+	}
+
+//	public static HGHandle findRootAtom(HyperGraph graph, ArrayList<HGHandle> atomlist) {
+//		boolean b = false;
+//		HashMap<Atom, HGHandle> candidateAtoms = new HashMap<>();
+//		ArrayList<HGHandle> relationships = new ArrayList<>();
+//
+//		for (HGHandle hgHandle2 : atomlist) {
+//			Object a = graph.get(hgHandle2);
+//
+//			if (a.getClass().equals(Atom.class) && ((Atom) a).getType() == AtomTypeEnum.Class) {
+//
+//				candidateAtoms.put((Atom) a, hgHandle2);
+//
+//			}
+//
+//			if (a.getClass().equals(Relationship.class)) {
+//				relationships.add(hgHandle2);
+//			}
+//		}
+//
+//		ArrayList<Atom> atoms = new ArrayList<>();
+//		candidateAtoms.keySet().iterator().forEachRemaining(atoms::add);
+//
+//		if (atoms.size() == 1) {
+//			b = true;
+//		} else {
+//
+//			ArrayList<Boolean> evals = new ArrayList<>();
+//
+//			for (int i = 0; i < atoms.size(); i++) {
+//
+//				Object target = atoms.get(i);
+//
+//				for (int j = 0; j < atoms.size(); j++) {
+//					Atom atom2 = atoms.get(j);
+//					if (i != j) {
+//						HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + atom2.getName(),
+//								candidateAtoms.get(target), candidateAtoms.get(atom2));
+//						if (rel != null) {
+//							evals.add(true);
+//						} else
+//							break;
+//					}
+//				}
+//				if (evals.size() == atoms.size() - 1) {
+//					if (!evals.contains(false)) {
+//						return true;
+//					}
+//				}
+//			}
+//
+//		}
+//	}
+
+	public static HGHandle addAtomtoGraph(HyperGraph graph, Atom atm) {
+		// TODO Auto-generated method stub
+
+		return graph.add(atm);
 	}
 }
