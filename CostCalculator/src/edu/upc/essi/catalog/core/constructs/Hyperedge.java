@@ -1,6 +1,9 @@
 package edu.upc.essi.catalog.core.constructs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.management.relation.Relation;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
@@ -19,6 +22,8 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	private HyperedgeTypeEnum type;
 	private int size = 1;
 	private double count = 1;
+	private HGHandle root = null;
+	private HashMap<HGHandle, Relationship> relMap = null;
 
 	public Hyperedge(HyperGraph graph, HGHandle handle, String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
 		super();
@@ -26,14 +31,20 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		this.type = type;
 		setHyperGraph(graph);
 		setAtomHandle(handle);
+		relMap = new HashMap<>();
 		for (int i = 0; i < targetSet.length; i++) {
-			System.out.println(i);
+			if ((type == HyperedgeTypeEnum.Struct || type == HyperedgeTypeEnum.SecondLevel) && i == 0) {
+				this.root = targetSet[i];
+			}
 			add(targetSet[i]);
 		}
 	}
 
 	public Hyperedge(HGHandle... targets) {
 		for (int i = 0; i < targets.length; i++) {
+//			if (i == 0) {
+//				this.root = targets[i];
+//			}
 			add(targets[i]);
 		}
 	}
@@ -114,4 +125,29 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		this.count = count;
 	}
 
+	public HGHandle getRoot() {
+		return root;
+	}
+
+	public void setRoot(HGHandle root) {
+		this.root = root;
+	}
+	
+	public void addToMap(HGHandle key, Relationship rel) {
+		this.relMap.put(key, rel);
+	}
+	
+	public Relationship getNestedRelationship (HGHandle key) {
+		return relMap.get(key);
+	}
+
+	public HashMap<HGHandle, Relationship> getRelMap() {
+		return relMap;
+	}
+
+	public void setRelMap(HashMap<HGHandle, Relationship> relMap) {
+		this.relMap = relMap;
+	}
+
+	
 }

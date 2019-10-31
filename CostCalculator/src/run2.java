@@ -57,7 +57,7 @@ public class run2 {
 //		System.out.print(
 //				"Enter the atom names you want to query seperated by commas (type exit to quit): ");
 
-		String input = "A_ID,AB_ID,B_ID";
+		String input = "A_ID,AB_ID,B_ID,A_NAME,B_NAME";
 //		String input = scanner.next();
 
 //		while (!input.equals("exit")) {
@@ -76,36 +76,36 @@ public class run2 {
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
 					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
 					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
-				LoadGraph.SaveDesignToCSV((Hyperedge) element, "booksample_design1x");
+//				LoadGraph.SaveDesignToCSV((Hyperedge) element, "booksample_design1");
 				}
 			}
 		}
 
-//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-////
-//		HGHandle atm = Graphoperations.getAtomByName(graph, "A_ID");
-//		HGHandle atm2 = Graphoperations.getAtomByName(graph, "AB_ID");
-//		ArrayList<HGHandle> p = Graphoperations.getParentHyperesdeofAtom(graph, atm);
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 //
-//		SchemaOperations.makeReference(graph, atm, atm2,
-//				Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm, atm2), p.get(0));
-//
-//		map = Graphoperations.makeHashmap(input.split(","));
-//
-//		keys = map.getMap().keySet();
-//
-//		for (Element element : keys) {
-//			if (element instanceof Hyperedge) {
-//				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
-//						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
-//						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
-//					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
-//					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
-//					LoadGraph.SaveDesignToCSV((Hyperedge) element, "booksample_design2");
-//				}
-//			}
-//		}
-//
+		HGHandle atm = Graphoperations.getAtomByName(graph, "A_ID");
+		HGHandle atm2 = Graphoperations.getAtomByName(graph, "AB_ID");
+		ArrayList<HGHandle> p = Graphoperations.getParentHyperesdeofAtom(graph, atm);
+
+		SchemaOperations.makeReference(graph, atm, atm2,
+				Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm, atm2), p.get(0));
+
+		map = Graphoperations.makeHashmap(input.split(","));
+
+		keys = map.getMap().keySet();
+
+		for (Element element : keys) {
+			if (element instanceof Hyperedge) {
+				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
+						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
+						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
+					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
+					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
+					LoadGraph.SaveDesignToCSV((Hyperedge) element, "booksample_design2");
+				}
+			}
+		}
+
 //		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 //		HGHandle atm3 = Graphoperations.getAtomByName(graph, "B_ID");
 //		HGHandle atm4 = Graphoperations.getAtomByName(graph, "AB_ID");

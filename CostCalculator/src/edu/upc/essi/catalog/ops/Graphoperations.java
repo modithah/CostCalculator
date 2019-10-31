@@ -64,7 +64,7 @@ public final class Graphoperations {
 	public static Element getElementbyHandle(HGHandle handle) {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		Element el = graph.get(handle);
-		graph.close();
+//		graph.close();
 		return el;
 	}
 
@@ -171,6 +171,14 @@ public final class Graphoperations {
 		return atoms.stream().sorted().map(Atom::getName).collect(Collectors.toList());
 	}
 
+	public static List<Hyperedge> getAllFirstLevels() {
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		List<Hyperedge> hyperedges = graph
+				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+//		graph.close();
+		return hyperedges;
+	}
+
 	public static HGHandle getHyperedgebyNameType(HyperGraph graph, String name, HyperedgeTypeEnum type) {
 		return hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("name", name), hg.eq("type", type)));
 	}
@@ -211,9 +219,25 @@ public final class Graphoperations {
 	}
 
 	public static HGHandle addHyperedgetoGraph(HyperGraph graph, String name, HyperedgeTypeEnum type,
-			HGHandle... targetSet) {
+			HGHandle... targetSet) throws Exception {
+		if(type== HyperedgeTypeEnum.Set) {
+			throw new Exception("Plese use the set constructor");
+		}
 		HGHandle handle = graph.add(new Hyperedge());
 		graph.replace(handle, new Hyperedge(graph, handle, name, type, targetSet));
+		return handle;
+	}
+
+	public static HGHandle addSetHyperedgetoGraph(HyperGraph graph, String name, Relationship rel,
+			HGHandle... targetSet) throws Exception {
+
+		if(targetSet.length>1) {
+			throw new Exception("Set can have only one struct");
+		}
+		HGHandle handle = graph.add(new Hyperedge());
+		Hyperedge hyp = new Hyperedge(graph, handle, name, HyperedgeTypeEnum.Set, targetSet);
+		hyp.addToMap(targetSet[0], rel);
+		graph.replace(handle, hyp);
 		return handle;
 	}
 

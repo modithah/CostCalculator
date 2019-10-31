@@ -13,7 +13,7 @@ public class Atom implements Element, Comparable<Atom> {
 	 *  
 	 */
 	private int count;
-	
+	private int distinctVals;
 	/**
 	 * 
 	 *  For attributes
@@ -25,6 +25,7 @@ public class Atom implements Element, Comparable<Atom> {
 	private int max;
 	private int average;
 	private int size;
+	
 
 	public Atom() {
 	}
@@ -149,6 +150,19 @@ public class Atom implements Element, Comparable<Atom> {
 
 	public void setSize(int size) {
 		this.size = size;
+	}
+
+	public int getDistinctVals() {
+		return distinctVals;
+	}
+
+	public void setDistinctVals(int distinctVals) {
+		this.distinctVals = distinctVals;
+	}
+
+	@Override
+	public String toString() {
+		return "Atom [" + name + "]";
 	}
 
 	

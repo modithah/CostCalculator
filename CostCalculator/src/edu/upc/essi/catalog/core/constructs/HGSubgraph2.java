@@ -274,7 +274,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	}
 
 	public Iterator<HGHandle> iterator() {
-		return outgoingSet.iterator();
+		return findAll().iterator();
 	}
 
 	public String toString() {

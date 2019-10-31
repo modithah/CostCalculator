@@ -90,7 +90,7 @@ public final class CostOperations {
 					}
 					if (evals.size() == atoms.size() - 1) {
 						if (!evals.contains(false)) {
-							count = (atom1).getCount(); // find the class atom
+							count = (atom1).getCount(); // find the root atom
 							childAtomHandle = candidateAtoms.get(atom1);
 							childName = atom1.getName();
 						}
@@ -161,4 +161,22 @@ public final class CostOperations {
 		return count;
 	}
 
+	public static double CalculateCounts(HGHandle hyperedgehandle, HGHandle childHandle) {
+
+		double multiplier = 1.0;
+		HyperGraph graph = Const.graph;
+		Hyperedge hyperedge = graph.get(hyperedgehandle);
+		if (hyperedge.getType() == HyperedgeTypeEnum.SecondLevel) {
+			multiplier = ((Atom) graph.get(hyperedge.getRoot())).getCount();
+		} else if (hyperedge.getType() == HyperedgeTypeEnum.Set) {
+			HGHandle parent = hyperedge.getIncidenceSet().first(); // Set will always have one parent
+			Hyperedge parentHyperedge = graph.get(parent);
+			Hyperedge childhyperedge = graph.get(childHandle);
+			Relationship relationship = (Relationship) parentHyperedge
+					.findOne(hg.and(hg.orderedLink(hg.anyHandle(), childhyperedge.getRoot())));
+			multiplier = relationship.getMultiplicity();
+		}
+
+		return multiplier;
+	}
 }

@@ -23,43 +23,51 @@ public class SchemaOperations {
 		Atom child = graph.get(otherAtom);
 		Relationship rel = graph.get(relationship);
 		Hyperedge parent = graph.get(parentOfRoot);
+		try {
+			if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_ONE)) {
+				HGHandle struct;
 
-		if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_ONE)) {
-			HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, child.getName(), HyperedgeTypeEnum.Struct,
-					otherAtom);
-			ArrayList<HGHandle> toAdd = new ArrayList<>();
-			toAdd.add(struct);
-			makeNewtargets(parent, toAdd);
-			graph.update(parent);
+				struct = Graphoperations.addHyperedgetoGraph(graph, child.getName(), HyperedgeTypeEnum.Struct,
+						otherAtom);
 
-		} else if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_MANY)) {
-			HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, "~" + UUID.randomUUID().toString(),
-					HyperedgeTypeEnum.Struct, otherAtom);
-			HGHandle set = Graphoperations.addHyperedgetoGraph(graph,
-					child.getName() + "s~" + UUID.randomUUID().toString(), HyperedgeTypeEnum.Set, struct);
-			ArrayList<HGHandle> toAdd = new ArrayList<>();
-			toAdd.add(set);
-			makeNewtargets(parent, toAdd);
-			graph.update(parent);
+				ArrayList<HGHandle> toAdd = new ArrayList<>();
+				toAdd.add(struct);
+				makeNewtargets(parent, toAdd);
+				graph.update(parent);
+
+			} else if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_MANY)) {
+				HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, "~" + UUID.randomUUID().toString(),
+						HyperedgeTypeEnum.Struct, otherAtom);
+				HGHandle set = Graphoperations.addSetHyperedgetoGraph(graph,
+						child.getName() + "s~" + UUID.randomUUID().toString(), rel, struct);
+				ArrayList<HGHandle> toAdd = new ArrayList<>();
+				toAdd.add(set);
+				makeNewtargets(parent, toAdd);
+				graph.update(parent);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
 	public static void embed(HyperGraph graph, HGHandle rootAtom, HGHandle otherAtom, HGHandle relationship,
 			HGHandle parentOfRoot) {
-		Atom root = graph.get(rootAtom);
-		Atom child = graph.get(otherAtom);
-		Relationship rel = graph.get(relationship);
-		Hyperedge parent = graph.get(parentOfRoot);
+		try {
+			Atom root = graph.get(rootAtom);
+			Atom child = graph.get(otherAtom);
+			Relationship rel = graph.get(relationship);
+			Hyperedge parent = graph.get(parentOfRoot);
 
-		if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_ONE)) {
-			HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, child.getName(), HyperedgeTypeEnum.Struct,
-					otherAtom);
-			ArrayList<HGHandle> toAdd = new ArrayList<>();
-			toAdd.add(struct);
-			makeNewtargets(parent, toAdd);
-			graph.update(parent);
+			if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_ONE)) {
+				HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, child.getName(), HyperedgeTypeEnum.Struct,
+						otherAtom);
+				ArrayList<HGHandle> toAdd = new ArrayList<>();
+				toAdd.add(struct);
+				makeNewtargets(parent, toAdd);
+				graph.update(parent);
 
-		} else if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_MANY)) {
+			} else if (rel.getCardinality().equals(CardinalityEnum.ONE_TO_MANY)) {
 //			HGHandle struct = Graphoperations.addtoGraph(graph, new Hyperedge("", HyperedgeTypeEnum.Struct, otherAtom));
 //			HGHandle set = Graphoperations.addtoGraph(graph, new Hyperedge(
 //					child.getName() + "s~" + UUID.randomUUID().toString(), HyperedgeTypeEnum.Set, struct));
@@ -69,8 +77,12 @@ public class SchemaOperations {
 //			parent.setNewOutgoing(newobjs);
 //			graph.update(parent);
 
-			HGHandle firstlevel = Graphoperations.getFirstLevelHyperedgesContainingAtom(graph, otherAtom);
+				HGHandle firstlevel = Graphoperations.getFirstLevelHyperedgesContainingAtom(graph, otherAtom);
 //			System.out.println(graph.get(firstlevel).toString());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
