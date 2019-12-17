@@ -48,6 +48,7 @@ public class run {
 			
 			Set<Element> keys = map.getMap().keySet();
 
+			System.out.println(keys);
 			for (Element element : keys) {
 				if (element instanceof Hyperedge) {
 					if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)

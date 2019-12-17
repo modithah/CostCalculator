@@ -73,7 +73,7 @@ public class CostGenerator2 {
 	}
 
 	public Pair<Double, HashMap<Atom, Double>> CalculateSize(Element node) {
-//		System.out.println("node -> " + node);
+		System.out.println("node -> " + node);
 		double size = GetSize(node);
 //		System.out.println("size   " + size);
 		HashMap<Atom, Double> map = new HashMap<>();

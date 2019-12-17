@@ -81,30 +81,8 @@ public class run2 {
 			}
 		}
 
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-//
-		HGHandle atm = Graphoperations.getAtomByName(graph, "A_ID");
-		HGHandle atm2 = Graphoperations.getAtomByName(graph, "AB_ID");
-		ArrayList<HGHandle> p = Graphoperations.getParentHyperesdeofAtom(graph, atm);
 
-		SchemaOperations.makeReference(graph, atm, atm2,
-				Graphoperations.getRelationshipByNameAtoms(graph, "hasAB_ID", atm, atm2), p.get(0));
 
-		map = Graphoperations.makeHashmap(input.split(","));
-
-		keys = map.getMap().keySet();
-
-		for (Element element : keys) {
-			if (element instanceof Hyperedge) {
-				if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
-						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
-						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
-					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
-					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
-					LoadGraph.SaveDesignToCSV((Hyperedge) element, "booksample_design2");
-				}
-			}
-		}
 
 //		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 //		HGHandle atm3 = Graphoperations.getAtomByName(graph, "B_ID");

@@ -179,6 +179,31 @@ public final class Graphoperations {
 		return hyperedges;
 	}
 
+	public static List<Hyperedge> getAllDesigns() {
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		List<Hyperedge> hyperedges = graph
+				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Design)));
+//		graph.close();
+		return hyperedges;
+	}
+
+	public static List<Hyperedge> GetFirstLevelsOfDesign(Hyperedge design) {
+		List<Hyperedge> l = new ArrayList<>();
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		HGHandle designHandle = graph.getHandle(design);
+		design.findAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel))).iterator()
+				.forEachRemaining(d -> {
+					l.add(graph.get(d));
+				});
+		return l;
+	}
+
+	public static void addElementToHyperedge(HGHandle parent, HGHandle child) {
+		Hyperedge parentel = (Hyperedge) getElementbyHandle(parent);
+		parentel.add(child);
+		Const.graph.update(parentel);
+	}
+
 	public static HGHandle getHyperedgebyNameType(HyperGraph graph, String name, HyperedgeTypeEnum type) {
 		return hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("name", name), hg.eq("type", type)));
 	}
@@ -194,6 +219,15 @@ public final class Graphoperations {
 	public static HGHandle getRelationshipByNameAtoms(HyperGraph graph, String name, HGHandle atom1, HGHandle atom2) {
 		return hg.findOne(graph, hg.and(hg.type(Relationship.class), hg.eq("IRI", name), hg.orderedLink(atom1, atom2)));
 	}
+
+	public static HGHandle getRelationshipByNameandSource(HyperGraph graph, String name, HGHandle source) {
+		return hg.findOne(graph,
+				hg.and(hg.type(Relationship.class), hg.eq("IRI", name), hg.orderedLink(source, hg.anyHandle())));
+	}
+
+//	public static HGHandle getRelationshipByName(HyperGraph graph, String name) {
+//		return hg.findOne(graph, hg.and(hg.type(Relationship.class), hg.eq("IRI", name)));
+//	}
 
 	public static List<HGHandle> getHyperedgesContainingAtoms(HyperGraph graph, HGHandle... atoms) {
 		return hg.findAll(graph, hg.and(hg.type(Hyperedge.class), hg.link(atoms)));
@@ -218,9 +252,19 @@ public final class Graphoperations {
 		System.out.println(id + "->" + "has" + keyn);
 	}
 
+	public static void makeRelationWithName(HyperGraph graph, HashMap<String, HGHandle> atomHandles,
+			Table<String, String, HGHandle> relHandles, String id, String keyn, double multiplicity, String name)
+			throws Exception {
+		relHandles.put(id, keyn,
+				graph.add(new Relationship(name,
+						multiplicity > 1 ? CardinalityEnum.ONE_TO_MANY : CardinalityEnum.ONE_TO_ONE, multiplicity,
+						atomHandles.get(id), atomHandles.get(keyn))));
+		System.out.println(id + "->" + "has" + keyn);
+	}
+
 	public static HGHandle addHyperedgetoGraph(HyperGraph graph, String name, HyperedgeTypeEnum type,
 			HGHandle... targetSet) throws Exception {
-		if(type== HyperedgeTypeEnum.Set) {
+		if (type == HyperedgeTypeEnum.Set) {
 			throw new Exception("Plese use the set constructor");
 		}
 		HGHandle handle = graph.add(new Hyperedge());
@@ -231,7 +275,7 @@ public final class Graphoperations {
 	public static HGHandle addSetHyperedgetoGraph(HyperGraph graph, String name, Relationship rel,
 			HGHandle... targetSet) throws Exception {
 
-		if(targetSet.length>1) {
+		if (targetSet.length > 1) {
 			throw new Exception("Set can have only one struct");
 		}
 		HGHandle handle = graph.add(new Hyperedge());

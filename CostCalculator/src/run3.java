@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,13 +34,25 @@ public class run3 {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IllegalStateException, FileNotFoundException {
 		// TODO Auto-generated method stub
-		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels();
+
+		ReadTest.main(args);
+
+		List<Hyperedge> designs = Graphoperations.getAllDesigns();
+
+//		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels();
+//		System.out.println(firstLevels);
 		CostGenerator2 c = new CostGenerator2();
 
-		for (Hyperedge hyperedge : firstLevels) {
-			c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
+		for (Hyperedge hyp : designs) {
+			
+			System.out.println("============================"+ hyp.getName() + "==================");
+			List<Hyperedge> firstLevels = Graphoperations.GetFirstLevelsOfDesign(hyp);
+			for (Hyperedge hyperedge : firstLevels) {
+				c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
+			}
+			
 		}
 
 	}

@@ -16,6 +16,7 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
+import org.apache.lucene.util.StringHelper;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.json.JSONArray;
@@ -43,7 +44,16 @@ public class LoadGraph {
 	static final Logger logger = Logger.getLogger(BookSample.class);
 	JSONObject jo;
 
-	public static void LoadBaseFromJSON(String schema) {
+	public static void LoadBaseFromJSONFile(String filename) {
+		try {
+			LoadBaseFromJSONString(new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void LoadBaseFromJSONString(String schema) {
 		// TODO Auto-generated method stub
 		try {
 //			FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
@@ -54,7 +64,7 @@ public class LoadGraph {
 			Table<String, String, HGHandle> relHandles = HashBasedTable.create();
 
 			logger.info("Creating Atoms");
-			JSONObject jo = new JSONObject(new String(Files.readAllBytes(Paths.get(schema)), StandardCharsets.UTF_8));
+			JSONObject jo = new JSONObject(schema);
 			JSONArray atomstrings = jo.getJSONArray("atoms");
 
 			for (int i = 0; i < atomstrings.length(); i++) {
@@ -143,7 +153,7 @@ public class LoadGraph {
 		}
 	}
 
-	public static void LoadDesignFromCSV(List<CSVRow> rows) {
+	public static void LoadDesignFromCSV(List<CSVRow> rows, String name) {
 		// TODO Auto-generated method stub
 		try {
 //			FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
@@ -205,6 +215,15 @@ public class LoadGraph {
 
 				} else {
 					ArrayList<HGHandle> list = new ArrayList<>();
+					CSVRow relation = rows.stream()
+							.filter(x -> x.getParent().equals(setName) && x.getType().equals("Relationship"))
+							.findFirst().orElse(null);
+					Relationship rel = relation == null ? null
+							: (Relationship) Graphoperations.getElementbyHandle(
+									Graphoperations.getRelationshipByNameandSource(graph, relation.getNode(),
+											Graphoperations.getAtomByName(graph, relation.getPos())));
+					// todo : for multiple structs in set modify. get the relationship and create
+					// the struct
 					String root = rows.stream()
 							.filter(x -> x.getParent().equals(structName) && x.getNode().contains("*")).findFirst()
 							.orElse(null).getNode().replace("*", "");
@@ -257,6 +276,7 @@ public class LoadGraph {
 									if (el.getType().equals("Set")) {
 										list.add(setHandles.get(el.getNode()));
 									}
+
 								}
 
 							});
@@ -268,8 +288,8 @@ public class LoadGraph {
 						done.add(structName);
 						System.out.println(graph.get(struct).toString());
 						String[] names = setName.split("~");
-						setHandles.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
-								HyperedgeTypeEnum.Set, struct));
+						setHandles.put(setName,
+								Graphoperations.addSetHyperedgetoGraph(graph, names[names.length - 1], rel, struct));
 						done.add(setName);
 						System.out.println("added ss  " + setName);
 					} else if (type == HyperedgeTypeEnum.Struct) {
@@ -301,8 +321,21 @@ public class LoadGraph {
 
 			}
 
-			Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
-					sets.values().toArray(new HGHandle[sets.values().size()]));
+			if (name == null) {
+				Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
+						sets.values().toArray(new HGHandle[sets.values().size()]));
+			} else {
+				HGHandle designHandle = Graphoperations.addHyperedgetoGraph(graph, name, HyperedgeTypeEnum.Design,
+						sets.values().toArray(new HGHandle[sets.values().size()]));
+				HGHandle dbhandle = Graphoperations.getHyperedgebyNameType("MongoDB", HyperedgeTypeEnum.Database_Doc);
+
+				if (dbhandle == null) {
+					Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc, designHandle);
+				} else {
+
+				}
+			}
+			graph.close();
 //				d++;
 //				design = "design" + d;
 
@@ -384,6 +417,7 @@ public class LoadGraph {
 					System.out.println(graph.get(HNDL).toString());
 				}
 
+//				if(na)
 				Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
 						sets.values().toArray(new HGHandle[sets.values().size()]));
 				d++;
