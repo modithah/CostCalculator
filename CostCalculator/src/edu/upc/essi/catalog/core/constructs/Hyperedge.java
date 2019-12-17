@@ -19,6 +19,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	}
 
 	private String name;
+	private String id;
 	private HyperedgeTypeEnum type;
 	private int size = 1;
 	private double count = 1;
@@ -132,12 +133,12 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	public void setRoot(HGHandle root) {
 		this.root = root;
 	}
-	
+
 	public void addToMap(HGHandle key, Relationship rel) {
 		this.relMap.put(key, rel);
 	}
-	
-	public Relationship getNestedRelationship (HGHandle key) {
+
+	public Relationship getNestedRelationship(HGHandle key) {
 		return relMap.get(key);
 	}
 
@@ -149,5 +150,12 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		this.relMap = relMap;
 	}
 
-	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 }

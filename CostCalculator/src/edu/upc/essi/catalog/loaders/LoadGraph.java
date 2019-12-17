@@ -50,107 +50,99 @@ public class LoadGraph {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-	}
-
-	public static void LoadBaseFromJSONString(String schema) {
-		// TODO Auto-generated method stub
-		try {
-//			FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
-			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-			HashMap<String, Atom> atoms = new HashMap<>();
-//			ArrayList<Atom> atoms = new ArrayList<>();
-			HashMap<String, HGHandle> atomHandles = new HashMap<>();
-			Table<String, String, HGHandle> relHandles = HashBasedTable.create();
-
-			logger.info("Creating Atoms");
-			JSONObject jo = new JSONObject(schema);
-			JSONArray atomstrings = jo.getJSONArray("atoms");
-
-			for (int i = 0; i < atomstrings.length(); i++) {
-				JSONObject keyatom = atomstrings.getJSONObject(i);
-				Iterator<String> keys = keyatom.keys();
-
-				while (keys.hasNext()) {
-					String key = keys.next(); // name of the class atom (only one)
-					System.out.println(key + "-----");
-					System.out.println(keyatom.getJSONObject(key).names());
-					Iterator<String> keys2 = keyatom.getJSONObject(key).keys();
-					String id = "";
-					ArrayList<String> others = new ArrayList<>();
-
-					while (keys2.hasNext()) { // all other atoms
-						String keyn = keys2.next();
-
-						Atom atm = new Atom(keyn);
-
-						atm.setType(AtomTypeEnum.Attribute);
-
-						if (keyn.contains("*")) {
-							id = keyn.substring(1);
-							atm.setName(id);
-							atm.setType(AtomTypeEnum.Class);
-							atm.setSize(keyatom.getJSONObject(key).getJSONObject(keyn).getInt("size"));
-							atm.setCount(keyatom.getJSONObject(key).getJSONObject(keyn).getInt("count"));
-							atoms.put(id, atm);
-							atomHandles.put(id, Graphoperations.addAtomtoGraph(graph, atm));
-
-							for (String otherstring : others) { // add other atom relationships
-								Graphoperations.makeRelation(graph, atomHandles, relHandles, id, otherstring, 1);
-							}
-
-							others = new ArrayList<>();
-						} else {
-							atm.setSize(keyatom.getJSONObject(key).getInt(keyn));
-							atoms.put(keyn, atm);
-							atomHandles.put(keyn, Graphoperations.addAtomtoGraph(graph, atm));
-							if (id.equals("")) {
-								others.add(keyn);
-							} else {
-								Graphoperations.makeRelation(graph, atomHandles, relHandles, id, keyn, 1);
-							}
-						}
-					}
-				}
-			}
-
-			JSONArray relStrings = jo.getJSONArray("relationships");
-
-			for (int i = 0; i < relStrings.length(); i++) {
-				JSONObject keyatom = relStrings.getJSONObject(i);
-				Iterator<String> keys = keyatom.keys();
-
-				while (keys.hasNext()) {
-					String from = keys.next(); // name of the main atom (only one)
-					System.out.println(from + "-----");
-					System.out.println(keyatom.getJSONObject(from).names());
-					Iterator<String> keys2 = keyatom.getJSONObject(from).keys();
-
-					while (keys2.hasNext()) { // all other atoms
-						String to = keys2.next();
-
-						System.out.println(from + " ->" + to + "  " + keyatom.getJSONObject(from).getDouble(to));
-						Graphoperations.makeRelation(graph, atomHandles, relHandles, from, to,
-								keyatom.getJSONObject(from).getDouble(to));
-
-					}
-				}
-
-			}
-
-			System.out.println(relHandles);
-			graph.close();
-
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static void LoadBaseFromJSONString(String schema) throws Exception {
+		// TODO Auto-generated method stub
+
+//			FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		HashMap<String, Atom> atoms = new HashMap<>();
+//			ArrayList<Atom> atoms = new ArrayList<>();
+		HashMap<String, HGHandle> atomHandles = new HashMap<>();
+		Table<String, String, HGHandle> relHandles = HashBasedTable.create();
+
+		logger.info("Creating Atoms");
+		JSONObject jo = new JSONObject(schema);
+		JSONArray atomstrings = jo.getJSONArray("atoms");
+
+		for (int i = 0; i < atomstrings.length(); i++) {
+			JSONObject keyatom = atomstrings.getJSONObject(i);
+			Iterator<String> keys = keyatom.keys();
+
+			while (keys.hasNext()) {
+				String key = keys.next(); // name of the class atom (only one)
+				System.out.println(key + "-----");
+				System.out.println(keyatom.getJSONObject(key).names());
+				Iterator<String> keys2 = keyatom.getJSONObject(key).keys();
+				String id = "";
+				ArrayList<String> others = new ArrayList<>();
+
+				while (keys2.hasNext()) { // all other atoms
+					String keyn = keys2.next();
+
+					Atom atm = new Atom(keyn);
+
+					atm.setType(AtomTypeEnum.Attribute);
+
+					if (keyn.contains("*")) {
+						id = keyn.substring(1);
+						atm.setName(id);
+						atm.setType(AtomTypeEnum.Class);
+						atm.setSize(keyatom.getJSONObject(key).getJSONObject(keyn).getInt("size"));
+						atm.setCount(keyatom.getJSONObject(key).getJSONObject(keyn).getInt("count"));
+						atoms.put(id, atm);
+						atomHandles.put(id, Graphoperations.addAtomtoGraph(graph, atm));
+
+						for (String otherstring : others) { // add other atom relationships
+							Graphoperations.makeRelation(graph, atomHandles, relHandles, id, otherstring, 1);
+						}
+
+						others = new ArrayList<>();
+					} else {
+						atm.setSize(keyatom.getJSONObject(key).getInt(keyn));
+						atoms.put(keyn, atm);
+						atomHandles.put(keyn, Graphoperations.addAtomtoGraph(graph, atm));
+						if (id.equals("")) {
+							others.add(keyn);
+						} else {
+							Graphoperations.makeRelation(graph, atomHandles, relHandles, id, keyn, 1);
+						}
+					}
+				}
+			}
+		}
+
+		JSONArray relStrings = jo.getJSONArray("relationships");
+
+		for (int i = 0; i < relStrings.length(); i++) {
+			JSONObject keyatom = relStrings.getJSONObject(i);
+			Iterator<String> keys = keyatom.keys();
+
+			while (keys.hasNext()) {
+				String from = keys.next(); // name of the main atom (only one)
+				System.out.println(from + "-----");
+				System.out.println(keyatom.getJSONObject(from).names());
+				Iterator<String> keys2 = keyatom.getJSONObject(from).keys();
+
+				while (keys2.hasNext()) { // all other atoms
+					String to = keys2.next();
+
+					System.out.println(from + " ->" + to + "  " + keyatom.getJSONObject(from).getDouble(to));
+					Graphoperations.makeRelation(graph, atomHandles, relHandles, from, to,
+							keyatom.getJSONObject(from).getDouble(to));
+
+				}
+			}
+
+		}
+
+		System.out.println(relHandles);
+		graph.close();
 	}
 
 	public static void LoadDesignFromCSV(List<CSVRow> rows, String name) {
