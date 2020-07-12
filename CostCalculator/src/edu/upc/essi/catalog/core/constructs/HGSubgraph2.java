@@ -121,7 +121,8 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 //		return graph.getTransactionManager().ensureTransaction(new Callable<HGHandle>() {
 //			public HGHandle call() {
 		index(atom);
-		outgoingSet.add(atom);
+//		System.out.println("Adding" +atom);
+		this.outgoingSet.add(atom);
 		return atom;
 //			}
 //		});
@@ -302,5 +303,13 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	public void setNewOutgoing(ArrayList<HGHandle> newobjs) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public ArrayList<HGHandle> getOutgoingSet() {
+		return outgoingSet;
+	}
+
+	public void setOutgoingSet(ArrayList<HGHandle> outgoingSet) {
+		this.outgoingSet = outgoingSet;
 	}
 }

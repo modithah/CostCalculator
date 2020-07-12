@@ -165,5 +165,12 @@ public class Atom implements Element, Comparable<Atom> {
 		return "Atom [" + name + "]";
 	}
 
+//	@Override
+//	public int compareTo(Element arg0) {
+//		// TODO Auto-generated method stub
+//		return this.name.compareTo(arg0.getName());
+//	}
+
+	
 	
 }

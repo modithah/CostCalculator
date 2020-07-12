@@ -17,7 +17,7 @@ public class ReadTest {
 						.withIgnoreLeadingWhiteSpace(true).withType(CSVRow.class).build();
 
 		List<CSVRow> list = bb.parse();
-		LoadGraph.LoadDesignFromCSV(list, "design1");
-		LoadGraph.LoadDesignFromCSV(list, "design 2");
+//		LoadGraph.LoadDesignFromCSV(list, "design1");
+//		LoadGraph.LoadDesignFromCSV(list, "design 2");
 	}
 }
