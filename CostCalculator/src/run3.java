@@ -37,7 +37,7 @@ public class run3 {
 	public static void main(String[] args) throws IllegalStateException, FileNotFoundException {
 		// TODO Auto-generated method stub
 
-		ReadTest.main(args);
+//		ReadTest.main(args);
 
 		List<Hyperedge> designs = Graphoperations.getAllDesigns();
 

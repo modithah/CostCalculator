@@ -1,12 +1,20 @@
 package edu.upc.essi.catalog.ops;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGLink;
@@ -23,6 +31,7 @@ import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
+import edu.upc.essi.catalog.core.constructs.HGSubgraph2;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
@@ -66,6 +75,22 @@ public final class Graphoperations {
 		Element el = graph.get(handle);
 //		graph.close();
 		return el;
+	}
+
+	public static void changeDir(String path) {
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		graph.close();
+		String source = Const.HG_LOCATION_BOOK;
+		File srcDir = new File(source);
+
+		String destination = path;
+		File destDir = new File(destination);
+
+		try {
+			FileUtils.copyDirectory(srcDir, destDir);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -171,6 +196,33 @@ public final class Graphoperations {
 		return atoms.stream().sorted().map(Atom::getName).collect(Collectors.toList());
 	}
 
+	public static List<Atom> getAtomList(HyperGraph graph) {
+//		 = new HyperGraph(Const.HG_LOCATION_BOOK);
+		return graph.getAll(hg.type(Atom.class));
+	}
+
+	public static List<Atom> getClassAtomList(HyperGraph graph) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		return graph.getAll((hg.and(hg.type(Atom.class), hg.eq("type", AtomTypeEnum.Class))));
+	}
+
+	public static List<Relationship> getRelList(HyperGraph graph) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		return graph.getAll(hg.type(Relationship.class));
+	}
+
+	public static List<Relationship> getClassRelList(HyperGraph graph) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		List<Relationship> rels = graph.getAll(hg.type(Relationship.class));
+
+		rels.removeIf(r -> !(((Atom) graph.get(r.getTargetAt(0))).getType() == AtomTypeEnum.Class
+				&& ((Atom) graph.get(r.getTargetAt(1))).getType() == AtomTypeEnum.Class)
+
+		);
+
+		return rels;
+	}
+
 	public static List<Hyperedge> getAllFirstLevels() {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		List<Hyperedge> hyperedges = graph
@@ -221,8 +273,40 @@ public final class Graphoperations {
 	}
 
 	public static HGHandle getRelationshipByNameandSource(HyperGraph graph, String name, HGHandle source) {
-		return hg.findOne(graph,
-				hg.and(hg.type(Relationship.class), hg.eq("IRI", name), hg.orderedLink(source, hg.anyHandle())));
+		System.out.println("source   " + source);
+		return hg.findOne(graph, hg.and(hg.type(Relationship.class), hg.eq("IRI", name),
+				hg.or(hg.orderedLink(source, hg.anyHandle()), hg.orderedLink(hg.anyHandle(), source))));
+	}
+
+	public static List<HGHandle> getAttributeRelsofClass(HyperGraph graph, HGHandle source) {
+
+		List<HGHandle> handles = new ArrayList<>();
+		List<Relationship> l = hg.getAll(graph,
+				hg.and(hg.type(Relationship.class), hg.orderedLink(source, hg.anyHandle())));
+		
+		l.removeIf(r -> ((Atom) graph.get(r.getTargetAt(1))).getType() == AtomTypeEnum.Class);
+
+		for (Relationship relationship : l) {
+			handles.add(graph.getHandle(relationship));
+		}
+
+		return handles;
+	}
+
+	public static List<HGHandle> getAttributesClass(HyperGraph graph, HGHandle source) {
+
+		List<HGHandle> handles = new ArrayList<>();
+		List<Relationship> l = hg.getAll(graph,
+				hg.and(hg.type(Relationship.class), hg.orderedLink(source, hg.anyHandle())));
+		
+		l.removeIf(r -> ((Atom) graph.get(r.getTargetAt(1))).getType() == AtomTypeEnum.Class);
+
+		for (Relationship relationship : l) {
+			handles.add(relationship.getTargetAt(1));
+		}
+
+//		System.out.println(handles.size());
+		return handles;
 	}
 
 //	public static HGHandle getRelationshipByName(HyperGraph graph, String name) {
@@ -235,8 +319,8 @@ public final class Graphoperations {
 
 	public static HGHandle getFirstLevelHyperedgesContainingAtom(HyperGraph graph, HGHandle atom) {
 
-		HGHandle s = hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.SecondLevel),
-				hg.link(new HGHandle[] { atom })));
+//		HGHandle s = hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.SecondLevel),
+//				hg.link(new HGHandle[] { atom })));
 
 		List<HGHandle> x = hg.findAll(graph, hg.and(hg.type(Hyperedge.class), hg.contains(atom)));
 		System.out.println(x.size());
@@ -244,21 +328,42 @@ public final class Graphoperations {
 	}
 
 	public static void makeRelation(HyperGraph graph, HashMap<String, HGHandle> atomHandles,
-			Table<String, String, HGHandle> relHandles, String id, String keyn, double multiplicity) throws Exception {
-		relHandles.put(id, keyn,
-				graph.add(new Relationship("has" + keyn,
-						multiplicity > 1 ? CardinalityEnum.ONE_TO_MANY : CardinalityEnum.ONE_TO_ONE, multiplicity,
-						atomHandles.get(id), atomHandles.get(keyn))));
+			Table<String, String, HGHandle> relHandles, String id, String keyn, int mult) throws Exception {
+
+		HGHandle sda = graph
+				.add(new Relationship("has" + keyn, mult > 1 ? CardinalityEnum.ONE_TO_MANY : CardinalityEnum.ONE_TO_ONE,
+						mult, atomHandles.get(id), atomHandles.get(keyn)));
+
+		System.out.println(graph.get(sda).toString());
+		relHandles.put(id, keyn, sda);
+		System.out.println(relHandles);
 		System.out.println(id + "->" + "has" + keyn);
+	}
+
+	public static void makeRelation(HyperGraph graph, HashMap<String, HGHandle> atomHandles,
+			Table<String, String, HGHandle> relHandles, String id, String keyn, double[] multiplicity)
+			throws Exception {
+
+		HGHandle sda = graph
+				.add(new Relationship(id + "and" + keyn, multiplicity, atomHandles.get(id), atomHandles.get(keyn)));
+
+		System.out.println(graph.get(sda).toString());
+		relHandles.put(id, keyn, sda);
+		System.out.println(relHandles);
+		System.out.println(id + "->" + "and" + keyn);
 	}
 
 	public static void makeRelationWithName(HyperGraph graph, HashMap<String, HGHandle> atomHandles,
 			Table<String, String, HGHandle> relHandles, String id, String keyn, double multiplicity, String name)
 			throws Exception {
-		relHandles.put(id, keyn,
-				graph.add(new Relationship(name,
-						multiplicity > 1 ? CardinalityEnum.ONE_TO_MANY : CardinalityEnum.ONE_TO_ONE, multiplicity,
-						atomHandles.get(id), atomHandles.get(keyn))));
+		HGHandle sda = graph
+				.add(new Relationship(name, multiplicity > 1 ? CardinalityEnum.ONE_TO_MANY : CardinalityEnum.ONE_TO_ONE,
+						multiplicity, atomHandles.get(id), atomHandles.get(keyn)));
+		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+		System.out.println(sda);
+		System.out.println(graph.get(sda).toString());
+
+		relHandles.put(id, keyn, sda);
 		System.out.println(id + "->" + "has" + keyn);
 	}
 
@@ -280,7 +385,21 @@ public final class Graphoperations {
 		}
 		HGHandle handle = graph.add(new Hyperedge());
 		Hyperedge hyp = new Hyperedge(graph, handle, name, HyperedgeTypeEnum.Set, targetSet);
+//		hyp.add(graph.getHandle(rel));
 		hyp.addToMap(targetSet[0], rel);
+		graph.replace(handle, hyp);
+		return handle;
+	}
+
+	public static HGHandle addSetHyperedgetoGraph(HyperGraph graph, String name, ArrayList<Relationship> rels,
+			HGHandle... targetSet) throws Exception {
+
+		HGHandle handle = graph.add(new Hyperedge());
+		Hyperedge hyp = new Hyperedge(graph, handle, name, HyperedgeTypeEnum.Set, targetSet);
+//		hyp.add(graph.getHandle(rel));
+		for (Relationship rel : rels) {
+			hyp.addToMap(targetSet[0], rel);
+		}
 		graph.replace(handle, hyp);
 		return handle;
 	}
@@ -473,5 +592,101 @@ public final class Graphoperations {
 		// TODO Auto-generated method stub
 
 		return graph.add(atm);
+	}
+
+	public static void printDesign(HyperGraph graph2) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+		List<Hyperedge> hyperedges = graph2
+				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+		for (Hyperedge hyperedge : hyperedges) {
+			hyperedge.print(0);
+		}
+	}
+
+	public static void printDesign() {
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+		List<Hyperedge> hyperedges = graph
+				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Database_Doc)));
+		for (Hyperedge hyperedge : hyperedges) {
+			hyperedge.print(0);
+		}
+	}
+
+	public static void printDesign(String path, HyperGraph graph) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		try {
+			FileWriter myWriter = new FileWriter(path);
+
+			if (graph != null) {
+
+				List<Hyperedge> hyperedges = graph
+						.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Database_Doc)));
+
+				for (Hyperedge hyperedge : hyperedges) {
+					hyperedge.print(myWriter, 0);
+				}
+
+				System.out.println("Successfully wrote to the file.");
+			}
+			myWriter.close();
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
+	}
+
+	public static boolean isConsistant(HyperGraph graph) {
+		Queue<Element> atoms = new LinkedBlockingQueue<>();
+
+		atoms.addAll(graph.getAll(hg.type(Atom.class)));
+		atoms.addAll(graph.getAll(hg.type(Relationship.class)));
+
+		int loopcount = 0;
+
+		Set<Element> set = new HashSet<>();
+		set.addAll(atoms);
+
+		do {
+			Element current = atoms.poll();
+			HGHandle currentHandle = graph.getHandle(current);
+			Object currentObj = graph.get(currentHandle);
+			if (currentObj instanceof Hyperedge
+					&& ((Hyperedge) currentObj).getType() == HyperedgeTypeEnum.Database_Doc) {
+				atoms.add(current);
+			} else {
+				HGSearchResult<Object> parents = graph.find(hg.contains(currentHandle));
+				if (!parents.hasNext()) {
+					atoms.add(current);
+				} else {
+
+					while (parents.hasNext()) {
+						Element parent = graph.get((HGHandle) parents.next());
+						if (!atoms.contains(parent))
+							atoms.add(parent);
+					}
+
+				}
+			}
+
+			Set<Element> set2 = new HashSet<>();
+			set2.addAll(atoms);
+
+			if (set.equals(set2)) {
+				loopcount++;
+			} else {
+				set = set2;
+				loopcount = 0;
+			}
+
+		} while (loopcount < 100);
+
+		atoms.stream().forEach((a -> {
+			System.out.println(a);
+		}));
+
+		return atoms.size() == 1;
 	}
 }

@@ -1,7 +1,10 @@
 package edu.upc.essi.catalog.core.constructs;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.management.relation.Relation;
 
@@ -11,6 +14,7 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGSubgraph;
 
+import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
 public class Hyperedge extends HGSubgraph2 implements Element {
@@ -38,7 +42,10 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 				this.root = targetSet[i];
 			}
 			add(targetSet[i]);
+
 		}
+//		System.out.println("printing");
+//		print(0);
 	}
 
 	public Hyperedge(HGHandle... targets) {
@@ -67,7 +74,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	}
 
 	public String toString() {
-		return name + "  " + type + "[" + count(hg.memberOf(thisHandle)) + "]" + getCount();
+		return name + "  " + type + "[" + count(hg.memberOf(thisHandle)) + "]" + getCount() + relMap;
 	}
 
 	@Override
@@ -100,12 +107,12 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		return true;
 	}
 
-	private Object getTargetAt(int i) {
+	public HGHandle getTargetAt(int i) {
 		// TODO Auto-generated method stub
 		return outgoingSet.get(i);
 	}
 
-	private int getArity() {
+	public int getArity() {
 		// TODO Auto-generated method stub
 		return outgoingSet.size();
 	}
@@ -156,6 +163,66 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public void print(FileWriter myWriter, int tabs) {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tabs; i++) {
+			sb.append(" ");
+		}
+		try {
+			myWriter.write(sb.toString() + type + " -> " + name+"\n");
+
+			Iterator<HGHandle> seconditer = this.findAll().iterator();
+
+			while (seconditer.hasNext()) {
+				HGHandle hgHandle2 = (HGHandle) seconditer.next();
+
+				Object a = graph.get(hgHandle2);
+//		System.out.println(a);
+				if (a instanceof Hyperedge) {
+					((Hyperedge) a).print(myWriter, tabs + 4);
+				}
+
+				if (a instanceof Atom) {
+					myWriter.write(sb.toString() + ((Atom) a).getName()+"\n");
+				}
+				if (a instanceof Relationship) {
+					myWriter.write(sb.toString() + ((Relationship) a)+"\n");
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void print(int tabs) {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tabs; i++) {
+			sb.append(" ");
+		}
+		System.out.println(sb.toString() + type + " -> " + name);
+		Iterator<HGHandle> seconditer = this.findAll().iterator();
+
+		while (seconditer.hasNext()) {
+			HGHandle hgHandle2 = (HGHandle) seconditer.next();
+
+			Object a = graph.get(hgHandle2);
+//		System.out.println(a);
+			if (a instanceof Hyperedge) {
+				((Hyperedge) a).print(tabs + 4);
+			}
+
+			if (a instanceof Atom) {
+				System.out.println(sb.toString() + ((Atom) a).getName());
+			}
+			if (a instanceof Relationship) {
+				System.out.println(sb.toString() + ((Relationship) a));
+			}
+		}
 	}
 
 }
