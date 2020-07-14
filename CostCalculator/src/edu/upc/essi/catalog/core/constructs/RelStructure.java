@@ -16,4 +16,10 @@ public class RelStructure {
 
 	public Relationship rel;
 	public OperationTypeEnum op;
+	@Override
+	public String toString() {
+		return "" + op + "";
+	}
+	
+	
 }

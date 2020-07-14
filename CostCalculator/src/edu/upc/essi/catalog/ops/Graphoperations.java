@@ -223,6 +223,18 @@ public final class Graphoperations {
 		return rels;
 	}
 
+	public static List<Relationship> getAtomClassRelList(HyperGraph graph, HGHandle atomHanlde) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		List<Relationship> rels = graph.getAll(hg.and(hg.type(Relationship.class),
+				hg.or(hg.orderedLink(atomHanlde, hg.anyHandle()), hg.orderedLink(hg.anyHandle(), atomHanlde))));
+
+		System.out.println(rels.size());
+		rels.removeIf(r -> !(((Atom) graph.get(r.getTargetAt(0))).getType() == AtomTypeEnum.Class
+				&& ((Atom) graph.get(r.getTargetAt(1))).getType() == AtomTypeEnum.Class));
+
+		return rels;
+	}
+
 	public static List<Hyperedge> getAllFirstLevels() {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		List<Hyperedge> hyperedges = graph
@@ -283,7 +295,7 @@ public final class Graphoperations {
 		List<HGHandle> handles = new ArrayList<>();
 		List<Relationship> l = hg.getAll(graph,
 				hg.and(hg.type(Relationship.class), hg.orderedLink(source, hg.anyHandle())));
-		
+
 		l.removeIf(r -> ((Atom) graph.get(r.getTargetAt(1))).getType() == AtomTypeEnum.Class);
 
 		for (Relationship relationship : l) {
@@ -298,7 +310,7 @@ public final class Graphoperations {
 		List<HGHandle> handles = new ArrayList<>();
 		List<Relationship> l = hg.getAll(graph,
 				hg.and(hg.type(Relationship.class), hg.orderedLink(source, hg.anyHandle())));
-		
+
 		l.removeIf(r -> ((Atom) graph.get(r.getTargetAt(1))).getType() == AtomTypeEnum.Class);
 
 		for (Relationship relationship : l) {
