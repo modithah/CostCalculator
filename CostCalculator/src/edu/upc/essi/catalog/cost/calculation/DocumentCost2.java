@@ -1,5 +1,7 @@
 package edu.upc.essi.catalog.cost.calculation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -62,10 +64,19 @@ public class DocumentCost2 implements ICost {
 		HyperGraph graph = Const.graph;
 
 		if (source.getType() == HyperedgeTypeEnum.SecondLevel) {
+			System.out.println(graph.get(source.getRoot()).toString());
 			multiplier = ((Atom) graph.get(source.getRoot())).getCount();
 		} else if (source.getType() == HyperedgeTypeEnum.Set) {
 			Relationship relationship = source.getNestedRelationship(child);
-			multiplier = relationship.getMultiplicity();
+			System.out.println("FFFFFFFFFFFFF");
+					
+			System.out.println(relationship);
+			ArrayList<String> relorder = new ArrayList<>();
+			relorder.add(((Atom) graph.get(relationship.getTargetAt(0))).getName());
+			relorder.add(((Atom) graph.get(relationship.getTargetAt(1))).getName());
+			Collections.sort(relorder);
+			int index=relorder.indexOf(((Atom) graph.get(((Hyperedge) graph.get(child)).getRoot())).getName());
+			multiplier = relationship.getMultiplicities()[index];
 		}
 
 		return multiplier;

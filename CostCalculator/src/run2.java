@@ -57,7 +57,7 @@ public class run2 {
 //		System.out.print(
 //				"Enter the atom names you want to query seperated by commas (type exit to quit): ");
 
-		String input = "A_ID,AB_ID,B_ID,A_NAME,B_NAME";
+		String input = "A_ID,P_ID,B_ID,A_NAME,B_NAME,P_NAME";
 //		String input = scanner.next();
 
 //		while (!input.equals("exit")) {

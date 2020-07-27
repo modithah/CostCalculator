@@ -40,7 +40,7 @@ public class RandomDesignV2 {
 	}
 
 	final double pSet = 0.5;
-	final static double skip = 0.75;
+	final static double skip = 0;
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
@@ -51,7 +51,7 @@ public class RandomDesignV2 {
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
 		RelStructure dummyRelStr = new RelStructure(dummyRel, null);
-		ArrayList<Atom> allAtoms = new ArrayList<>();
+//		ArrayList<Atom> allAtoms = new ArrayList<>();
 		ArrayList<Relationship> allRels = new ArrayList<>();
 		ArrayList<Relationship> usedRels = new ArrayList<>();
 		ArrayList<Relationship> IteratingRels = new ArrayList<>();
@@ -59,10 +59,10 @@ public class RandomDesignV2 {
 		Table<Atom, Atom, RelStructure> structures = HashBasedTable.create();
 		Random rand = new Random();
 
-		allAtoms.addAll(Graphoperations.getClassAtomList(graph));
+//		allAtoms.addAll(Graphoperations.getClassAtomList(graph));
 		allRels.addAll(Graphoperations.getClassRelList(graph));
 
-		System.out.println("FFFFFFFFFFF" + allAtoms.get(0));
+//		System.out.println("FFFFFFFFFFF" + allAtoms.get(0));
 //		Graphoperations.getAtomClassRelList(graph,graph.getHandle(allAtoms.get(0))).forEach(r -> {
 //			System.out.println(r);
 //		});
@@ -108,7 +108,8 @@ public class RandomDesignV2 {
 				newPick = edges.remove(rand.nextInt(edges.size()));
 				allRels.remove(newPick);
 				newChoice = rand.nextInt(2);
-				refer = rand.nextBoolean();
+				refer = true;
+//				rand.nextBoolean();
 				root = newChoice;
 				chooseOperation(graph, dummyAtom, dummyRelStr, reification, structures, newPick, refer, newChoice,
 						allRels);
@@ -120,12 +121,13 @@ public class RandomDesignV2 {
 				});
 
 				if (refer && rand.nextDouble() > skip) {
+					System.out.println("SKIPPING");
 					RelStructure struct = structures.get(graph.get(newPick.getTargetAt(root)),
 							graph.get(newPick.getTargetAt(root == 1 ? 0 : 1)));
 					struct.op = OperationTypeEnum.RefSkip;
 					structures.put(graph.get(newPick.getTargetAt(root)),
 							graph.get(newPick.getTargetAt(root == 1 ? 0 : 1)), struct);
-					allAtoms.remove(graph.get(newPick.getTargetAt(root == 1 ? 0 : 1)));
+//					allAtoms.remove(graph.get(newPick.getTargetAt(root == 1 ? 0 : 1)));
 				}
 
 				Map<Atom, RelStructure> rootAsChild = structures.column(graph.get(newPick.getTargetAt(root)));
@@ -420,15 +422,7 @@ public class RandomDesignV2 {
 			Graphoperations.addHyperedgetoGraph(graph, "design", HyperedgeTypeEnum.Database_Doc,
 					firstLevels.toArray(new HGHandle[firstLevels.size()]));
 			Graphoperations.printDesign();
-//			Graphoperations.isConsistant(graph);
 
-//			graph.close();
-
-//			List<HGHandle> all = graph.findAll((hg.type(Hyperedge.class)));
-//
-//			for (HGHandle hyperedge : all) {
-//				graph.remove(hyperedge);
-//			}
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

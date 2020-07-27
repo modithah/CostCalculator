@@ -13,9 +13,11 @@ import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGSubgraph;
+import org.hypergraphdb.util.Pair;
 
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
+import edu.upc.essi.catalog.ops.Graphoperations;
 
 public class Hyperedge extends HGSubgraph2 implements Element {
 
@@ -165,6 +167,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		this.id = id;
 	}
 
+	
 	public void print(FileWriter myWriter, int tabs) {
 
 		StringBuilder sb = new StringBuilder();
@@ -172,7 +175,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 			sb.append(" ");
 		}
 		try {
-			myWriter.write(sb.toString() + type + " -> " + name+"\n");
+			myWriter.write(sb.toString() + type + " -> " + name + "\n");
 
 			Iterator<HGHandle> seconditer = this.findAll().iterator();
 
@@ -186,10 +189,10 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 				}
 
 				if (a instanceof Atom) {
-					myWriter.write(sb.toString() + ((Atom) a).getName()+"\n");
+					myWriter.write(sb.toString() + ((Atom) a).getName() + "\n");
 				}
 				if (a instanceof Relationship) {
-					myWriter.write(sb.toString() + ((Relationship) a)+"\n");
+					myWriter.write(sb.toString() + ((Relationship) a) + "\n");
 				}
 			}
 		} catch (IOException e) {

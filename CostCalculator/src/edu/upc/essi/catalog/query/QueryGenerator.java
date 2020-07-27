@@ -94,7 +94,7 @@ public class QueryGenerator {
 			PrefixSuffix = new RelationalPrefixSuffix();
 			break;
 		case Database_Doc:
-			PrefixSuffix = new DocumentPrefixSuffix(true);
+			PrefixSuffix = new DocumentPrefixSuffix(false);
 			break;
 		default:
 			break;

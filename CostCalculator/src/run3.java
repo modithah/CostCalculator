@@ -36,7 +36,7 @@ public class run3 {
 
 	public static void main(String[] args) throws IllegalStateException, FileNotFoundException {
 		// TODO Auto-generated method stub
-
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 //		ReadTest.main(args);
 
 		List<Hyperedge> designs = Graphoperations.getAllDesigns();
@@ -45,15 +45,17 @@ public class run3 {
 //		System.out.println(firstLevels);
 		CostGenerator2 c = new CostGenerator2();
 
-		for (Hyperedge hyp : designs) {
+//		for (Hyperedge hyp : designs) {
 			
-			System.out.println("============================"+ hyp.getName() + "==================");
-			List<Hyperedge> firstLevels = Graphoperations.GetFirstLevelsOfDesign(hyp);
+//			System.out.println("============================"+ hyp.getName() + "==================");
+			List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels();   //GetFirstLevelsOfDesign(hyp);
 			for (Hyperedge hyperedge : firstLevels) {
-				c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
+//				c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
+				System.out.println(CostOperations.CalculateSize(graph, hyperedge));
+				hyperedge.print(0);
 			}
 			
-		}
+//		}
 
 	}
 
