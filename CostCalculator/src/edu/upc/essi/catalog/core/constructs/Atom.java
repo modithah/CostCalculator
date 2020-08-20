@@ -164,6 +164,20 @@ public class Atom implements Element, Comparable<Atom> {
 	public String toString() {
 		return "Atom [" + name + "]";
 	}
+	
+	 @Override
+	    public boolean equals(Object obj) {
+	        if(obj != null && obj instanceof Atom) {
+	        	Atom s = (Atom)obj;
+	            return name.equals(s.name);
+	        }
+	        return false;
+	    }
+	 
+	 @Override
+	    public int hashCode() {
+	        return name.hashCode();
+	    }
 
 //	@Override
 //	public int compareTo(Element arg0) {
