@@ -1,3 +1,4 @@
+package edu.upc.essi.catalog.generators;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,9 +38,9 @@ import edu.upc.essi.catalog.enums.OperationTypeEnum;
 import edu.upc.essi.catalog.loaders.LoadGraph;
 import edu.upc.essi.catalog.ops.Graphoperations;
 
-public class RandomDesign_LinkedList {
+public class GenerateRandomDesign {
 
-	public RandomDesign_LinkedList() {
+	public GenerateRandomDesign() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -50,7 +51,7 @@ public class RandomDesign_LinkedList {
 		// TODO Auto-generated method stub
 		File serverDir = new File(Const.HG_LOCATION_BOOK);
 		FileUtils.cleanDirectory(serverDir);
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample2.json");
+		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json");
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();

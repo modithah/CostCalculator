@@ -21,6 +21,7 @@ import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
+import edu.upc.essi.catalog.core.constructs.QueryFrequencies;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.cost.CostGenerator;
 import edu.upc.essi.catalog.cost.CostGenerator2;
@@ -56,6 +57,17 @@ public class run3 {
 
 //			System.out.println("============================"+ hyp.getName() + "==================");
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph); // GetFirstLevelsOfDesign(hyp);
+		
+		for (Hyperedge hyperedge : firstLevels) {
+		System.out.println("000000000000000000000       " + graph.getHandle(hyperedge));
+//			c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
+		Pair<Double, HashMap<Atom, Double>> data = CostOperations.CalculateSize(graph, hyperedge);
+		hyperedge.setSize(data.getFirst());
+		hyperedge.setMultipliers(data.getSecond());
+		graph.update(hyperedge);
+		hyperedge.print(0);
+		((Hyperedge) graph.get(graph.getHandle(hyperedge))).print(0);
+	}
 
 		for (Hyperedge hyperedge : firstLevels) {
 
@@ -67,16 +79,7 @@ public class run3 {
 			System.out.println(hyperedge.getSize());
 		}
 //
-//		for (Hyperedge hyperedge : firstLevels) {
-//			System.out.println("000000000000000000000       " + graph.getHandle(hyperedge));
-////				c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
-//			Pair<Double, HashMap<Atom, Double>> data = CostOperations.CalculateSize(graph, hyperedge);
-//			hyperedge.setSize(data.getFirst());
-//			hyperedge.setMultipliers(data.getSecond());
-//			graph.update(hyperedge);
-//			hyperedge.print(0);
-//			((Hyperedge) graph.get(graph.getHandle(hyperedge))).print(0);
-//		}
+
 //
 
 		////// Calculating frequency
@@ -85,26 +88,32 @@ public class run3 {
 		query.add(graph.get(Graphoperations.getAtomByName(graph, "A_ID")));
 		query.add(graph.get(Graphoperations.getAtomByName(graph, "B_ID")));
 		query.add(graph.get(Graphoperations.getAtomByName(graph, "P_ID")));
-		Pair<Double, ArrayList<Atom>> p= new Pair<Double, ArrayList<Atom>>(1.0, query);
-		
-		
+		Pair<Double, ArrayList<Atom>> p = new Pair<Double, ArrayList<Atom>>(1.0, query);
+
 		ArrayList<Atom> query2 = new ArrayList<>();
 //		query.add(graph.get(Graphoperations.getAtomByName(graph, "A_ID")));
 //		query.add(graph.get(Graphoperations.getAtomByName(graph, "B_ID")));
 		query2.add(graph.get(Graphoperations.getAtomByName(graph, "P_ID")));
-		Pair<Double, ArrayList<Atom>> p1= new Pair<Double, ArrayList<Atom>>(1.0, query2);
-		
-		
-		
-		ArrayList<Pair<Double, ArrayList<Atom>>> allQ= new ArrayList<>();
-		allQ.add(p);
-		allQ.add(p1); 
-		
-		HashMap<Hyperedge, Map<Atom, Double>> x = QueryCalculator.CalculateFrequency(allQ, graph);
+		Pair<Double, ArrayList<Atom>> p1 = new Pair<Double, ArrayList<Atom>>(1.0, query2);
 
-		for (Hyperedge pair : x.keySet()) {
-			System.out.println(pair);
-			System.out.println(x.get(pair));
-		}
+		ArrayList<Pair<Double, ArrayList<Atom>>> allQ = new ArrayList<>();
+		allQ.add(p);
+		allQ.add(p1);
+
+		QueryFrequencies x = QueryCalculator.CalculateFrequency(allQ, graph);
+		System.out.println("-----------");
+		
+		System.out.println(x.getGlobalFrequencies());
+		
+//		x.getQueryFrequencies().forEach(y -> {
+//			y.getSecond().keySet().forEach(z -> {
+//				System.out.println(z+"  "+y.getSecond().get(z));
+//			});
+//			System.out.println("******");
+//		});
+//		for (Hyperedge pair : x.keySet()) {
+//			System.out.println(pair);
+//			System.out.println(x.get(pair));
+//		}
 	}
 }

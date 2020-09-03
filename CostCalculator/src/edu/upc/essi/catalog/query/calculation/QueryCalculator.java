@@ -20,6 +20,7 @@ import org.hypergraphdb.util.Pair;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
+import edu.upc.essi.catalog.core.constructs.QueryFrequencies;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
 
@@ -29,9 +30,11 @@ public class QueryCalculator {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static HashMap<Hyperedge, Map<Atom, Double>> CalculateFrequency(ArrayList<Pair<Double, ArrayList<Atom>>> workload, HyperGraph graph) {
+	public static QueryFrequencies CalculateFrequency(ArrayList<Pair<Double, ArrayList<Atom>>> workload,
+			HyperGraph graph) {
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
 		HashMap<Hyperedge, Map<Atom, Double>> globalfrequencies = new HashMap<Hyperedge, Map<Atom, Double>>();
+		QueryFrequencies result = new QueryFrequencies();
 		Atom dummy = new Atom("~dummy");
 		initializeFreqMap(firstLevels, globalfrequencies, dummy);
 
@@ -41,7 +44,7 @@ public class QueryCalculator {
 			initializeFreqMap(firstLevels, frequencies, dummy);
 			Queue<Hyperedge> winners = new LinkedList<>();
 			double freq = pair.getFirst();
-			ArrayList<Atom> remaining = pair.getSecond();
+			ArrayList<Atom> remaining = new ArrayList<>(pair.getSecond());
 			List<Hyperedge> candidatesWithRoot = firstLevels.stream()
 					.filter(h -> h.getMultipliers().containsKey(remaining.get(0))).collect(Collectors.toList());
 			SizeComparator sc = new SizeComparator();
@@ -76,11 +79,12 @@ public class QueryCalculator {
 			if (!winners.isEmpty()) {
 				Hyperedge first = winners.peek();
 				Map<Atom, Double> entry = frequencies.get(first);
-				
+
 				double colValue = entry.get(dummy);
 				double keyValue = entry.get(remaining.get(0));
 				keyValue = keyValue + freq;
-				int rootEntries = ((Atom) graph.get(((Hyperedge) graph.get(first.findAll().get(0))).getRoot())).getCount(); // need to change for multiple entries
+				int rootEntries = ((Atom) graph.get(((Hyperedge) graph.get(first.findAll().get(0))).getRoot()))
+						.getCount(); // need to change for multiple entries
 				colValue = colValue + freq * first.getMultipliers().get(remaining.get(0)) / rootEntries;
 				entry.put(dummy, colValue);
 				entry.put(remaining.get(0), keyValue);
@@ -96,40 +100,47 @@ public class QueryCalculator {
 					remaining.removeAll(covered);
 
 					Iterator<Atom> it = covered.iterator();
-					ArrayList<Atom> alraedyDone= new ArrayList<>();
+					ArrayList<Atom> alraedyDone = new ArrayList<>();
 					while (it.hasNext()) {
-						
+
 						Atom atm = it.next(); // parent node that is connected
 //						if (atm.getType() == AtomTypeEnum.Attribute) {  // if its a join Class is in the parent already and  attribute is in the 
 						for (Atom rem : remaining) { // joined collection having also the class
-							if(!alraedyDone.contains(rem)) {
-							List<Hyperedge> candidates = firstLevels.stream().filter(
-									h -> h.getMultipliers().containsKey(rem) && h.getMultipliers().containsKey(atm))
-									.collect(Collectors.toList());
-							Collections.sort(candidates, sc);
-							if (candidates.size() > 0) {
-								first = candidates.get(0); // to hyperedge
-								entry = frequencies.get(first);
-								Map<Atom, Double> rootEntry = frequencies.get(main);
-								colValue = entry.get(dummy);
-								keyValue = entry.get(atm); // you change the connected one atm exists in both parent and
-															// child to join
-								keyValue = keyValue + rootEntry.get(dummy); // key is accessed the same frequency as the
-																			// parent collection
-								rootEntries = ((Atom) graph.get(((Hyperedge) graph.get(first.findAll().get(0))).getRoot())).getCount(); // need to change for multiple entries
-								
-										
-										//((Atom) graph.get(first.getRoot())).getCount();
-								colValue = colValue
-										+ rootEntry.get(dummy) * first.getMultipliers().get(atm) / rootEntries;
-								entry.put(dummy, colValue);
-								entry.put(atm, keyValue);
-								frequencies.put(first, entry);
-								winners.add(first);
-								alraedyDone.addAll(first.getMultipliers().keySet());
-								System.out.println("done" +alraedyDone);
+							if (!alraedyDone.contains(rem)) {
+								List<Hyperedge> candidates = firstLevels.stream().filter(
+										h -> h.getMultipliers().containsKey(rem) && h.getMultipliers().containsKey(atm))
+										.collect(Collectors.toList());
+								Collections.sort(candidates, sc);
+								if (candidates.size() > 0) {
+									first = candidates.get(0); // to hyperedge
+									entry = frequencies.get(first);
+									Map<Atom, Double> rootEntry = frequencies.get(main);
+									colValue = entry.get(dummy);
+									keyValue = entry.get(atm); // you change the connected one atm exists in both parent
+																// and
+																// child to join
+									keyValue = keyValue + rootEntry.get(dummy); // key is accessed the same frequency as
+																				// the
+																				// parent collection
+									rootEntries = ((Atom) graph
+											.get(((Hyperedge) graph.get(first.findAll().get(0))).getRoot())).getCount(); // need
+																															// to
+																															// change
+																															// for
+																															// multiple
+																															// entries
+
+									// ((Atom) graph.get(first.getRoot())).getCount();
+									colValue = colValue
+											+ rootEntry.get(dummy) * first.getMultipliers().get(atm) / rootEntries;
+									entry.put(dummy, colValue);
+									entry.put(atm, keyValue);
+									frequencies.put(first, entry);
+									winners.add(first);
+									alraedyDone.addAll(first.getMultipliers().keySet());
+									System.out.println("done" + alraedyDone);
+								}
 							}
-						}
 						}
 //						}
 
@@ -137,6 +148,7 @@ public class QueryCalculator {
 
 				}
 
+				result.addQueryFrequency(pair.getSecond(), frequencies);
 				for (Hyperedge hyperedge : frequencies.keySet()) {
 					Map<Atom, Double> localCol = frequencies.get(hyperedge);
 					Map<Atom, Double> globalCol = globalfrequencies.get(hyperedge);
@@ -154,12 +166,41 @@ public class QueryCalculator {
 			}
 
 		}
-		return globalfrequencies;
+
+		double totalSum = 0;
+
+//		globalfrequencies.values().forEach(val -> {
+//			val.values().forEach(d -> {
+//				increase(totalSum, d);
+//			});
+//		});
+//		;
+		
+		for (Map<Atom, Double> map : globalfrequencies.values()) {
+			for (Atom key : map.keySet()) {
+				totalSum=totalSum+map.get(key);
+			}
+		}
+		
+
+		System.out.println("#################### ------>"+totalSum);
+		
+		for (Map<Atom, Double> map : globalfrequencies.values()) {
+			for (Atom key : map.keySet()) {
+				if (map.get(key) > 0) {
+					map.put(key, map.get(key) / totalSum);
+				}
+			}
+		}
+
+		result.setGlobalFrequencies(globalfrequencies);
+		return result;
 
 	}
 
-	private static void initializeFreqMap(List<Hyperedge> firstLevels, HashMap<Hyperedge, Map<Atom, Double>> frequencies,
-			Atom dummy) {
+
+	private static void initializeFreqMap(List<Hyperedge> firstLevels,
+			HashMap<Hyperedge, Map<Atom, Double>> frequencies, Atom dummy) {
 		for (Hyperedge hyperedge : firstLevels) {
 			HashMap<Atom, Double> map = new HashMap<Atom, Double>();
 

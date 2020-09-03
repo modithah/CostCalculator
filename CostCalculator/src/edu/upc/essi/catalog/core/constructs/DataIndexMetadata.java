@@ -7,7 +7,7 @@ public class DataIndexMetadata {
 	 * @param distinctCount
 	 * @param frequency
 	 */
-	public DataIndexMetadata(boolean data, float sizeOrMult, float distinctCount, float frequency, DataType type) {
+	public DataIndexMetadata(boolean data, double sizeOrMult, double distinctCount, double frequency, DataType type) {
 		this.data = data;
 		this.sizeOrMult = sizeOrMult;
 		this.distinctCount = distinctCount;
@@ -23,9 +23,9 @@ public class DataIndexMetadata {
 	
 	
 	private boolean data;
-	private float sizeOrMult;
-	private float distinctCount;
-	private float frequency;
+	private double sizeOrMult;
+	private double distinctCount;
+	private double frequency;
 	private DataType dataType;
 	
 
@@ -37,27 +37,27 @@ public class DataIndexMetadata {
 		this.data = data;
 	}
 
-	public float getSizeOrMult() {
+	public double getSizeOrMult() {
 		return sizeOrMult;
 	}
 
-	public void setSizeOrMult(float sizeOrMult) {
+	public void setSizeOrMult(double sizeOrMult) {
 		this.sizeOrMult = sizeOrMult;
 	}
 
-	public float getDistinctCount() {
+	public double getDistinctCount() {
 		return distinctCount;
 	}
 
-	public void setDistinctCount(float distinctCount) {
+	public void setDistinctCount(double distinctCount) {
 		this.distinctCount = distinctCount;
 	}
 
-	public float getFrequency() {
+	public double getFrequency() {
 		return frequency;
 	}
 
-	public void setFrequency(float frequency) {
+	public void setFrequency(double frequency) {
 		this.frequency = frequency;
 	}
 
@@ -67,6 +67,12 @@ public class DataIndexMetadata {
 
 	public void setDataType(DataType dataType) {
 		this.dataType = dataType;
+	}
+
+	@Override
+	public String toString() {
+		return "DataIndexMetadata [data=" + data + ", sizeOrMult=" + sizeOrMult + ", distinctCount=" + distinctCount
+				+ ", frequency=" + frequency + ", dataType=" + dataType + "]";
 	}
 
 }
