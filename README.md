@@ -12,3 +12,7 @@ pip install gekko
    - This will generate a random design and output the storage size and the query cost in "result" (CostResult.java)
    - If you use a transformation all the code except line 42 ( generator.main(args); ) need to be run
 4. Two transformation functions are implemented in edu.upc.essi.catalog.ops.Transformations.
+
+
+![overview](overview.png)
+
