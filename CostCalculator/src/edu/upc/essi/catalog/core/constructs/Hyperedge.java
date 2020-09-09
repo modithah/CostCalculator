@@ -8,14 +8,17 @@ import java.util.Iterator;
 
 import javax.management.relation.Relation;
 
+import org.apache.jena.tdb.store.Hash;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.atom.HGSubgraph;
+import org.hypergraphdb.util.Pair;
 
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
+import edu.upc.essi.catalog.ops.Graphoperations;
 
 public class Hyperedge extends HGSubgraph2 implements Element {
 
@@ -25,15 +28,18 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	private String name;
 	private String id;
 	private HyperedgeTypeEnum type;
-	private int size = 1;
 	private double count = 1;
 	private HGHandle root = null;
-	private HashMap<HGHandle, Relationship> relMap = null;
+	private HashMap<HGHandle, Relationship> relMap = new HashMap<>();
+	private HashMap<Atom, Double> multipliers=null;
+	private double size=0.0;
 
 	public Hyperedge(HyperGraph graph, HGHandle handle, String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
 		super();
 		this.name = name;
 		this.type = type;
+		this.size=0.0;
+		this.multipliers= new HashMap<>();
 		setHyperGraph(graph);
 		setAtomHandle(handle);
 		relMap = new HashMap<>();
@@ -107,6 +113,21 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		return true;
 	}
 
+	public HashMap<Atom, Double> getMultipliers() {
+		return multipliers;
+	}
+
+	public void setMultipliers(HashMap<Atom, Double> multipliers) {
+//		if(this.multipliers==null) {
+//			this.multipliers= new HashMap<>();
+//		}
+//		for (HGHandle a : multipliers.keySet()) {
+//			this.multipliers.put(a, multipliers.get(a));
+//		}
+//		System.out.println("Setting" );
+		this.multipliers = multipliers;
+	}
+	
 	public HGHandle getTargetAt(int i) {
 		// TODO Auto-generated method stub
 		return outgoingSet.get(i);
@@ -117,11 +138,11 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		return outgoingSet.size();
 	}
 
-	public int getSize() {
+	public double getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(double size) {
 		this.size = size;
 	}
 
@@ -165,6 +186,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		this.id = id;
 	}
 
+	
 	public void print(FileWriter myWriter, int tabs) {
 
 		StringBuilder sb = new StringBuilder();
@@ -172,7 +194,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 			sb.append(" ");
 		}
 		try {
-			myWriter.write(sb.toString() + type + " -> " + name+"\n");
+			myWriter.write(sb.toString() + type + " -> " + name + "\n");
 
 			Iterator<HGHandle> seconditer = this.findAll().iterator();
 
@@ -186,10 +208,10 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 				}
 
 				if (a instanceof Atom) {
-					myWriter.write(sb.toString() + ((Atom) a).getName()+"\n");
+					myWriter.write(sb.toString() + ((Atom) a).getName() + "\n");
 				}
 				if (a instanceof Relationship) {
-					myWriter.write(sb.toString() + ((Relationship) a)+"\n");
+					myWriter.write(sb.toString() + ((Relationship) a) + "\n");
 				}
 			}
 		} catch (IOException e) {
@@ -200,6 +222,10 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 
 	public void print(int tabs) {
 
+		if(!this.getMultipliers().keySet().isEmpty()) {
+			System.out.println("Size ->"+ this.getSize());
+			System.out.println(this.getMultipliers());
+		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tabs; i++) {
 			sb.append(" ");
@@ -224,5 +250,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 			}
 		}
 	}
+
+
 
 }
