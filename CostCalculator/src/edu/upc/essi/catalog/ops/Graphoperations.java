@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -451,9 +452,19 @@ public final class Graphoperations {
 			HGHandle... targetSet) throws Exception {
 
 		HGHandle handle = graph.add(new Hyperedge());
+		List<HGHandle> list = Arrays.asList(targetSet);
+//		for (HGHandle hgHandle : list) {
+//			rels.forEach(r->{
+//				if(list.contains(graph.getHandle(r))) {
+//					
+//				}
+//			});
+//		}
+		
 		Hyperedge hyp = new Hyperedge(graph, handle, name, HyperedgeTypeEnum.Set, targetSet);
 //		hyp.add(graph.getHandle(rel));
 		for (Relationship rel : rels) {
+			hyp.add(graph.getHandle(rel));
 			hyp.addToMap(targetSet[0], rel);
 		}
 		graph.replace(handle, hyp);
