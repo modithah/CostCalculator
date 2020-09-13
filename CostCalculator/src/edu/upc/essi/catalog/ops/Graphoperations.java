@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -77,20 +78,47 @@ public final class Graphoperations {
 		return el;
 	}
 
-	public static void changeDir(String path) {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		graph.close();
+	public static void makeGraphCopy(String foldername) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		graph.close();
 		String source = Const.HG_LOCATION_BOOK;
 		File srcDir = new File(source);
 
-		String destination = path;
+		String destination = Const.HG_LOCATION_BASE + foldername;
 		File destDir = new File(destination);
 
 		try {
+			System.out.println(destDir);
 			FileUtils.copyDirectory(srcDir, destDir);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static HyperGraph revertGraph(HyperGraph graph, String foldername) {
+		HyperGraph returnGraph = null;
+		graph.close();
+		System.out.println(graph.isOpen());
+		String source = Const.HG_LOCATION_BASE + foldername;
+		File srcDir = new File(source);
+
+		String destination = Const.HG_LOCATION_BOOK;
+		
+		File destDir = new File(destination);
+		
+		try {
+			FileUtils.cleanDirectory(destDir);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			FileUtils.copyDirectory(srcDir, destDir);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		returnGraph = new HyperGraph(destination);
+		return returnGraph;
 	}
 
 	/**
@@ -249,7 +277,7 @@ public final class Graphoperations {
 //		graph.close();
 		return hyperedges;
 	}
-	
+
 	public static List<Hyperedge> getAllDesigns() {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		List<Hyperedge> hyperedges = graph
@@ -346,7 +374,6 @@ public final class Graphoperations {
 		return null;
 	}
 
-	
 	public static List<HGHandle> getParentHyperedges(HyperGraph graph, HGHandle hyperedge) {
 
 //		HGHandle s = hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.SecondLevel),
@@ -357,7 +384,6 @@ public final class Graphoperations {
 		return x;
 	}
 
-	
 	public static void makeRelation(HyperGraph graph, HashMap<String, HGHandle> atomHandles,
 			Table<String, String, HGHandle> relHandles, String id, String keyn, int mult) throws Exception {
 
@@ -426,9 +452,19 @@ public final class Graphoperations {
 			HGHandle... targetSet) throws Exception {
 
 		HGHandle handle = graph.add(new Hyperedge());
+		List<HGHandle> list = Arrays.asList(targetSet);
+//		for (HGHandle hgHandle : list) {
+//			rels.forEach(r->{
+//				if(list.contains(graph.getHandle(r))) {
+//					
+//				}
+//			});
+//		}
+		
 		Hyperedge hyp = new Hyperedge(graph, handle, name, HyperedgeTypeEnum.Set, targetSet);
 //		hyp.add(graph.getHandle(rel));
 		for (Relationship rel : rels) {
+			hyp.add(graph.getHandle(rel));
 			hyp.addToMap(targetSet[0], rel);
 		}
 		graph.replace(handle, hyp);
