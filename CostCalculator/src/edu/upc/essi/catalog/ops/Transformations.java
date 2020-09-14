@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+
 //import javax.management.relation.Relation;
 
 import org.hypergraphdb.HGHandle;
@@ -177,10 +178,10 @@ public final class Transformations {
 	}
 
 	public static boolean group(HyperGraph graph, GroupParams param) {
-		
-		Hyperedge hyp=param.getHyp();
-		ArrayList<Relationship> rels=param.getRels();
-		Element elm=param.getElm();
+
+		Hyperedge hyp = param.getHyp();
+		ArrayList<Relationship> rels = param.getRels();
+		Element elm = param.getElm();
 
 		if (!(hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel)) {
 			System.out.println("Group can be only inside a struct");
@@ -214,34 +215,7 @@ public final class Transformations {
 //						newSet=null;
 						hyp.remove(elementHandle);
 //						System.out.println("removing  "+ elementHandle);
-						Set<Relationship> used = new HashSet();
-						parentContents = hyp.findAll();
-						parentContents.forEach(hdl -> {
-							if (!hdl.equals(newSet)) {
-								Element e = graph.get(hdl);
-//								System.out.println("path to" + e.getName());
-								if (e instanceof Atom) {
-									used.addAll(findRelPath(graph, hyp, (Atom) e));
-								} else if (e instanceof Hyperedge) {
-									Hyperedge edge = (Hyperedge) e;
-									if (edge.getType() == HyperedgeTypeEnum.Struct) {
-										used.addAll(findRelPath(graph, hyp, graph.get(edge.getRoot())));
-									} else {
-										edge.findAll().forEach(h -> {
-											Element el = graph.get(h);
-											if (el instanceof Atom) {
-												used.addAll(findRelPath(graph, hyp, (Atom) el));
-											} else if (el instanceof Hyperedge) {
-												used.addAll(
-														findRelPath(graph, hyp, graph.get(((Hyperedge) el).getRoot())));
-											}
-										});
-									}
-								}
-//								System.out.println(used);
-//								System.out.println("********");
-							}
-						});
+						Set<Relationship> used = findUsedRelationships(graph, hyp, newSet);
 
 //						System.out.println(used.size());
 						rels.removeAll(used);
@@ -277,6 +251,36 @@ public final class Transformations {
 //		graph.remove(hypHandle);
 //		graph.update(parent);
 		return true;
+	}
+
+	private static Set<Relationship> findUsedRelationships(HyperGraph graph, Hyperedge hyp, HGHandle except) {
+		List<HGHandle> parentContents;
+		Set<Relationship> used = new HashSet();
+		parentContents = hyp.findAll();
+		parentContents.forEach(hdl -> {
+			if (!hdl.equals(except)) {
+				Element e = graph.get(hdl);
+//								System.out.println("path to" + e.getName());
+				if (e instanceof Atom) {
+					used.addAll(findRelPath(graph, hyp, (Atom) e));
+				} else if (e instanceof Hyperedge) {
+					Hyperedge edge = (Hyperedge) e;
+					if (edge.getType() == HyperedgeTypeEnum.Struct) {
+						used.addAll(findRelPath(graph, hyp, graph.get(edge.getRoot())));
+					} else {
+						edge.findAll().forEach(h -> {
+							Element el = graph.get(h);
+							if (el instanceof Atom) {
+								used.addAll(findRelPath(graph, hyp, (Atom) el));
+							} else if (el instanceof Hyperedge) {
+								used.addAll(findRelPath(graph, hyp, graph.get(((Hyperedge) el).getRoot())));
+							}
+						});
+					}
+				}
+			}
+		});
+		return used;
 	}
 
 	public static ArrayList<GroupParams> getGroupCandidates(HyperGraph graph) {
@@ -345,6 +349,117 @@ public final class Transformations {
 			}
 		}
 
+		return candidates;
+	}
+
+	public static boolean segregate(HyperGraph graph, Hyperedge set, Element el) {
+
+		if (!(set.getType() == HyperedgeTypeEnum.Set || set.getType() == HyperedgeTypeEnum.FirstLevel)) {
+			System.out.println("Segregate can be only inside a Set");
+			return false;
+		} else {
+			HGHandle elementHandle = graph.getHandle(el);
+			HGHandle setHandle = graph.getHandle(set);
+			if (!set.isMember(elementHandle)) {
+				System.out.println("Element must be inside the Set");
+				return false;
+			} else {
+				try {
+					if (set.getType() == HyperedgeTypeEnum.FirstLevel) {
+						Graphoperations.addHyperedgetoGraph(graph, el.getName() + "FL", HyperedgeTypeEnum.FirstLevel,
+								elementHandle);
+						set.remove(elementHandle);
+						return true;
+					} else {
+						// set can have only one parent
+						HGHandle grandParentHandle = Graphoperations.getParentHyperedges(graph, setHandle).get(0);
+						Hyperedge grandParent = graph.get(grandParentHandle);
+						Set<Relationship> used = new HashSet<>();
+						set.findAll().forEach(c -> {
+							if (!c.equals(elementHandle)) {
+								Element child = graph.get(c);
+								if (child instanceof Atom) {
+									used.addAll(findRelPath(graph, grandParent, (Atom) child));
+								} else {
+									HGHandle rootofStruct = ((Hyperedge) child).getRoot();
+									used.addAll(findRelPath(graph, grandParent, graph.get(rootofStruct)));
+								}
+
+							}
+						});
+
+						if (el instanceof Hyperedge) {
+							ArrayList<Relationship> pathtoStruct = findRelPath(graph, grandParent,
+									graph.get(((Hyperedge) el).getRoot()));
+							HGHandle newSet = Graphoperations.addSetHyperedgetoGraph(graph, el.getName() + "Set",
+									pathtoStruct, elementHandle);
+							grandParent.add(newSet);
+							pathtoStruct.removeAll(used);
+							for (Relationship relationship : pathtoStruct) {
+								set.remove(graph.getHandle(relationship));
+							}
+							set.remove(elementHandle);
+							graph.update(grandParent);
+							graph.update(set);
+						} else {
+//							TODO : do we create with atoms ??
+						}
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return false;
+				}
+			}
+
+		}
+		return false;
+	}
+
+	public static ArrayList<Pair<Hyperedge, Hyperedge>> getSegregateCandidates(HyperGraph graph) {
+		ArrayList<Pair<Hyperedge, Hyperedge>> candidates = new ArrayList<>();
+		Queue<Hyperedge> queue = new LinkedList<>();
+		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
+		firstLevels.forEach(f -> {
+			ArrayList<Pair<Hyperedge, Hyperedge>> tmpCandidates = new ArrayList<>();
+			f.findAll().forEach(s -> {
+				Element e = graph.get(s); // secondLevel
+				if (e instanceof Hyperedge) {
+					tmpCandidates.add(new Pair<Hyperedge, Hyperedge>(f, (Hyperedge) e));
+					queue.add((Hyperedge) e);
+				}
+			});
+			if (tmpCandidates.size() > 1) { // only add sets with more than one struct
+				candidates.addAll(tmpCandidates);
+			}
+		});
+//		System.out.println("-----------");
+		while (!queue.isEmpty()) {
+			Hyperedge hyp = queue.poll();
+			if (hyp.getType() == HyperedgeTypeEnum.Set) {
+				ArrayList<Pair<Hyperedge, Hyperedge>> tmpCandidates = new ArrayList<>();
+				hyp.findAll().forEach(cand -> {
+					Element candE = graph.get(cand); // inner elements
+					if (candE instanceof Hyperedge && ((Hyperedge) candE).getType() == HyperedgeTypeEnum.Struct) {
+						tmpCandidates.add(new Pair<Hyperedge, Hyperedge>(hyp, (Hyperedge) (Hyperedge) candE));
+						queue.add((Hyperedge) candE);
+					} else if (candE instanceof Atom && ((Atom) candE).getType() == AtomTypeEnum.Class) {
+						// TODO : are we separating atomas ??
+					}
+				});
+				if (tmpCandidates.size() > 1) { // only add sets with more than one struct
+					candidates.addAll(tmpCandidates);
+				}
+			} else if (hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel) {
+				hyp.findAll().forEach(cand -> {
+					Element candE = graph.get(cand); // inner elements
+					if (candE instanceof Hyperedge) {
+						Hyperedge hyper = (Hyperedge) candE;
+						queue.add((Hyperedge) hyper);
+					}
+				});
+			}
+		}
 		return candidates;
 	}
 
