@@ -11,7 +11,6 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-
 //import javax.management.relation.Relation;
 
 import org.hypergraphdb.HGHandle;
@@ -27,6 +26,7 @@ import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
+import edu.upc.essi.catalog.core.constructs.opsparams.EmbedParams;
 import edu.upc.essi.catalog.core.constructs.opsparams.GroupParams;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
@@ -441,7 +441,7 @@ public final class Transformations {
 				hyp.findAll().forEach(cand -> {
 					Element candE = graph.get(cand); // inner elements
 					if (candE instanceof Hyperedge && ((Hyperedge) candE).getType() == HyperedgeTypeEnum.Struct) {
-						tmpCandidates.add(new Pair<Hyperedge, Hyperedge>(hyp, (Hyperedge) (Hyperedge) candE));
+						tmpCandidates.add(new Pair<Hyperedge, Hyperedge>(hyp, (Hyperedge) candE));
 						queue.add((Hyperedge) candE);
 					} else if (candE instanceof Atom && ((Atom) candE).getType() == AtomTypeEnum.Class) {
 						// TODO : are we separating atomas ??
@@ -461,6 +461,84 @@ public final class Transformations {
 			}
 		}
 		return candidates;
+	}
+
+	// TODO : Maybe error Handling
+	public static boolean embed(HyperGraph graph, EmbedParams param) {
+
+		HGHandle childHandle = graph.getHandle(param.getChild());
+		Hyperedge grandParent = param.getGrandParent();
+		Hyperedge newParent = param.getEmbeddingParent();
+		Set<Relationship> used = findUsedRelationships(graph, grandParent, childHandle);
+		ArrayList<Relationship> relPath = findRelPath(graph, grandParent, graph.get(param.getChild().getRoot()));
+		relPath.removeAll(used);
+		for (Relationship relationship : relPath) {
+			grandParent.remove(graph.getHandle(relationship));
+		}
+		grandParent.remove(childHandle);
+		newParent.add(childHandle);
+		graph.update(grandParent);
+		graph.update(newParent);
+		return true;
+
+	}
+
+	public static ArrayList<EmbedParams> getEmbedCandidates(HyperGraph graph) {
+		ArrayList<EmbedParams> candidates = new ArrayList<>();
+		Queue<Hyperedge> queue = new LinkedList<>();
+		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
+
+		queue.addAll(firstLevels);
+
+		while (!queue.isEmpty()) {
+			Hyperedge hyp = queue.poll();
+			if (hyp.getType() == HyperedgeTypeEnum.Set || hyp.getType() == HyperedgeTypeEnum.FirstLevel) {
+				ArrayList<Hyperedge> tmpCandidates = new ArrayList<>();
+				hyp.findAll().forEach(cand -> {
+					Element candE = graph.get(cand); // inner elements
+					if (candE instanceof Hyperedge && ((Hyperedge) candE).getType() == HyperedgeTypeEnum.Struct) {
+						tmpCandidates.add((Hyperedge) candE);
+						queue.add((Hyperedge) candE);
+					}
+				});
+
+				executeStructCombinations(graph, candidates, tmpCandidates, hyp);
+
+			} else if (hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel) {
+				// nothing to do inside a struct explore further
+				hyp.findAll().forEach(cand -> {
+					Element candE = graph.get(cand); // inner elements
+					if (candE instanceof Hyperedge) {
+						Hyperedge hyper = (Hyperedge) candE;
+						queue.add((Hyperedge) hyper);
+					}
+				});
+			}
+		}
+
+		return candidates;
+	}
+
+	private static void executeStructCombinations(HyperGraph graph, ArrayList<EmbedParams> candidates,
+			ArrayList<Hyperedge> tmpCandidates, Hyperedge grandParent) {
+		if (tmpCandidates.size() > 2) {
+			Set<Set<Hyperedge>> combos = Sets.combinations(ImmutableSet.copyOf(tmpCandidates), 2);
+			Iterator<Set<Hyperedge>> comboIterator = combos.iterator();
+			while (comboIterator.hasNext()) {
+				Set<Hyperedge> set = (Set<Hyperedge>) comboIterator.next();
+				Object[] arr = set.toArray();
+				for (int i = 0; i < 2; i++) {
+					Hyperedge parent = i == 0 ? (Hyperedge) arr[0] : (Hyperedge) arr[1];
+					Hyperedge child = i == 0 ? (Hyperedge) arr[1] : (Hyperedge) arr[0];
+					EmbedParams param = new EmbedParams(parent, child, grandParent);
+					findRelPathWithParent(graph, parent, graph.get(child.getRoot()), param);
+					if (param.getEmbeddingParent() != null) {
+						candidates.add(param);
+					}
+				}
+
+			}
+		}
 	}
 
 	public static ArrayList<Relationship> findRelPath(HyperGraph graph, Hyperedge hyp, Atom atm) {
@@ -535,6 +613,81 @@ public final class Transformations {
 			} while (true);
 		}
 		return finalPath;
+	}
+
+	public static void findRelPathWithParent(HyperGraph graph, Hyperedge hyp, Atom atm, EmbedParams param) {
+		HGHandle hypHandle = graph.getHandle(hyp);
+		HGHandle atomHAndle = graph.getHandle(atm);
+		HashMap<HGHandle, HGHandle> path = new HashMap<>();
+		ArrayList<Relationship> rels = new ArrayList<>();
+		boolean breakable = false;
+
+		HGBreadthFirstTraversal traversal = new HGBreadthFirstTraversal(hypHandle, new TargetSetALGenerator(graph));
+
+		while (traversal.hasNext()) {
+			Pair<HGHandle, HGHandle> current = traversal.next();
+			Hyperedge parent = (Hyperedge) graph.get(current.getFirst());
+			Object atom = graph.get(current.getSecond());
+
+			if (atom instanceof Relationship) {
+				rels.add((Relationship) atom);
+//				System.out.println("adding" + atom);
+			}
+
+			path.put(current.getSecond(), current.getFirst());
+			if (atom instanceof Atom && atom.equals(atm)) {
+				System.out.println(atom);
+				breakable = true;
+				param.setEmbeddingParent(parent);
+			}
+			// we found the atom no need to dig deeper
+			if (breakable && atom instanceof Hyperedge) {
+				break;
+			}
+
+//			    if(((Atom)atom).getName().equals("B_ID")) {
+//			    	System.out.println("XXXXXXXXXX");
+//			    	break;
+//			    	}
+//			System.out.println("Visiting atom " + atom + " pointed to by " + parent);
+		}
+//		System.out.println(rels);
+		ArrayList<Relationship> finalPath = new ArrayList<>();
+		HGHandle targetHandle = atomHAndle;
+		if (!rels.isEmpty() && !targetHandle.equals(hyp.getRoot())) {
+			do {
+//				if () {
+//					break;
+//				}
+				Pair<Relationship, HGHandle> relHandlePair = findNextHop(graph, targetHandle, rels);
+//				System.out.println("OOOO  " + relHandlePair.getFirst());
+
+				if (relHandlePair == null) {
+//					System.out.println("YYYYYYY");
+					break;
+				}
+				if (finalPath.contains(relHandlePair.getFirst())) {
+//					System.out.println("SSSSSSSSSSSSSSSS");
+					break;
+				} else {
+					finalPath.add(relHandlePair.getFirst());
+//					System.out.println(relHandlePair.getSecond() + "  " + hyp.getRoot());
+//					if (!((hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel)
+//							&& hyp.getRoot().equals(relHandlePair.getSecond()))) {
+//					System.out.println();
+
+					if (relHandlePair.getSecond().equals(hyp.getRoot())) {
+						// MAYBE we have to check about the sets usability
+						break;
+					} else {
+						targetHandle = relHandlePair.getSecond();
+					}
+//					}
+//					}
+				}
+			} while (true);
+		}
+		param.setPath(finalPath);
 	}
 
 	private static Pair<Relationship, HGHandle> findNextHop(HyperGraph graph, HGHandle atomHAndle,
