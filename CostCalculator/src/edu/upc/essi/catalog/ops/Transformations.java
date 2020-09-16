@@ -366,9 +366,14 @@ public final class Transformations {
 			} else {
 				try {
 					if (set.getType() == HyperedgeTypeEnum.FirstLevel) {
-						Graphoperations.addHyperedgetoGraph(graph, el.getName() + "FL", HyperedgeTypeEnum.FirstLevel,
-								elementHandle);
+						HGHandle newFirstLevel = Graphoperations.addHyperedgetoGraph(graph, el.getName() + "FL",
+								HyperedgeTypeEnum.FirstLevel, elementHandle);
 						set.remove(elementHandle);
+						graph.update(set);
+						HGHandle topDesignHandle = Graphoperations.getParentHyperedges(graph, setHandle).get(0);
+						Hyperedge topDesign = graph.get(topDesignHandle);
+						topDesign.add(newFirstLevel);
+						graph.update(topDesign);
 						return true;
 					} else {
 						// set can have only one parent
@@ -477,6 +482,7 @@ public final class Transformations {
 		}
 		grandParent.remove(childHandle);
 		newParent.add(childHandle);
+		newParent.remove(param.getChild().getRoot());
 		graph.update(grandParent);
 		graph.update(newParent);
 		return true;
