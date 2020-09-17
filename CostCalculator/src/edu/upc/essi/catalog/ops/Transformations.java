@@ -257,15 +257,20 @@ public final class Transformations {
 		List<HGHandle> parentContents;
 		Set<Relationship> used = new HashSet();
 		parentContents = hyp.findAll();
+		System.out.println("FFFFFFFFFF \n" + parentContents);
 		parentContents.forEach(hdl -> {
 			if (!hdl.equals(except)) {
+//				System.out.println(hdl);
+
 				Element e = graph.get(hdl);
 //								System.out.println("path to" + e.getName());
+				System.out.println(e);
 				if (e instanceof Atom) {
 					used.addAll(findRelPath(graph, hyp, (Atom) e));
 				} else if (e instanceof Hyperedge) {
 					Hyperedge edge = (Hyperedge) e;
-					if (edge.getType() == HyperedgeTypeEnum.Struct) {
+
+					if (edge.getType() == HyperedgeTypeEnum.Struct || edge.getType() == HyperedgeTypeEnum.SecondLevel) {
 						used.addAll(findRelPath(graph, hyp, graph.get(edge.getRoot())));
 					} else {
 						edge.findAll().forEach(h -> {
@@ -469,20 +474,51 @@ public final class Transformations {
 	}
 
 	// TODO : Maybe error Handling
+//	public static boolean embed(HyperGraph graph, EmbedParams param) {
+//
+//		HGHandle childHandle = graph.getHandle(param.getChild());
+//		Hyperedge grandParent = param.getGrandParent();
+//		Hyperedge newParent = param.getEmbeddingParent();
+//		Set<Relationship> used = findUsedRelationships(graph, grandParent, childHandle);
+//		ArrayList<Relationship> relPath = findRelPath(graph, grandParent, graph.get(param.getChild().getRoot()));
+//		relPath.removeAll(used);
+//		for (Relationship relationship : relPath) {
+//			grandParent.remove(graph.getHandle(relationship));
+//		}
+//		grandParent.remove(childHandle);
+//		newParent.add(childHandle);
+//		newParent.remove(param.getChild().getRoot());
+//		graph.update(grandParent);
+//		graph.update(newParent);
+//		return true;
+//
+//	}
+
 	public static boolean embed(HyperGraph graph, EmbedParams param) {
 
-		HGHandle childHandle = graph.getHandle(param.getChild());
+		Hyperedge child = param.getChild();
+		HGHandle childHandle = graph.getHandle(child);
 		Hyperedge grandParent = param.getGrandParent();
-		Hyperedge newParent = param.getEmbeddingParent();
+		Hyperedge newParent = param.getParent();
 		Set<Relationship> used = findUsedRelationships(graph, grandParent, childHandle);
+//		System.out.println("XXXXXXXXXXXXXXXXXXXXX");
+//		System.out.println(param.getChild());
+//		System.out.println(graph.get(param.getChild().getRoot()).toString());
 		ArrayList<Relationship> relPath = findRelPath(graph, grandParent, graph.get(param.getChild().getRoot()));
 		relPath.removeAll(used);
 		for (Relationship relationship : relPath) {
-			grandParent.remove(graph.getHandle(relationship));
+			HGHandle rel = graph.getHandle(relationship);
+			grandParent.remove(rel);
+			newParent.add(rel);
+		}
+		if (child.getType() == HyperedgeTypeEnum.FirstLevel) {
+			child.setType(HyperedgeTypeEnum.Struct);
+			graph.update(child);
 		}
 		grandParent.remove(childHandle);
 		newParent.add(childHandle);
-		newParent.remove(param.getChild().getRoot());
+		// TODO : should we remove if this is from a reference ? how would we know ?
+//		newParent.remove(param.getChild().getRoot());  
 		graph.update(grandParent);
 		graph.update(newParent);
 		return true;
@@ -502,23 +538,27 @@ public final class Transformations {
 				ArrayList<Hyperedge> tmpCandidates = new ArrayList<>();
 				hyp.findAll().forEach(cand -> {
 					Element candE = graph.get(cand); // inner elements
-					if (candE instanceof Hyperedge && ((Hyperedge) candE).getType() == HyperedgeTypeEnum.Struct) {
+					if (candE instanceof Hyperedge && (((Hyperedge) candE).getType() == HyperedgeTypeEnum.Struct
+							|| ((Hyperedge) candE).getType() == HyperedgeTypeEnum.SecondLevel)) {
 						tmpCandidates.add((Hyperedge) candE);
 						queue.add((Hyperedge) candE);
 					}
 				});
 
 				executeStructCombinations(graph, candidates, tmpCandidates, hyp);
-
 			} else if (hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel) {
-				// nothing to do inside a struct explore further
+				ArrayList<Hyperedge> tmpCandidates = new ArrayList<>();
 				hyp.findAll().forEach(cand -> {
 					Element candE = graph.get(cand); // inner elements
 					if (candE instanceof Hyperedge) {
 						Hyperedge hyper = (Hyperedge) candE;
 						queue.add((Hyperedge) hyper);
+						if (hyper.getType() == HyperedgeTypeEnum.Struct) { // struct inside struct
+							tmpCandidates.add((Hyperedge) candE);
+						}
 					}
 				});
+				executeStructCombinations(graph, candidates, tmpCandidates, hyp);
 			}
 		}
 
@@ -527,7 +567,8 @@ public final class Transformations {
 
 	private static void executeStructCombinations(HyperGraph graph, ArrayList<EmbedParams> candidates,
 			ArrayList<Hyperedge> tmpCandidates, Hyperedge grandParent) {
-		if (tmpCandidates.size() > 2) {
+		if (tmpCandidates.size() >= 2) {
+			System.out.println(tmpCandidates);
 			Set<Set<Hyperedge>> combos = Sets.combinations(ImmutableSet.copyOf(tmpCandidates), 2);
 			Iterator<Set<Hyperedge>> comboIterator = combos.iterator();
 			while (comboIterator.hasNext()) {
@@ -536,7 +577,7 @@ public final class Transformations {
 				for (int i = 0; i < 2; i++) {
 					Hyperedge parent = i == 0 ? (Hyperedge) arr[0] : (Hyperedge) arr[1];
 					Hyperedge child = i == 0 ? (Hyperedge) arr[1] : (Hyperedge) arr[0];
-					EmbedParams param = new EmbedParams(parent, child, grandParent);
+					EmbedParams param = new EmbedParams(grandParent, parent, child);
 					findRelPathWithParent(graph, parent, graph.get(child.getRoot()), param);
 					if (param.getEmbeddingParent() != null) {
 						candidates.add(param);

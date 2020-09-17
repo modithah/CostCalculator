@@ -380,7 +380,7 @@ public final class Graphoperations {
 //				hg.link(new HGHandle[] { atom })));
 
 		List<HGHandle> x = hg.findAll(graph, hg.and(hg.type(Hyperedge.class), hg.contains(hyperedge)));
-		System.out.println(x.size());
+//		System.out.println(x.size());
 		return x;
 	}
 
