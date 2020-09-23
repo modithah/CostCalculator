@@ -582,7 +582,7 @@ public final class Transformations {
 		return new Pair<Double, Double>(global, 10 * global);
 	}
 
-	public static Pair<Double, Double> getSizeMinMax(HyperGraph graph, ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
+	public static Pair<Double, Double> getCostMinMax(HyperGraph graph, ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
 
 		return new Pair<Double, Double>(0.0, 1000.0);
 
