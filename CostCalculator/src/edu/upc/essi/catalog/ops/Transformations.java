@@ -565,6 +565,29 @@ public final class Transformations {
 		return candidates;
 	}
 
+	public static Pair<Double, Double> getSizeMinMax(HyperGraph graph) {
+		List<Atom> classes = Graphoperations.getClassAtomList(graph);
+		Double global = 0.0;
+		for (Atom atom : classes) {
+			long local = atom.getSize();
+			List<HGHandle> attHandles = Graphoperations.getAttributesClass(graph, graph.getHandle(atom));
+			for (HGHandle handle : attHandles) {
+				Atom attrib = graph.get(handle);
+				local += attrib.getSize();
+			}
+			local = local * atom.getCount();
+			global += local;
+		}
+
+		return new Pair<Double, Double>(global, 10 * global);
+	}
+
+	public static Pair<Double, Double> getSizeMinMax(HyperGraph graph, ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
+
+		return new Pair<Double, Double>(0.0, 1000.0);
+
+	}
+
 	private static void executeStructCombinations(HyperGraph graph, ArrayList<EmbedParams> candidates,
 			ArrayList<Hyperedge> tmpCandidates, Hyperedge grandParent) {
 		if (tmpCandidates.size() >= 2) {
