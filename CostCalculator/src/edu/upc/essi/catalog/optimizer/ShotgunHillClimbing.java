@@ -39,7 +39,7 @@ public class ShotgunHillClimbing {
 		int iterations = 0;
 		do {
 			++iterations;
-			solution = WorkflowExecutions.run(null);
+//			solution = WorkflowExecutions.run(null);
 			if (bestSoFar == null) bestSoFar = solution;
 			else {
 				if (bestSoFar.getSecond() < solution.getSecond()) {

@@ -111,6 +111,13 @@
 			<artifactId>GenericN-aryTree</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.aima-java</groupId>
+			<artifactId>aima-core</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
