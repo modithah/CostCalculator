@@ -29,14 +29,14 @@ public final class GenerateMetadata {
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph); // GetFirstLevelsOfDesign(hyp);
 
 		for (Hyperedge hyperedge : firstLevels) {
-			System.out.println("000000000000000000000       " + graph.getHandle(hyperedge));
+//			System.out.println("000000000000000000000       " + graph.getHandle(hyperedge));
 //		c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
 			Pair<Double, HashMap<Atom, Double>> data = CostOperations.CalculateSize(graph, hyperedge);
 			hyperedge.setSize(data.getFirst());
 			hyperedge.setMultipliers(data.getSecond());
 			graph.update(hyperedge);
-			hyperedge.print(0);
-			((Hyperedge) graph.get(graph.getHandle(hyperedge))).print(0);
+//			hyperedge.print(0);
+//			((Hyperedge) graph.get(graph.getHandle(hyperedge))).print(0);
 		}
 
 	}

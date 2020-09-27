@@ -203,40 +203,53 @@ public final class CostOperations {
 				break;
 			case Set:
 				HGHandle parentHandle = Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0);
-				Hyperedge parent = ((Hyperedge)graph.get(parentHandle));
-				size = ((Hyperedge) e).getName().length() * CalculateMultiplier(graph, parent, graph.get(parent.getRoot()));
+				Hyperedge parent = ((Hyperedge) graph.get(parentHandle));
+				size = ((Hyperedge) e).getName().length()
+						* CalculateMultiplier(graph, parent, graph.get(parent.getRoot()));
 				break;
 			case Struct:
-				System.out.println(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)));
+//				System.out.println(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)));
 				if (((Hyperedge) graph.get(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0)))
 						.getType() == HyperedgeTypeEnum.Set) { // embedded inside a set (always have 1 parent)
 					// name is added by the parent set
 				} else { // embedded set
 					HGHandle pHandle = Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0);
-					Hyperedge p = ((Hyperedge)graph.get(pHandle));
-					size = ((Hyperedge) e).getName().length()* CalculateMultiplier(graph, p, graph.get(p.getRoot()));
+					Hyperedge p = ((Hyperedge) graph.get(pHandle));
+					size = ((Hyperedge) e).getName().length() * CalculateMultiplier(graph, p, graph.get(p.getRoot()));
 				}
 				break;
 			default:
 				break;
 			}
-			System.out.println("OOOOOOOOO" + e);
+//			System.out.println("OOOOOOOOO" + e);
 			for (HGHandle childHandle : ((Hyperedge) e).findAll()) {
 				Element child = graph.get(childHandle);
-
+//				System.out.println("Child is ---" + child);
 				double multiplier = CalculateMultiplier(graph, (Hyperedge) e, child);
 				Pair<Double, HashMap<Atom, Double>> result = CalculateSize(graph, child);
-				System.out.println("size before" + size);
+//				System.out.println("size before" + size);
 				size = size + result.getFirst() * multiplier;
-				System.out.println(child + "          " + result.getFirst());
-				System.out.println("size            " + size);
-				System.out.println(e + "multipl         " + multiplier);
+//				System.out.println(child + "          " + result.getFirst());
+//				System.out.println("size            " + size);
+//				System.out.println(e + "multiplXXXX         " + multiplier);
 //				System.out.println("existing = "+map);System.out.println(e+"multipl         "+multiplier);
-				System.out.println("existing = " + map);
-				System.out.println("new = " + result.getSecond());
+//				System.out.println("existing = " + map);
+//				System.out.println("new = " + result.getSecond());
+
+				
+				// TODO: hetetogeneous collections
+//				if (((Hyperedge) e).getType() == HyperedgeTypeEnum.FirstLevel) {
+//					for (Atom key : result.getSecond().keySet()) {
+//						System.out.println("putting  " + key + " before " + map.get(key) + "getting "
+//								+ result.getSecond().get(key));
+//					}
+//					System.out.println("Size is " +size);
+//				}
+
 				for (Atom key : result.getSecond().keySet()) {
 					map.put(key, result.getSecond().get(key) * multiplier);
 				}
+
 			}
 		}
 		Pair<Double, HashMap<Atom, Double>> p = new Pair<Double, HashMap<Atom, Double>>(size, map);
@@ -246,14 +259,14 @@ public final class CostOperations {
 	private static double CalculateMultiplier(HyperGraph graph, Hyperedge e, Element child) {
 		double multiplier = 1.0;
 
-		System.out.println(e + "\n----->" +child);
+//		System.out.println(e + "\n----->" + child);
 		if (!(child instanceof Relationship)) {
 
 			if (e.getType() == HyperedgeTypeEnum.SecondLevel && child instanceof Atom) {
 				Atom root = (Atom) graph.get(e.getRoot());
 				List<HGHandle> attributes = Graphoperations.getAttributesClass(graph, e.getRoot());
 				if (attributes.contains(graph.getHandle(child)) || root == child) {
-					System.out.println("FFFFFFFFFFFFF");
+//					System.out.println("FFFFFFFFFFFFF");
 
 					multiplier = root.getCount();
 				} else { // find the path to the root
@@ -263,10 +276,10 @@ public final class CostOperations {
 			} else if (e.getType() == HyperedgeTypeEnum.Set) {
 				Hyperedge parentStruct = ((Hyperedge) graph
 						.get(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0)));
-				System.out.println("making for" + parentStruct);
+//				System.out.println("making for" + parentStruct);
 				ArrayList<RelStructure> parentRels = makeRelStructures(graph, parentStruct);
 
-				System.out.println(parentRels);
+//				System.out.println(parentRels);
 
 				Tree<RelStructure> tree = makeTree(graph, parentStruct, parentRels);
 				ArrayList<RelStructure> setRels = new ArrayList<>();
@@ -292,7 +305,7 @@ public final class CostOperations {
 					multiplier = multiplier * ((Atom) graph.get(e.getRoot())).getCount();
 				}
 
-				System.out.println("MMMMMMMMMM" + multiplier);
+//				System.out.println("MMMMMMMMMM" + multiplier);
 			}
 
 //			else if ((e.getType() == HyperedgeTypeEnum.Struct || e.getType() == HyperedgeTypeEnum.SecondLevel) && child instanceof Hyperedge

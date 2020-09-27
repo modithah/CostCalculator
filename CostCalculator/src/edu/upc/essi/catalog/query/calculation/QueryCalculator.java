@@ -91,9 +91,9 @@ public class QueryCalculator {
 				frequencies.put(first, entry);
 
 				while (!winners.isEmpty() && !remaining.isEmpty()) {
-					System.out.println(remaining);
+//					System.out.println(remaining);
 					Hyperedge main = winners.poll();
-					System.out.println(main);
+//					System.out.println(main);
 					Set<Atom> covered = new HashSet<>();
 					covered.addAll(main.getMultipliers().keySet());
 					covered.retainAll(remaining);
@@ -138,7 +138,7 @@ public class QueryCalculator {
 									frequencies.put(first, entry);
 									winners.add(first);
 									alraedyDone.addAll(first.getMultipliers().keySet());
-									System.out.println("done" + alraedyDone);
+//									System.out.println("done" + alraedyDone);
 								}
 							}
 						}
@@ -183,7 +183,7 @@ public class QueryCalculator {
 		}
 		
 
-		System.out.println("#################### ------>"+totalSum);
+//		System.out.println("#################### ------>"+totalSum);
 		
 		for (Map<Atom, Double> map : globalfrequencies.values()) {
 			for (Atom key : map.keySet()) {
