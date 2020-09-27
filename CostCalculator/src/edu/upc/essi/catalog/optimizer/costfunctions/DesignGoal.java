@@ -1,4 +1,4 @@
-package edu.upc.essi.catalog.optimizer;
+package edu.upc.essi.catalog.optimizer.costfunctions;
 
 import org.hypergraphdb.HyperGraph;
 

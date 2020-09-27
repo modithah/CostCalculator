@@ -1,4 +1,10 @@
 package edu.upc.essi.catalog.optimizer.costfunctions;
 
-public class TotalQueryCost_CF {
+import org.hypergraphdb.HyperGraph;
+
+public class TotalQueryCost_CF extends CostFunction {
+
+    public double evaluate(HyperGraph G) {
+        return 0;
+    }
 }
