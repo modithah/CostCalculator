@@ -1,6 +1,8 @@
 package edu.upc.essi.catalog.ops;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,11 +16,13 @@ import com.google.common.collect.Sets;
 //import javax.management.relation.Relation;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.algorithms.HGBreadthFirstTraversal;
+import org.hypergraphdb.algorithms.HGDepthFirstTraversal;
+import org.hypergraphdb.algorithms.SimpleALGenerator;
 import org.hypergraphdb.util.Pair;
 
-import com.github.andrewoma.dexx.collection.HashMap;
 
 import org.hypergraphdb.HyperGraph;
 
@@ -583,8 +587,43 @@ public final class Transformations {
 	}
 
 	public static Pair<Double, Double> getCostMinMax(HyperGraph graph, ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
+		double cost = 0.0;
+		
+		for (Pair<Double, ArrayList<Atom>> pair : workload) {
+			ArrayList<Atom> atomlist = pair.getSecond();
+			Atom entry = atomlist.get(0);
+			HashMap<Atom, Double> map= new HashMap<Atom, Double>();
+			map.put(entry, 1.0);
+			
+			HGDepthFirstTraversal traversal = 
+				    new HGDepthFirstTraversal(graph.getHandle(entry), new SimpleALGenerator(graph));
 
-		return new Pair<Double, Double>(0.0, 1000.0);
+				while (traversal.hasNext() && !atomlist.isEmpty())
+				{
+				    Pair<HGHandle, HGHandle> current = traversal.next();
+				    Relationship l = (Relationship)graph.get(current.getFirst());
+				    Atom atom = graph.get(current.getSecond());
+				    if(atom.getType()==AtomTypeEnum.Class) {
+//				    	l.getMultiplicities();
+				    	ArrayList<String> relorder = new ArrayList<>();
+				    	Atom atom1 = ((Atom) graph.get(l.getTargetAt(0)));
+				    	Atom atom2 = ((Atom) graph.get(l.getTargetAt(1)));
+						relorder.add(atom1.getName());
+						relorder.add(atom2.getName());
+						Collections.sort(relorder);
+						int index=relorder.indexOf(atom.getName());
+						Atom parentAtom = atom1==atom?atom2:atom1;
+						System.out.println(parentAtom+"  "+map.get(parentAtom));
+						double val=l.getMultiplicities()[index]*map.get(parentAtom);
+						cost+=val;
+						map.put(atom, val);
+						System.out.println(cost);
+				    }
+				    atomlist.remove(atom);
+				}
+		}
+		
+		return new Pair<Double, Double>(0.0, cost);
 
 	}
 
