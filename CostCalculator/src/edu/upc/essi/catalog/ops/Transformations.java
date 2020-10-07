@@ -585,6 +585,18 @@ public final class Transformations {
 
 		return new Pair<Double, Double>(global, 10 * global);
 	}
+	
+	public static Pair<Double, Double> getDepthMinMax(HyperGraph graph) {
+		List<Atom> classes = Graphoperations.getClassAtomList(graph);
+		
+		return new Pair<Double, Double>(1.0, (double) classes.size());
+	}
+	
+	public static Pair<Double, Double> getHeterogenietyMinMax(HyperGraph graph) {
+		List<Atom> classes = Graphoperations.getClassAtomList(graph);
+		
+		return new Pair<Double, Double>(1.0, (double) classes.size());
+	}
 
 	public static Pair<Double, Double> getCostMinMax(HyperGraph graph, ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
 		double cost = 0.0;
@@ -613,11 +625,11 @@ public final class Transformations {
 						Collections.sort(relorder);
 						int index=relorder.indexOf(atom.getName());
 						Atom parentAtom = atom1==atom?atom2:atom1;
-						System.out.println(parentAtom+"  "+map.get(parentAtom));
+//						System.out.println(parentAtom+"  "+map.get(parentAtom));
 						double val=l.getMultiplicities()[index]*map.get(parentAtom);
 						cost+=val;
 						map.put(atom, val);
-						System.out.println(cost);
+//						System.out.println(cost);
 				    }
 				    atomlist.remove(atom);
 				}
