@@ -39,6 +39,7 @@ public class NormalizedWeightedSum_DG {
     public NormalizedWeightedSum_DG(Set<Pair<CostFunction, Double>> costFunctions) {
         this.costFunctions = costFunctions;
         minimumPoints = Maps.newHashMap();
+        
         maximumPoints = Maps.newHashMap();
     }
 

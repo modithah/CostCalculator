@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.optimizer;
 
+import aima.core.search.framework.problem.Problem;
 import edu.upc.essi.catalog.IO.python.SolverCaller;
 import edu.upc.essi.catalog.IO.python.SolverWriter;
 import edu.upc.essi.catalog.constants.Const;
@@ -35,6 +36,10 @@ public class WorkflowExecutions {
 			// Generate a random design
 			generator.main(new String[]{});
 			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+
+			Problem problem = new Problem(graph,)
+
+			//Calculate final cost
 			CostResult result = CostCalculator.calculateCost(graph);
 			System.out.println("-----Final Result------");
 			System.out.println(result);
