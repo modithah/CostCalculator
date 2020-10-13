@@ -8,17 +8,19 @@ import edu.upc.essi.catalog.optimizer.actions.ActionsCatalog;
 import edu.upc.essi.catalog.optimizer.actions.UnionAction;
 import org.hypergraphdb.HyperGraph;
 
+import java.util.UUID;
+
 public class DocDesignResultsFunction implements ResultFunction {
     @Override
     public Object result(Object o, Action a) {
         if (a instanceof UnionAction) {
             HyperGraph G = (HyperGraph)o;
-            Graphoperations.makeGraphCopy();
+            HyperGraph newG = Graphoperations.makeGraphCopy(UUID.randomUUID().toString());
             UnionAction uA = (UnionAction)a;
-            //Is this G global??
-            Transformations.union(G,uA.getA(),uA.getB());
 
-            return G;
+            Transformations.union(newG,uA.getA(),uA.getB());
+
+            return newG;
         }
         return null;
     }

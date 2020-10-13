@@ -5,6 +5,7 @@ import edu.upc.essi.catalog.cost.CostResult;
 import edu.upc.essi.catalog.generators.GenerateRandomDesign;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
+import org.json.JSONException;
 
 public class ShotgunHillClimbing {
 
@@ -20,7 +21,15 @@ public class ShotgunHillClimbing {
 		int iterations = 0;
 		do {
 			++iterations;
-			solution = WorkflowExecutions.run();
+
+			WorkflowExecutions worker = new WorkflowExecutions();
+			HyperGraph G = worker.run();
+			try {
+				CostResult result = CostCalculator.calculateCost(G);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
 			if (bestSoFar == null) bestSoFar = solution;
 			else {
 				if (bestSoFar.getSecond() < solution.getSecond()) {
