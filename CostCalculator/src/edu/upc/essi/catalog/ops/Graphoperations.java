@@ -3,15 +3,7 @@ package edu.upc.essi.catalog.ops;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
@@ -78,21 +70,18 @@ public final class Graphoperations {
 		return el;
 	}
 
-	public static void makeGraphCopy(String foldername) {
-//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-//		graph.close();
-		String source = Const.HG_LOCATION_BOOK;
-		File srcDir = new File(source);
-
-		String destination = Const.HG_LOCATION_BASE + foldername;
-		File destDir = new File(destination);
-
+	public static HyperGraph makeGraphCopy(HyperGraph source) {
+		//String source = Const.HG_LOCATION_BOOK;
+		File srcDir = new File(source.getStore().getDatabaseLocation());
+		//String destination = Const.HG_LOCATION_BASE + foldername;
+		File destDir = new File(source.getStore().getDatabaseLocation()+File.separator+ UUID.randomUUID().toString());
 		try {
-			System.out.println(destDir);
+			//System.out.println(destDir);
 			FileUtils.copyDirectory(srcDir, destDir);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return new HyperGraph(destDir.getAbsolutePath());
 	}
 	
 	public static HyperGraph revertGraph(HyperGraph graph, String foldername) {

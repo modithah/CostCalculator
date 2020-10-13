@@ -2,6 +2,7 @@ package edu.upc.essi.catalog.optimizer;
 
 import aima.core.agent.Action;
 import aima.core.search.framework.problem.ActionsFunction;
+import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
 import edu.upc.essi.catalog.optimizer.actions.ActionsCatalog;
 import edu.upc.essi.catalog.optimizer.actions.UnionAction;
@@ -18,8 +19,11 @@ public class DocDesignActionsFunction implements ActionsFunction {
         Set<Action> actions = Sets.newHashSet();
 
         // Union
-        Transformations.getUnionCandidates(G).forEach(uCandidate ->
-                actions.add(new UnionAction(uCandidate.getFirst(), uCandidate.getSecond())));
+        Transformations.getUnionCandidates(G).forEach(uCandidate -> {
+            //Create a copy
+            HyperGraph newG = Graphoperations.makeGraphCopy(G);
+            actions.add(new UnionAction(newG,uCandidate.getFirst(), uCandidate.getSecond()));
+        });
 
 
         return actions;

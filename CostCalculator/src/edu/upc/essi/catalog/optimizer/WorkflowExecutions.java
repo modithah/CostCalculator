@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.testng.collections.Lists;
 
+import java.io.File;
 import java.util.*;
 
 public class WorkflowExecutions {
@@ -33,6 +34,10 @@ public class WorkflowExecutions {
 	public static Set<HyperGraph> worstConfigurations;
 	public static double optimalh;
 	public static double worsth;
+
+	public static void main(String[] args) {
+		new WorkflowExecutions().run();
+	}
 
 	public HyperGraph run() {
 		usedConfigurations = Sets.newHashSet();

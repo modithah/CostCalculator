@@ -20,15 +20,16 @@ public class ShotgunHillClimbing {
 		int timesConverged = 0;
 		int iterations = 0;
 		do {
+			System.out.println("ITERATIONS "+iterations);
 			++iterations;
 
 			WorkflowExecutions worker = new WorkflowExecutions();
 			HyperGraph G = worker.run();
-			try {
+			/**try {
 				CostResult result = CostCalculator.calculateCost(G);
 			} catch (JSONException e) {
 				e.printStackTrace();
-			}
+			}**/
 
 			if (bestSoFar == null) bestSoFar = solution;
 			else {
@@ -39,7 +40,7 @@ public class ShotgunHillClimbing {
 					++timesConverged;
 				}
 			}
-		} while (timesConverged < 30);
+		} while (timesConverged < 1);
 
 	}
 
