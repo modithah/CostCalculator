@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGQuery.hg;
+import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.algorithms.HGBreadthFirstTraversal;
 import org.hypergraphdb.algorithms.HGDepthFirstTraversal;
 import org.hypergraphdb.algorithms.SimpleALGenerator;
@@ -41,8 +42,13 @@ public final class Transformations {
 	public static boolean union(HyperGraph graph, Hyperedge hyp1, Hyperedge hyp2) {
 
 		// TODO condidions
-		List<HGHandle> parents1 = graph.findAll(hg.contains(graph.getHandle(hyp1)));
-		List<HGHandle> parents2 = graph.findAll(hg.contains(graph.getHandle(hyp2)));
+//		Hyperedge x = graph.findOne(hg.eq(hyp1));
+		List<HGHandle> parents1 = graph.findAll(hg.contains(graph.findOne(hg.eq(hyp1))));
+		List<HGHandle> parents2 = graph.findAll(hg.contains(graph.findOne(hg.eq(hyp2))));
+		hyp1=graph.get(graph.findOne(hg.eq(hyp1)));
+		hyp2=graph.get(graph.findOne(hg.eq(hyp2)));
+		 
+		
 
 		if (!((hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.Set)
 				|| (hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.FirstLevel))) {
