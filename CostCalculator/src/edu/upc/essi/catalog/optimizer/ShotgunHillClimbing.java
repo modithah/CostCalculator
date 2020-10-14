@@ -16,8 +16,8 @@ public class ShotgunHillClimbing {
 
 	public static void main(String[] args) {
 		//Shotgun hill-climbing
-		Pair<HyperGraph, Double> solution = null;
-		Pair<HyperGraph, Double> bestSoFar = null;
+		Pair<String, Double> solution = null;
+		Pair<String, Double> bestSoFar = null;
 		int timesConverged = 0;
 		int iterations = 0;
 		do {
@@ -25,8 +25,8 @@ public class ShotgunHillClimbing {
 			++iterations;
 
 			WorkflowExecutions worker = new WorkflowExecutions();
-			HyperGraph G = worker.run();
-			System.out.println("STRING DESIGN:"+Graphoperations.stringDesign(G));
+			solution = worker.run();
+
 			/**try {
 				CostResult result = CostCalculator.calculateCost(G);
 			} catch (JSONException e) {
@@ -43,6 +43,8 @@ public class ShotgunHillClimbing {
 				}
 			}
 		} while (/*timesConverged*/iterations < 3);
+
+		System.out.println("You are done, the solution has a cost "+bestSoFar.getSecond()+" with design "+bestSoFar.getFirst());
 
 	}
 

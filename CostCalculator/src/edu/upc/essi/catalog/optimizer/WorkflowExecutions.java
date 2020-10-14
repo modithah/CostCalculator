@@ -39,7 +39,7 @@ public class WorkflowExecutions {
 		new WorkflowExecutions().run();
 	}
 
-	public HyperGraph run() {
+	public Pair<String, Double> run() {
 		usedConfigurations = Sets.newHashSet();
 		HyperGraph out = null;
 		optimalConfigurations = Sets.newHashSet();
@@ -65,7 +65,14 @@ public class WorkflowExecutions {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return out;
+
+		CostResult result=null;
+		try {
+			result = CostCalculator.calculateCost(out);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return new Pair<>(Graphoperations.stringDesign(out), result.getStorageSize());
 	}
 
 
