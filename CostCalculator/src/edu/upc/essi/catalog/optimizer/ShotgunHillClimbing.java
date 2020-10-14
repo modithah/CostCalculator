@@ -38,7 +38,7 @@ public class ShotgunHillClimbing {
 
 			if (bestSoFar == null) bestSoFar = solution;
 			else {
-				if (bestSoFar.getSecond() < solution.getSecond()) {
+				if (solution.getSecond() < bestSoFar.getSecond()) {
 					timesConverged = 0;
 					bestSoFar = solution;
 				} else {

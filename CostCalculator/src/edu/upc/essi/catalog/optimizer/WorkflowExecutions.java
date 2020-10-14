@@ -61,22 +61,13 @@ public class WorkflowExecutions {
 			Problem problem = new Problem(G,new DocDesignActionsFunction(),new DocDesignResultsFunction(),new DocDesignGoalTest());
 			HillClimbingSearch search =  new HillClimbingSearch(new DocDesignHeuristic());
 			SearchAgent agent = new SearchAgent(problem,search);
-
 			out = (HyperGraph)search.getLastSearchState();
-
-
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		CostResult result=null;
-		try {
-			result = CostCalculator.calculateCost(out);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return new Pair<>(Graphoperations.stringDesign(out), result.getStorageSize());
+		return new Pair<>(Graphoperations.stringDesign(out), SingletonMultiObjectiveDesignGoal.INSTANCE.getDG().evaluate(out));
 	}
 
 
