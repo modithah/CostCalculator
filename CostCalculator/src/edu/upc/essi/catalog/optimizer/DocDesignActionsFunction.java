@@ -5,6 +5,7 @@ import aima.core.search.framework.problem.ActionsFunction;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
 import edu.upc.essi.catalog.optimizer.actions.ActionsCatalog;
+import edu.upc.essi.catalog.optimizer.actions.FlattenAction;
 import edu.upc.essi.catalog.optimizer.actions.UnionAction;
 import org.assertj.core.util.Sets;
 import org.hypergraphdb.HyperGraph;
@@ -23,6 +24,13 @@ public class DocDesignActionsFunction implements ActionsFunction {
             //Create a copy
             HyperGraph newG = Graphoperations.makeGraphCopy(G);
             actions.add(new UnionAction(newG,uCandidate.getFirst(), uCandidate.getSecond()));
+        });
+
+        //Flatten
+        Transformations.getFlattenCandidates(G).forEach(fCandidate -> {
+            //Create a copy
+            HyperGraph newG = Graphoperations.makeGraphCopy(G);
+            actions.add(new FlattenAction(newG,fCandidate));
         });
 
 

@@ -45,6 +45,7 @@ public class ShotgunHillClimbing {
 					++timesConverged;
 				}
 			}
+			System.out.println("bestSoFar cost = "+bestSoFar.getSecond());
 
 			SingletonMultiObjectiveDesignGoal.INSTANCE.destroy();
 		} while (/*timesConverged*/iterations < 3);

@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
 import edu.upc.essi.catalog.optimizer.actions.ActionsCatalog;
+import edu.upc.essi.catalog.optimizer.actions.FlattenAction;
 import edu.upc.essi.catalog.optimizer.actions.UnionAction;
 import org.hypergraphdb.HyperGraph;
 
@@ -16,12 +17,14 @@ public class DocDesignResultsFunction implements ResultFunction {
     public Object result(Object o, Action a) {
         HyperGraph newG = null;
         if (a instanceof UnionAction) {
-            //HyperGraph G = (HyperGraph)o;
-            //newG = Graphoperations.makeGraphCopy(G);
             UnionAction uA = (UnionAction)a;
             newG = uA.getG();
-
             Transformations.union(newG,uA.getA(),uA.getB());
+        }
+        else if (a instanceof FlattenAction) {
+            FlattenAction fA = (FlattenAction)a;
+            newG = fA.getG();
+            Transformations.flatten(newG,fA.getA());
         }
 
         DocDesignHeuristic fh = new DocDesignHeuristic();

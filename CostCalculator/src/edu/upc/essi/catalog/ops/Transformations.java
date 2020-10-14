@@ -75,7 +75,7 @@ public final class Transformations {
 	public static ArrayList<Pair<Hyperedge, Hyperedge>> getUnionCandidates(HyperGraph graph) {
 		ArrayList<Pair<Hyperedge, Hyperedge>> candidates = new ArrayList<>();
 		Queue<Hyperedge> queue = new LinkedList<>();
-		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
+		/*List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
 		makeHyperedgePairs(firstLevels, candidates);
 		firstLevels.forEach(f -> {
 			f.findAll().forEach(s -> {
@@ -84,7 +84,7 @@ public final class Transformations {
 					queue.add((Hyperedge) e);
 				}
 			});
-		});
+		});*/
 //		System.out.println("-----------");
 		while (!queue.isEmpty()) {
 			Hyperedge hyp = queue.poll();
