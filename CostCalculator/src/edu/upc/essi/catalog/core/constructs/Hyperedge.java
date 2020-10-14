@@ -251,6 +251,36 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 		}
 	}
 
+	public String printToString(int tabs) {
+		StringBuilder out = new StringBuilder();
+		if(!this.getMultipliers().keySet().isEmpty()) {
+			out.append("Size ->"+ this.getSize()+"\n");
+			out.append(this.getMultipliers()+"\n");
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < tabs; i++) {
+			sb.append(" ");
+		}
+		out.append(sb.toString() + type + " -> " + name+"\n");
+		Iterator<HGHandle> seconditer = this.findAll().iterator();
 
+		while (seconditer.hasNext()) {
+			HGHandle hgHandle2 = (HGHandle) seconditer.next();
+
+			Object a = graph.get(hgHandle2);
+//		System.out.println(a);
+			if (a instanceof Hyperedge) {
+				out.append( ((Hyperedge) a).printToString(tabs + 4) +"\n");
+			}
+
+			if (a instanceof Atom) {
+				out.append(sb.toString() + ((Atom) a).getName() + "\n");
+			}
+			if (a instanceof Relationship) {
+				out.append(sb.toString() + ((Relationship) a) + "\n");
+			}
+		}
+		return out.toString();
+	}
 
 }

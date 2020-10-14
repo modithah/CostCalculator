@@ -652,12 +652,21 @@ public final class Graphoperations {
 
 	public static void printDesign(HyperGraph graph2) {
 //		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
 		List<Hyperedge> hyperedges = graph2
 				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
 		for (Hyperedge hyperedge : hyperedges) {
 			hyperedge.print(0);
 		}
+	}
+
+	public static String stringDesign(HyperGraph graph2) {
+		StringBuilder s = new StringBuilder();
+		List<Hyperedge> hyperedges = graph2
+				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+		for (Hyperedge hyperedge : hyperedges) {
+			s.append(hyperedge.printToString(0));
+		}
+		return s.toString();
 	}
 
 //	public static void printDesign() {

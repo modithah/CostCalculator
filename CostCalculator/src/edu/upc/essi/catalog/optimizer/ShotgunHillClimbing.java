@@ -3,6 +3,7 @@ package edu.upc.essi.catalog.optimizer;
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.cost.CostResult;
 import edu.upc.essi.catalog.generators.GenerateRandomDesign;
+import edu.upc.essi.catalog.ops.Graphoperations;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 import org.json.JSONException;
@@ -25,6 +26,7 @@ public class ShotgunHillClimbing {
 
 			WorkflowExecutions worker = new WorkflowExecutions();
 			HyperGraph G = worker.run();
+			System.out.println("STRING DESIGN:"+Graphoperations.stringDesign(G));
 			/**try {
 				CostResult result = CostCalculator.calculateCost(G);
 			} catch (JSONException e) {
@@ -40,7 +42,7 @@ public class ShotgunHillClimbing {
 					++timesConverged;
 				}
 			}
-		} while (/*timesConverged*/iterations < 2);
+		} while (/*timesConverged*/iterations < 3);
 
 	}
 
