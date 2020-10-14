@@ -43,8 +43,9 @@ public class GenerateRandomDesign {
 		// TODO Auto-generated method stub
 		File serverDir = new File(Const.HG_LOCATION_BOOK );
 		FileUtils.cleanDirectory(serverDir);
-		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json");
 		HyperGraph graph = new HyperGraph(serverDir.getAbsolutePath()+ File.separator + UUID.randomUUID().toString());
+		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json",graph);
+		
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
 		RelStructure dummyRelStr = new RelStructure(dummyRel, null);
@@ -450,7 +451,7 @@ public class GenerateRandomDesign {
 		try {
 			Graphoperations.addHyperedgetoGraph(graph, "design", HyperedgeTypeEnum.Database_Doc,
 					firstLevels.toArray(new HGHandle[firstLevels.size()]));
-			Graphoperations.printDesign();
+//			Graphoperations.printDesign();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

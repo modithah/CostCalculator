@@ -33,15 +33,15 @@ import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 
 public final class Graphoperations {
 
-	static HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-
-	static {
-		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-	}
+//	static HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//
+//	static {
+//		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//	}
 
 	public Graphoperations() {
 		// TODO Auto-generated constructor stub
-		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 	}
 
 	/**
@@ -50,12 +50,12 @@ public final class Graphoperations {
 	 * @param type
 	 * @return
 	 */
-	public static Hyperedge getDBHyperedgebyType(HyperedgeTypeEnum type) {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		List<Object> r = hg.getAll(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", type)));
-		graph.close();
-		return (Hyperedge) r.get(0);
-	}
+//	public static Hyperedge getDBHyperedgebyType(HyperedgeTypeEnum type) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		List<Object> r = hg.getAll(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", type)));
+//		graph.close();
+//		return (Hyperedge) r.get(0);
+//	}
 
 	/**
 	 * Returns the element by a hgHandle
@@ -63,12 +63,12 @@ public final class Graphoperations {
 	 * @param handle
 	 * @return
 	 */
-	public static Element getElementbyHandle(HGHandle handle) {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		Element el = graph.get(handle);
-//		graph.close();
-		return el;
-	}
+//	public static Element getElementbyHandle(HGHandle handle) {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		Element el = graph.get(handle);
+////		graph.close();
+//		return el;
+//	}
 
 	public static HyperGraph makeGraphCopy(HyperGraph source) {
 		//String source = Const.HG_LOCATION_BOOK;
@@ -116,33 +116,33 @@ public final class Graphoperations {
 	 * @param atomName
 	 * @return
 	 */
-	public static AdjacencyList makeHashmap(String atomName) {
-		AdjacencyList l = new AdjacencyList();
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
-
-		IncidenceSet incidence = graph.getIncidenceSet(atom);
-
-		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
-
-		for (HGHandle hgHandle : incidence) {
-			q.add(Pair.of(hgHandle, atom));
-		}
-
-		while (!q.isEmpty()) {
-			Pair<HGHandle, HGHandle> tmp = q.poll();
-			Object parent = graph.get(tmp.getLeft());
-			Object child = graph.get(tmp.getRight());
-			if (parent instanceof Hyperedge) {
-				l.AddToSet((Element) parent, (Element) child);
-				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
-					q.add(Pair.of(hgHandle, tmp.getLeft()));
-				}
-			}
-		}
-		graph.close();
-		return l;
-	}
+//	public static AdjacencyList makeHashmap(String atomName) {
+//		AdjacencyList l = new AdjacencyList();
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
+//
+//		IncidenceSet incidence = graph.getIncidenceSet(atom);
+//
+//		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
+//
+//		for (HGHandle hgHandle : incidence) {
+//			q.add(Pair.of(hgHandle, atom));
+//		}
+//
+//		while (!q.isEmpty()) {
+//			Pair<HGHandle, HGHandle> tmp = q.poll();
+//			Object parent = graph.get(tmp.getLeft());
+//			Object child = graph.get(tmp.getRight());
+//			if (parent instanceof Hyperedge) {
+//				l.AddToSet((Element) parent, (Element) child);
+//				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
+//					q.add(Pair.of(hgHandle, tmp.getLeft()));
+//				}
+//			}
+//		}
+//		graph.close();
+//		return l;
+//	}
 
 	/**
 	 * Algorithm 1 in the paper
@@ -150,68 +150,68 @@ public final class Graphoperations {
 	 * @param atomNames - queried atoms
 	 * @return adjacency list of hyperedges corresponding to the queries
 	 */
-	public static AdjacencyList makeHashmap(String... atomNames) {
-		AdjacencyList l = new AdjacencyList();
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
-
-//		System.out.println(graph);
-		for (String atomName : atomNames) {
-
-			HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
-			if (atom != null) {
-//				System.out.println(atomName);
-				HGSearchResult<Object> y = graph.find(hg.contains(atom));
-				while (y.hasNext()) {
-					HGHandle type = (HGHandle) y.next();
-//					System.out.println(type);
-					q.add(Pair.of(type, atom));
-				}
-
-//				IncidenceSet incidence = graph.getIncidenceSet(atom);
-//				for (HGHandle hgHandle : incidence) {
-//					q.add(Pair.of(hgHandle, atom));
+//	public static AdjacencyList makeHashmap(String... atomNames) {
+//		AdjacencyList l = new AdjacencyList();
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		PriorityQueue<Pair<HGHandle, HGHandle>> q = new PriorityQueue<Pair<HGHandle, HGHandle>>();
+//
+////		System.out.println(graph);
+//		for (String atomName : atomNames) {
+//
+//			HGHandle atom = hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", atomName)));
+//			if (atom != null) {
+////				System.out.println(atomName);
+//				HGSearchResult<Object> y = graph.find(hg.contains(atom));
+//				while (y.hasNext()) {
+//					HGHandle type = (HGHandle) y.next();
+////					System.out.println(type);
+//					q.add(Pair.of(type, atom));
 //				}
-			}
-		}
-//		System.out.println("xxxx");
-		while (!q.isEmpty()) {
-			Pair<HGHandle, HGHandle> tmp = q.poll();
-			Object parent = graph.get(tmp.getLeft());
-			Object child = graph.get(tmp.getRight());
-			if (parent instanceof Hyperedge) {
-
-//				System.out.println("addding"+ (Element) parent +"- >"+ (Element) child);
-//				System.out.println(l.getMap().keySet());
-				l.AddToSet((Element) parent, (Element) child);
-
-				HGSearchResult<Object> y = graph.find(hg.contains(tmp.getLeft()));
-//				System.out.println(graph.get(tmp.getLeft()) + "sssssssssss");
-				while (y.hasNext()) {
-					HGHandle type = (HGHandle) y.next();
-//					System.out.println(graph.get(type).toString());
-					q.add(Pair.of(type, tmp.getLeft()));
-				}
-
-//				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
-//					q.add(Pair.of(hgHandle, tmp.getLeft()));
+//
+////				IncidenceSet incidence = graph.getIncidenceSet(atom);
+////				for (HGHandle hgHandle : incidence) {
+////					q.add(Pair.of(hgHandle, atom));
+////				}
+//			}
+//		}
+////		System.out.println("xxxx");
+//		while (!q.isEmpty()) {
+//			Pair<HGHandle, HGHandle> tmp = q.poll();
+//			Object parent = graph.get(tmp.getLeft());
+//			Object child = graph.get(tmp.getRight());
+//			if (parent instanceof Hyperedge) {
+//
+////				System.out.println("addding"+ (Element) parent +"- >"+ (Element) child);
+////				System.out.println(l.getMap().keySet());
+//				l.AddToSet((Element) parent, (Element) child);
+//
+//				HGSearchResult<Object> y = graph.find(hg.contains(tmp.getLeft()));
+////				System.out.println(graph.get(tmp.getLeft()) + "sssssssssss");
+//				while (y.hasNext()) {
+//					HGHandle type = (HGHandle) y.next();
+////					System.out.println(graph.get(type).toString());
+//					q.add(Pair.of(type, tmp.getLeft()));
 //				}
-			}
-		}
-//		graph.close();
-		return l;
-	}
+//
+////				for (HGHandle hgHandle : graph.getIncidenceSet(tmp.getLeft())) {
+////					q.add(Pair.of(hgHandle, tmp.getLeft()));
+////				}
+//			}
+//		}
+////		graph.close();
+//		return l;
+//	}
 
 	/**
 	 * 
 	 * @return list of all atom names in the catalog
 	 */
-	public static List<String> getAllAtoms() {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		List<Atom> atoms = graph.getAll(hg.type(Atom.class));
-		graph.close();
-		return atoms.stream().sorted().map(Atom::getName).collect(Collectors.toList());
-	}
+//	public static List<String> getAllAtoms() {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		List<Atom> atoms = graph.getAll(hg.type(Atom.class));
+//		graph.close();
+//		return atoms.stream().sorted().map(Atom::getName).collect(Collectors.toList());
+//	}
 
 	public static List<Atom> getAtomList(HyperGraph graph) {
 //		 = new HyperGraph(Const.HG_LOCATION_BOOK);
@@ -252,13 +252,13 @@ public final class Graphoperations {
 		return rels;
 	}
 
-	public static List<Hyperedge> getAllFirstLevels() {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		List<Hyperedge> hyperedges = graph
-				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
-//		graph.close();
-		return hyperedges;
-	}
+//	public static List<Hyperedge> getAllFirstLevels() {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		List<Hyperedge> hyperedges = graph
+//				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+////		graph.close();
+//		return hyperedges;
+//	}
 
 	public static List<Hyperedge> getAllFirstLevels(HyperGraph graph) {
 		List<Hyperedge> hyperedges = graph
@@ -267,38 +267,38 @@ public final class Graphoperations {
 		return hyperedges;
 	}
 
-	public static List<Hyperedge> getAllDesigns() {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		List<Hyperedge> hyperedges = graph
-				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Design)));
-//		graph.close();
-		return hyperedges;
-	}
+//	public static List<Hyperedge> getAllDesigns() {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		List<Hyperedge> hyperedges = graph
+//				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Design)));
+////		graph.close();
+//		return hyperedges;
+//	}
 
-	public static List<Hyperedge> GetFirstLevelsOfDesign(Hyperedge design) {
-		List<Hyperedge> l = new ArrayList<>();
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-//		HGHandle designHandle = graph.getHandle(design);
-		design.findAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel))).iterator()
-				.forEachRemaining(d -> {
-					l.add(graph.get(d));
-				});
-		return l;
-	}
+//	public static List<Hyperedge> GetFirstLevelsOfDesign(Hyperedge design) {
+//		List<Hyperedge> l = new ArrayList<>();
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+////		HGHandle designHandle = graph.getHandle(design);
+//		design.findAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel))).iterator()
+//				.forEachRemaining(d -> {
+//					l.add(graph.get(d));
+//				});
+//		return l;
+//	}
 
-	public static void addElementToHyperedge(HGHandle parent, HGHandle child) {
-		Hyperedge parentel = (Hyperedge) getElementbyHandle(parent);
-		parentel.add(child);
-		Const.graph.update(parentel);
-	}
+//	public static void addElementToHyperedge(HGHandle parent, HGHandle child) {
+//		Hyperedge parentel = (Hyperedge) getElementbyHandle(parent);
+//		parentel.add(child);
+//		Const.graph.update(parentel);
+//	}
 
 	public static HGHandle getHyperedgebyNameType(HyperGraph graph, String name, HyperedgeTypeEnum type) {
 		return hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("name", name), hg.eq("type", type)));
 	}
 
-	public static HGHandle getHyperedgebyNameType(String name, HyperedgeTypeEnum type) {
-		return hg.findOne(Const.graph, hg.and(hg.type(Hyperedge.class), hg.eq("name", name), hg.eq("type", type)));
-	}
+//	public static HGHandle getHyperedgebyNameType(String name, HyperedgeTypeEnum type) {
+//		return hg.findOne(Const.graph, hg.and(hg.type(Hyperedge.class), hg.eq("name", name), hg.eq("type", type)));
+//	}
 
 	public static HGHandle getAtomByName(HyperGraph graph, String name) {
 		return hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", name)));
@@ -660,15 +660,15 @@ public final class Graphoperations {
 		}
 	}
 
-	public static void printDesign() {
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-		List<Hyperedge> hyperedges = graph
-				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Database_Doc)));
-		for (Hyperedge hyperedge : hyperedges) {
-			hyperedge.print(0);
-		}
-	}
+//	public static void printDesign() {
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		System.out.println("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+//		List<Hyperedge> hyperedges = graph
+//				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Database_Doc)));
+//		for (Hyperedge hyperedge : hyperedges) {
+//			hyperedge.print(0);
+//		}
+//	}
 
 	public static void printDesign(String path, HyperGraph graph) {
 //		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
@@ -744,5 +744,10 @@ public final class Graphoperations {
 		}));
 
 		return atoms.size() == 1;
+	}
+
+	public static Relationship getElementbyHandle(HyperGraph graph, HGHandle relationshipByNameandSource) {
+		// TODO Auto-generated method stub
+		return  graph.get(relationshipByNameandSource);
 	}
 }
