@@ -10,7 +10,7 @@ import org.hypergraphdb.util.Pair;
 import java.util.Map;
 import java.util.Set;
 
-public class NormalizedWeightedSum_DG {
+public class NormalizedWeightedSum_DG extends DesignGoal {
 
     private Set<Pair<CostFunction, Double>> costFunctions;
 
@@ -21,6 +21,7 @@ public class NormalizedWeightedSum_DG {
     public NormalizedWeightedSum_DG(HyperGraph G, double queryCostWeight, double storageSpaceWeight) {
         Set<Pair<CostFunction, Double>> costFunctions = Sets.newHashSet();
         minimumPoints = Maps.newHashMap();
+        maximumPoints = Maps.newHashMap();
 
         //Call first storage cost, as there is some update going on to G
         costFunctions.add(new Pair<>(new StorageSpace_CF(), storageSpaceWeight));
@@ -43,6 +44,7 @@ public class NormalizedWeightedSum_DG {
         maximumPoints = Maps.newHashMap();
     }
 
+    @Override
     public double evaluate(HyperGraph G) {
         double V = 0;
         for (Pair<CostFunction, Double> CF : costFunctions) {

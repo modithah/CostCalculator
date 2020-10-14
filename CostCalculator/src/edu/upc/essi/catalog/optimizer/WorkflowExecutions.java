@@ -13,6 +13,8 @@ import edu.upc.essi.catalog.cost.CostResult;
 import edu.upc.essi.catalog.generators.GenerateRandomDesign;
 import edu.upc.essi.catalog.metadata.GenerateMetadata;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import edu.upc.essi.catalog.optimizer.costfunctions.NormalizedWeightedSum_DG;
+import edu.upc.essi.catalog.optimizer.costfunctions.SingletonMultiObjectiveDesignGoal;
 import edu.upc.essi.catalog.query.calculation.QueryCalculator;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.assertj.core.util.Sets;
@@ -40,6 +42,7 @@ public class WorkflowExecutions {
 	}
 
 	public Pair<String, Double> run() {
+
 		usedConfigurations = Sets.newHashSet();
 		HyperGraph out = null;
 		optimalConfigurations = Sets.newHashSet();
@@ -53,6 +56,7 @@ public class WorkflowExecutions {
 			//generator.main(new String[]{});
 			//HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK+File.separator+UUID.randomUUID().toString());
 			HyperGraph G = GenerateRandomDesign.get();
+			SingletonMultiObjectiveDesignGoal.INSTANCE.init(new NormalizedWeightedSum_DG(G,0.5,0.5));
 
 			Problem problem = new Problem(G,new DocDesignActionsFunction(),new DocDesignResultsFunction(),new DocDesignGoalTest());
 			HillClimbingSearch search =  new HillClimbingSearch(new DocDesignHeuristic());
