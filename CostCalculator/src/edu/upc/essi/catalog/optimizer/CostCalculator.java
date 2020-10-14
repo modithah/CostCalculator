@@ -95,10 +95,11 @@ public class CostCalculator {
         ArrayList<Hyperedge> notUsed = new ArrayList<>();
 
         int collectionCounter = 0;
+        
         for (Hyperedge hyperedge : firstLevels) {
 
             collectionSize.add(hyperedge.getSize());
-//			System.out.println(collectionSize);
+//			System.out.println("FFFFFFFFFFFFFFFFFFFF" + hyperedge.getSize() + "    "+ hyperedge.getName());
             if (global.get(hyperedge).get(new Atom("~dummy")) != 0) {
                 collectionCounter++;
                 String collectionPrefix = "collection_" + collectionCounter;
@@ -139,8 +140,45 @@ public class CostCalculator {
                         }
                     }
                 } else {
+                	System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
+//                	System.out.println(global);
+                	int indexCount = 1;
+                	for (HGHandle secondLevel : secondLevels) {
+                		Hyperedge secondlevelHyperedge = (Hyperedge) graph.get(secondLevel);
+                        Atom secondLevelRoot = graph.get(secondlevelHyperedge.getRoot());
+                        hyperedgecount += hyperedge.getMultipliers().get(secondLevelRoot);
+                	}
+                	
+                	System.out.println("GGGGGGGGGGGGGGGG  "+hyperedgecount);
                     for (HGHandle secondLevel : secondLevels) {
-                        // TODO : heterogeneous collections
+                    	
+                        Hyperedge secondlevelHyperedge = (Hyperedge) graph.get(secondLevel);
+                        Atom secondLevelRoot = graph.get(secondlevelHyperedge.getRoot());
+//                        hyperedgecount += hyperedge.getMultipliers().get(secondLevelRoot);
+                        if (global.get(hyperedge).get(secondLevelRoot) != 0) {
+//    						System.out.println(global.get(hyperedge).get(secondLevelRoot));
+//                            col.add(new DataIndexMetadata(false, 1, hyperedgecount,
+//                                    global.get(hyperedge).get(secondLevelRoot), DataIndexMetadata.DataType.UUID));
+
+                            elmToString.put(hyperedge.getName() + "~" + secondLevelRoot.getName(),
+                                    collectionPrefix + "_index_" + indexCount);
+                            indexCount++;
+                        }
+
+                        for (Atom atom : global.get(hyperedge).keySet()) {
+                            if (!atom.getName().equals("~dummy") && !atom.getName().equals(secondLevelRoot.getName())
+                                    && global.get(hyperedge).get(atom) != 0) {
+//    						System.out.println(hyperedge.getMultipliers().get(atom));
+                                col.add(new DataIndexMetadata(false, hyperedge.getMultipliers().get(atom) / hyperedgecount,
+                                        hyperedge.getMultipliers().get(atom), global.get(hyperedge).get(atom),
+                                        DataIndexMetadata.DataType.INT));
+                                elmToString.put(hyperedge.getName() + "~" + atom.getName(),
+                                        collectionPrefix + "_index_" + indexCount);
+    							System.out.println(collectionPrefix+"_index_"+indexCount);
+                                indexCount++;
+                            }
+                        }
+                    	
                     }
                 }
 
