@@ -1,15 +1,7 @@
 package edu.upc.essi.catalog.generators;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.plaf.synth.SynthSpinnerUI;
 
@@ -47,12 +39,12 @@ public class GenerateRandomDesign {
 	final double pSet = 0.5;
 	final static double skip = 0;
 
-	public static void main(String[] args) throws IOException {
+	public static HyperGraph get() throws IOException {
 		// TODO Auto-generated method stub
-		File serverDir = new File(Const.HG_LOCATION_BOOK);
+		File serverDir = new File(Const.HG_LOCATION_BOOK );
 		FileUtils.cleanDirectory(serverDir);
 		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json");
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		HyperGraph graph = new HyperGraph(serverDir.getAbsolutePath()+ File.separator + UUID.randomUUID().toString());
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
 		RelStructure dummyRelStr = new RelStructure(dummyRel, null);
@@ -152,6 +144,7 @@ public class GenerateRandomDesign {
 		}
 		finalyzeGraph(graph);
 
+		return graph;
 	}
 
 	private static void chooseOperation(HyperGraph graph, Atom dummyAtom, RelStructure dummyRelStr,

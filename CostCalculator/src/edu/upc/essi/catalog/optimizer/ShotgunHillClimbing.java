@@ -40,7 +40,7 @@ public class ShotgunHillClimbing {
 					++timesConverged;
 				}
 			}
-		} while (timesConverged < 1);
+		} while (/*timesConverged*/iterations < 2);
 
 	}
 

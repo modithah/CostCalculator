@@ -47,13 +47,14 @@ public class WorkflowExecutions {
 		optimalh = Double.POSITIVE_INFINITY;
 		worsth = Double.NEGATIVE_INFINITY;
 
-		GenerateRandomDesign generator = new GenerateRandomDesign();
+		//GenerateRandomDesign generator = new GenerateRandomDesign();
 		try {
 			// Generate a random design
-			generator.main(new String[]{});
-			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK+File.separator+UUID.randomUUID().toString());
+			//generator.main(new String[]{});
+			//HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK+File.separator+UUID.randomUUID().toString());
+			HyperGraph G = GenerateRandomDesign.get();
 
-			Problem problem = new Problem(graph,new DocDesignActionsFunction(),new DocDesignResultsFunction(),new DocDesignGoalTest());
+			Problem problem = new Problem(G,new DocDesignActionsFunction(),new DocDesignResultsFunction(),new DocDesignGoalTest());
 			HillClimbingSearch search =  new HillClimbingSearch(new DocDesignHeuristic());
 			SearchAgent agent = new SearchAgent(problem,search);
 

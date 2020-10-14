@@ -35,12 +35,13 @@ public class Workflow {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		GenerateRandomDesign generator = new GenerateRandomDesign();
+		//GenerateRandomDesign generator = new GenerateRandomDesign();
 		GenerateMetadata metadataGen = new GenerateMetadata();
 		try {
 			// Generate a random design
-			generator.main(args);
-			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+			//generator.main(args);
+			//HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+			HyperGraph graph = GenerateRandomDesign.get();
 
 			// add the size and the multipliers
 			metadataGen.setSizeandMultipliers(graph);
