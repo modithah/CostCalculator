@@ -51,7 +51,7 @@ public class WorkflowExecutions {
 		try {
 			// Generate a random design
 			generator.main(new String[]{});
-			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK+File.separator+UUID.randomUUID().toString());
 
 			Problem problem = new Problem(graph,new DocDesignActionsFunction(),new DocDesignResultsFunction(),new DocDesignGoalTest());
 			HillClimbingSearch search =  new HillClimbingSearch(new DocDesignHeuristic());
