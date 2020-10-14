@@ -48,7 +48,7 @@ public class RandomDesign {
 	public static void main(String[] args) throws IOException {
 		File serverDir = new File(Const.HG_LOCATION_BOOK);
 		FileUtils.cleanDirectory(serverDir);
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample.json");
+//		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample.json");
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		for (int i = 0; i < 100; i++) {
 			String path = "C:\\hyper\\test\\designs\\" + i;

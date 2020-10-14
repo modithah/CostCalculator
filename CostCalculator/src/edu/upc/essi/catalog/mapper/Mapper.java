@@ -189,7 +189,7 @@ public static void main(String[] args) throws FileNotFoundException {
 			CreateGraph.main(null);
 			try {
 				Thread.sleep(2000);
-				atomss = Graphoperations.getAllAtoms();
+//				atomss = Graphoperations.getAllAtoms();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -22,7 +22,7 @@ public class run {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		Graphoperations.printDesign();
+//		Graphoperations.printDesign();
 
 		System.out.println("FFFFFFFF");
 

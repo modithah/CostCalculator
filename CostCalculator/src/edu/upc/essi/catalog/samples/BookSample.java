@@ -34,8 +34,8 @@ public class BookSample {
 //	JSONObject jo;
 	public static void main(String[] args) {
 		
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample.json");
-		LoadGraph.LoadDesignFromJSON("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample_design.json");
+//		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample.json");
+//		LoadGraph.LoadDesignFromJSON("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample_design.json");
 		
 //		LoadGraph.LoadDesignFromCSV("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample_design.json");
 		

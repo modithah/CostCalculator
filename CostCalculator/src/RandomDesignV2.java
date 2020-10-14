@@ -46,7 +46,7 @@ public class RandomDesignV2 {
 		// TODO Auto-generated method stub
 		File serverDir = new File(Const.HG_LOCATION_BOOK);
 		FileUtils.cleanDirectory(serverDir);
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample2.json");
+//		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample2.json");
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
@@ -421,7 +421,7 @@ public class RandomDesignV2 {
 		try {
 			Graphoperations.addHyperedgetoGraph(graph, "design", HyperedgeTypeEnum.Database_Doc,
 					firstLevels.toArray(new HGHandle[firstLevels.size()]));
-			Graphoperations.printDesign();
+//			Graphoperations.printDesign();
 
 
 		} catch (Exception e) {
