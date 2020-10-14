@@ -42,7 +42,7 @@ public class GenerateRandomDesign {
 	public static HyperGraph get() throws IOException {
 		// TODO Auto-generated method stub
 		File serverDir = new File(Const.HG_LOCATION_BOOK );
-		FileUtils.cleanDirectory(serverDir);
+//		FileUtils.cleanDirectory(serverDir);
 		HyperGraph graph = new HyperGraph(serverDir.getAbsolutePath()+ File.separator + UUID.randomUUID().toString());
 		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json",graph);
 		
