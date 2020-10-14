@@ -24,7 +24,6 @@ import org.hypergraphdb.algorithms.HGDepthFirstTraversal;
 import org.hypergraphdb.algorithms.SimpleALGenerator;
 import org.hypergraphdb.util.Pair;
 
-
 import org.hypergraphdb.HyperGraph;
 
 import edu.upc.essi.catalog.core.constructs.Atom;
@@ -45,10 +44,8 @@ public final class Transformations {
 //		Hyperedge x = graph.findOne(hg.eq(hyp1));
 		List<HGHandle> parents1 = graph.findAll(hg.contains(graph.findOne(hg.eq(hyp1))));
 		List<HGHandle> parents2 = graph.findAll(hg.contains(graph.findOne(hg.eq(hyp2))));
-		hyp1=graph.get(graph.findOne(hg.eq(hyp1)));
-		hyp2=graph.get(graph.findOne(hg.eq(hyp2)));
-		 
-		
+		hyp1 = graph.get(graph.findOne(hg.eq(hyp1)));
+		hyp2 = graph.get(graph.findOne(hg.eq(hyp2)));
 
 		if (!((hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.Set)
 				|| (hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.FirstLevel))) {
@@ -131,6 +128,7 @@ public final class Transformations {
 	}
 
 	public static boolean flatten(HyperGraph graph, Hyperedge hyp) {
+		hyp = graph.get(graph.findOne(hg.eq(hyp)));
 		HGHandle hypHandle = graph.getHandle(hyp);
 		HGHandle parentHandle = graph.findAll(hg.contains(hypHandle)).get(0);
 		Hyperedge parent = graph.get(parentHandle);
@@ -190,9 +188,16 @@ public final class Transformations {
 	public static boolean group(HyperGraph graph, GroupParams param) {
 
 		Hyperedge hyp = param.getHyp();
-		ArrayList<Relationship> rels = param.getRels();
-		Element elm = param.getElm();
+		hyp = graph.get(graph.findOne(hg.eq(hyp)));
+		ArrayList<Relationship> rels = new ArrayList<>();
+		param.getRels().forEach(r -> {
+			rels.add(graph.get(graph.findOne(hg.eq(r))));
+		});
 
+		Element elm = param.getElm();
+		elm = graph.get(graph.findOne(hg.eq(elm)));
+		
+		
 		if (!(hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel)) {
 			System.out.println("Group can be only inside a struct");
 			return false;
@@ -368,7 +373,9 @@ public final class Transformations {
 	}
 
 	public static boolean segregate(HyperGraph graph, Hyperedge set, Element el) {
-
+		set = graph.get(graph.findOne(hg.eq(set)));
+		el = graph.get(graph.findOne(hg.eq(el)));
+		
 		if (!(set.getType() == HyperedgeTypeEnum.Set || set.getType() == HyperedgeTypeEnum.FirstLevel)) {
 			System.out.println("Segregate can be only inside a Set");
 			return false;
@@ -507,9 +514,12 @@ public final class Transformations {
 	public static boolean embed(HyperGraph graph, EmbedParams param) {
 
 		Hyperedge child = param.getChild();
+		child = graph.get(graph.findOne(hg.eq(child)));
 		HGHandle childHandle = graph.getHandle(child);
 		Hyperedge grandParent = param.getGrandParent();
+		grandParent = graph.get(graph.findOne(hg.eq(grandParent)));
 		Hyperedge newParent = param.getParent();
+		newParent = graph.get(graph.findOne(hg.eq(newParent)));
 		Set<Relationship> used = findUsedRelationships(graph, grandParent, childHandle);
 //		System.out.println("XXXXXXXXXXXXXXXXXXXXX");
 //		System.out.println(param.getChild());
@@ -591,56 +601,56 @@ public final class Transformations {
 
 		return new Pair<Double, Double>(global, 10 * global);
 	}
-	
+
 	public static Pair<Double, Double> getDepthMinMax(HyperGraph graph) {
 		List<Atom> classes = Graphoperations.getClassAtomList(graph);
-		
-		return new Pair<Double, Double>(1.0, (double) classes.size());
-	}
-	
-	public static Pair<Double, Double> getHeterogenietyMinMax(HyperGraph graph) {
-		List<Atom> classes = Graphoperations.getClassAtomList(graph);
-		
+
 		return new Pair<Double, Double>(1.0, (double) classes.size());
 	}
 
-	public static Pair<Double, Double> getCostMinMax(HyperGraph graph, ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
+	public static Pair<Double, Double> getHeterogenietyMinMax(HyperGraph graph) {
+		List<Atom> classes = Graphoperations.getClassAtomList(graph);
+
+		return new Pair<Double, Double>(1.0, (double) classes.size());
+	}
+
+	public static Pair<Double, Double> getCostMinMax(HyperGraph graph,
+			ArrayList<Pair<Double, ArrayList<Atom>>> workload) {
 		double cost = 0.0;
-		
+
 		for (Pair<Double, ArrayList<Atom>> pair : workload) {
 			ArrayList<Atom> atomlist = pair.getSecond();
 			Atom entry = atomlist.get(0);
-			HashMap<Atom, Double> map= new HashMap<Atom, Double>();
+			HashMap<Atom, Double> map = new HashMap<Atom, Double>();
 			map.put(entry, 1.0);
-			
-			HGDepthFirstTraversal traversal = 
-				    new HGDepthFirstTraversal(graph.getHandle(entry), new SimpleALGenerator(graph));
 
-				while (traversal.hasNext() && !atomlist.isEmpty())
-				{
-				    Pair<HGHandle, HGHandle> current = traversal.next();
-				    Relationship l = (Relationship)graph.get(current.getFirst());
-				    Atom atom = graph.get(current.getSecond());
-				    if(atom.getType()==AtomTypeEnum.Class) {
+			HGDepthFirstTraversal traversal = new HGDepthFirstTraversal(graph.getHandle(entry),
+					new SimpleALGenerator(graph));
+
+			while (traversal.hasNext() && !atomlist.isEmpty()) {
+				Pair<HGHandle, HGHandle> current = traversal.next();
+				Relationship l = (Relationship) graph.get(current.getFirst());
+				Atom atom = graph.get(current.getSecond());
+				if (atom.getType() == AtomTypeEnum.Class) {
 //				    	l.getMultiplicities();
-				    	ArrayList<String> relorder = new ArrayList<>();
-				    	Atom atom1 = ((Atom) graph.get(l.getTargetAt(0)));
-				    	Atom atom2 = ((Atom) graph.get(l.getTargetAt(1)));
-						relorder.add(atom1.getName());
-						relorder.add(atom2.getName());
-						Collections.sort(relorder);
-						int index=relorder.indexOf(atom.getName());
-						Atom parentAtom = atom1==atom?atom2:atom1;
+					ArrayList<String> relorder = new ArrayList<>();
+					Atom atom1 = ((Atom) graph.get(l.getTargetAt(0)));
+					Atom atom2 = ((Atom) graph.get(l.getTargetAt(1)));
+					relorder.add(atom1.getName());
+					relorder.add(atom2.getName());
+					Collections.sort(relorder);
+					int index = relorder.indexOf(atom.getName());
+					Atom parentAtom = atom1 == atom ? atom2 : atom1;
 //						System.out.println(parentAtom+"  "+map.get(parentAtom));
-						double val=l.getMultiplicities()[index]*map.get(parentAtom);
-						cost+=val;
-						map.put(atom, val);
+					double val = l.getMultiplicities()[index] * map.get(parentAtom);
+					cost += val;
+					map.put(atom, val);
 //						System.out.println(cost);
-				    }
-				    atomlist.remove(atom);
 				}
+				atomlist.remove(atom);
+			}
 		}
-		
+
 		return new Pair<Double, Double>(0.0, cost);
 
 	}
