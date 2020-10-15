@@ -18,7 +18,7 @@ public class NormalizedWeightedSum_DG extends DesignGoal {
     private Map<String, Double> minimumPoints;
     private Map<String,  Double> maximumPoints;
 
-    public NormalizedWeightedSum_DG(HyperGraph G, double queryCostWeight, double storageSpaceWeight) {
+    public NormalizedWeightedSum_DG(HyperGraph G, double queryCostWeight, double storageSpaceWeight, double depthWeight, double heterogenityWeight) {
         Set<Pair<CostFunction, Double>> costFunctions = Sets.newHashSet();
         minimumPoints = Maps.newHashMap();
         maximumPoints = Maps.newHashMap();
@@ -33,6 +33,16 @@ public class NormalizedWeightedSum_DG extends DesignGoal {
         Pair<Double,Double> queryCostMinMax = Transformations.getCostMinMax(G,Workload.getWorkload(G));
         minimumPoints.put(TotalQueryCost_CF.class.getName(),queryCostMinMax.getFirst());
         maximumPoints.put(TotalQueryCost_CF.class.getName(),queryCostMinMax.getSecond());
+
+        costFunctions.add(new Pair<>(new DepthCost_CF(), depthWeight));
+        Pair<Double,Double> depthMinMax = Transformations.getDepthMinMax(G);
+        minimumPoints.put(DepthCost_CF.class.getName(),depthMinMax.getFirst());
+        maximumPoints.put(DepthCost_CF.class.getName(),depthMinMax.getSecond());
+
+        costFunctions.add(new Pair<>(new Heterogenity_CF(), heterogenityWeight));
+        Pair<Double,Double> heterogenityMinMax = Transformations.getHeterogenietyMinMax(G);
+        minimumPoints.put(Heterogenity_CF.class.getName(),heterogenityMinMax.getFirst());
+        maximumPoints.put(Heterogenity_CF.class.getName(),heterogenityMinMax.getSecond());
 
         this.costFunctions=costFunctions;
     }

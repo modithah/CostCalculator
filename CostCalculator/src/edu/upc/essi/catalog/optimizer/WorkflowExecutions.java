@@ -56,7 +56,7 @@ public class WorkflowExecutions {
 			//generator.main(new String[]{});
 			//HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK+File.separator+UUID.randomUUID().toString());
 			HyperGraph G = GenerateRandomDesign.get();
-			SingletonMultiObjectiveDesignGoal.INSTANCE.init(new NormalizedWeightedSum_DG(G,0.5,0.5));
+			SingletonMultiObjectiveDesignGoal.INSTANCE.init(new NormalizedWeightedSum_DG(G,0.25,0.25,0.25,0.25));
 
 			Problem problem = new Problem(G,new DocDesignActionsFunction(),new DocDesignResultsFunction(),new DocDesignGoalTest());
 			HillClimbingSearch search =  new HillClimbingSearch(new DocDesignHeuristic());

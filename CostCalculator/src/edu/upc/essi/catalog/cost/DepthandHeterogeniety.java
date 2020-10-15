@@ -1,3 +1,5 @@
+package edu.upc.essi.catalog.cost;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -27,7 +29,7 @@ public class DepthandHeterogeniety {
 //		Graphoperations.printDesign();
 	}
 
-	private static double CalculateDepth(HyperGraph graph) {
+	public static double CalculateDepth(HyperGraph graph) {
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
 		double max = 0.0;
 		Queue<Pair<Hyperedge, Double>> queue = new LinkedList<Pair<Hyperedge, Double>>();
@@ -54,7 +56,7 @@ public class DepthandHeterogeniety {
 		return max;
 	}
 
-	private static double CalculateHeterogeniety(HyperGraph graph) {
+	public static double CalculateHeterogeniety(HyperGraph graph) {
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
 		double max = 0.0;
 		Queue<Hyperedge> queue = new LinkedList<Hyperedge>();
