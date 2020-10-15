@@ -33,19 +33,19 @@ public class DocDesignResultsFunction implements ResultFunction {
         if (h < WorkflowExecutions.optimalh) {
             WorkflowExecutions.optimalh = h;
             WorkflowExecutions.optimalConfigurations = Sets.newHashSet();
-            WorkflowExecutions.optimalConfigurations.add(newG);
+            WorkflowExecutions.optimalConfigurations.add(Graphoperations.stringDesign(newG));
         }
         else if (h == WorkflowExecutions.optimalh) {
-            WorkflowExecutions.optimalConfigurations.add(newG);
+            WorkflowExecutions.optimalConfigurations.add(Graphoperations.stringDesign(newG));
         }
 
         if (h != Double.POSITIVE_INFINITY && h > WorkflowExecutions.worsth) {
             WorkflowExecutions.worsth = h;
             WorkflowExecutions.worstConfigurations = Sets.newHashSet();
-            WorkflowExecutions.worstConfigurations.add(newG);
+            WorkflowExecutions.worstConfigurations.add(Graphoperations.stringDesign(newG));
         }
         else if (h != Double.POSITIVE_INFINITY && h == WorkflowExecutions.worsth) {
-            WorkflowExecutions.worstConfigurations.add(newG);
+            WorkflowExecutions.worstConfigurations.add(Graphoperations.stringDesign(newG));
         }
         return newG;
     }

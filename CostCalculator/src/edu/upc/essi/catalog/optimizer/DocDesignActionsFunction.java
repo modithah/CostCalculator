@@ -23,14 +23,29 @@ public class DocDesignActionsFunction implements ActionsFunction {
         Transformations.getUnionCandidates(G).forEach(uCandidate -> {
             //Create a copy
             HyperGraph newG = Graphoperations.makeGraphCopy(G);
-            actions.add(new UnionAction(newG,uCandidate.getFirst(), uCandidate.getSecond()));
+
+            //Apply the transformation to check if its already tested
+            HyperGraph dummy = Graphoperations.makeGraphCopy(G);
+            Transformations.union(dummy,uCandidate.getFirst(), uCandidate.getSecond());
+            if (!WorkflowExecutions.usedConfigurations.contains(Graphoperations.stringDesign(dummy))) {
+                WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
+                actions.add(new UnionAction(newG, uCandidate.getFirst(), uCandidate.getSecond()));
+            }
         });
 
         //Flatten
         Transformations.getFlattenCandidates(G).forEach(fCandidate -> {
             //Create a copy
             HyperGraph newG = Graphoperations.makeGraphCopy(G);
-            actions.add(new FlattenAction(newG,fCandidate));
+
+            //Apply the transformation to check if its already tested
+            HyperGraph dummy = Graphoperations.makeGraphCopy(G);
+            Transformations.flatten(dummy,fCandidate);
+            if (!WorkflowExecutions.usedConfigurations.contains(Graphoperations.stringDesign(dummy))) {
+                WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
+                actions.add(new FlattenAction(newG,fCandidate));
+            }
+
         });
 
 

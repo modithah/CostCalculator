@@ -30,10 +30,10 @@ import java.util.*;
 
 public class WorkflowExecutions {
 
-	public static Set<HyperGraph> usedConfigurations;
+	public static Set<String> usedConfigurations;
 
-	public static Set<HyperGraph> optimalConfigurations;
-	public static Set<HyperGraph> worstConfigurations;
+	public static Set<String> optimalConfigurations;
+	public static Set<String> worstConfigurations;
 	public static double optimalh;
 	public static double worsth;
 
