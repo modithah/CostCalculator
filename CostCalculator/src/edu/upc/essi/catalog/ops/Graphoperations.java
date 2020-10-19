@@ -19,6 +19,7 @@ import com.google.common.collect.Table;
 
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
+import org.testng.internal.junit.ArrayAsserts;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
@@ -261,9 +262,16 @@ public final class Graphoperations {
 	}
 
 	public static List<Hyperedge> getAllFirstLevels(HyperGraph graph) {
-		List<Hyperedge> hyperedges = graph
-				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
-//		graph.close();
+		List<Hyperedge> hyperedges  = new ArrayList<>();
+		try {
+			 hyperedges = graph
+					.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+//			graph.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
 		return hyperedges;
 	}
 
@@ -661,11 +669,20 @@ public final class Graphoperations {
 
 	public static String stringDesign(HyperGraph graph2) {
 		StringBuilder s = new StringBuilder();
-		List<Hyperedge> hyperedges = graph2
-				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
-		for (Hyperedge hyperedge : hyperedges) {
-			s.append(hyperedge.printToString(0));
+		try {
+			List<Hyperedge> hyperedges = graph2
+					.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+			for (Hyperedge hyperedge : hyperedges) {
+				s.append(hyperedge.printToString(0));
+			}
 		}
+		catch (Exception e) {
+			// TODO: handle exception
+			
+			e.printStackTrace();
+			System.out.println("XXXXXXXXXX"+graph2);
+		}
+		
 		return s.toString();
 	}
 

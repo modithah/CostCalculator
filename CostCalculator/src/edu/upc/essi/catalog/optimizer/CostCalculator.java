@@ -90,6 +90,10 @@ public class CostCalculator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static ArrayList<ArrayList<DataIndexMetadata>> generateSolverData(HyperGraph graph,

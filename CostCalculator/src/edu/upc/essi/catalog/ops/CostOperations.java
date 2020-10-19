@@ -270,7 +270,11 @@ public final class CostOperations {
 
 					multiplier = root.getCount();
 				} else { // find the path to the root
+//System.out.println("OOOOOOOOOOOOOOOOOOOOOO");
+ArrayList<RelStructure> relationships = makeRelStructures(graph, e);
+Tree<RelStructure> tree = makeTree(graph, e, relationships);
 
+multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
 				}
 
 			} else if (e.getType() == HyperedgeTypeEnum.Set) {

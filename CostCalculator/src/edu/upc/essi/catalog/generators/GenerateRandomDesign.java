@@ -83,7 +83,7 @@ public class GenerateRandomDesign {
 		Relationship firstPick = allRels.remove(rand.nextInt(allRels.size()));
 		usedRels.add(firstPick);
 
-		boolean refer = false;//rand.nextBoolean();
+		boolean refer = rand.nextBoolean();
 //		for (int i = 0; i < 10; i++) {
 
 		int firstChoice = 2;// rand.nextInt(3);

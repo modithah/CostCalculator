@@ -117,7 +117,7 @@ public class SolverWriter {
 			writer.println(1, "]) ");
 			writer.println(1, "j.options.SOLVER = 1 ");
 			writer.println(1, "j.solve() ");
-			writer.println(1, "j.solve() ");
+//			writer.println(1, "j.solve() ");
 			writer.println(1, "dict = {} ");
 			collections.stream().forEach(s -> {
 				writer.println(1, "dict['" + s + "'] = 1 - " + s + "_evict.value[0] / " + s + "_leaf");
