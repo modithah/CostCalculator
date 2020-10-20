@@ -23,8 +23,9 @@ public final class SolverCaller {
 			conn.setRequestProperty("Accept", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				throw new RuntimeException("Failed : HTTP error code : "
+				System.out.println("Failed : HTTP error code : "
 						+ conn.getResponseCode());
+				return jsonObject;
 			}
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(

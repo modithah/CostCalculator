@@ -145,7 +145,7 @@ public class SolverWriter {
 //			list = ['larry', 'curly', 'moe']
 //			  list.append('shemp')
 			writer.close();
-			System.out.println("Successfully wrote to the file.");
+//			System.out.println("Successfully wrote to the file.");
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
