@@ -79,7 +79,7 @@ public class QueryGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateQueryFromMap(element, path, l));
+//			System.out.println(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -101,7 +101,7 @@ public class QueryGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateQueryFromMap(element, path, l));
+//			System.out.println(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -115,7 +115,8 @@ public class QueryGenerator {
 		if (node instanceof Hyperedge) {
 			Iterator<HGHandle> x = ((Hyperedge) node).iterator();
 			while (x.hasNext()) {
-				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(x.next()), pair.getPath());
+				HyperGraph graph= new HyperGraph();
+				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(graph,x.next()), pair.getPath());
 			}
 		}
 		Q = Q + pair.getSuffix();

@@ -38,19 +38,19 @@ public class CostGenerator2 {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Triple GetPrefixSuffix(Element node, String path) {
+	public Triple GetPrefixSuffix(HyperGraph graph,Element node, String path) {
 		return PrefixSuffix.GetprefixSuffix(node, path);
 	}
 
-	public double GetSize(Element node) {
-		return Cost.GetSize(node);
+	public double GetSize(HyperGraph graph,Element node) {
+		return Cost.GetSize(graph,node);
 	}
 
-	public double GetMultiplier(Hyperedge source, HGHandle child) {
-		return Cost.GetMultiplier(source, child);
+	public double GetMultiplier(HyperGraph graph,Hyperedge source, HGHandle child) {
+		return Cost.GetMultiplier( graph,source, child);
 	}
 
-	public void CalculateSize(Hyperedge node, HyperedgeTypeEnum type) {
+	public void CalculateSize(HyperGraph graph,Hyperedge node, HyperedgeTypeEnum type) {
 
 		switch (type) {
 		case Database_Col:
@@ -67,14 +67,14 @@ public class CostGenerator2 {
 			break;
 		}
 
-		System.out.println(CalculateSize(node));
+//		System.out.println(CalculateSize(graph,node));
 
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
 
-	public Pair<Double, HashMap<Atom, Double>> CalculateSize(Element node) {
-		System.out.println("node -> " + node);
-		double size = GetSize(node);
+	public Pair<Double, HashMap<Atom, Double>> CalculateSize(HyperGraph graph,Element node) {
+//		System.out.println("node -> " + node);
+		double size = GetSize(graph, node);
 //		System.out.println("size   " + size);
 		HashMap<Atom, Double> map = new HashMap<>();
 		Pair<Double, HashMap<Atom, Double>> p;
@@ -83,17 +83,17 @@ public class CostGenerator2 {
 			map.put((Atom) node, 1.0);
 		} else { // hyperedge
 
-			HyperGraph graph = Const.graph;
+//			HyperGraph graph = Const.graph;
 			Iterator<HGHandle> iter = ((Hyperedge) node).iterator();
 
 			while (iter.hasNext()) {
 
 				HGHandle child = (HGHandle) iter.next();
-				Element childObject = Graphoperations.getElementbyHandle(child);
+				Element childObject = Graphoperations.getElementbyHandle(graph,child);
 
 				if (!(childObject instanceof Relationship)) {
-					Pair<Double, HashMap<Atom, Double>> value = CalculateSize(childObject);
-					double multiplier = GetMultiplier((Hyperedge) node, child);
+					Pair<Double, HashMap<Atom, Double>> value = CalculateSize(graph,childObject);
+					double multiplier = GetMultiplier(graph,(Hyperedge) node, child);
 					size = size + value.getFirst() * multiplier;
 					for (Atom atom : value.getSecond().keySet()) {
 						map.put(atom, value.getSecond().get(atom) * multiplier);

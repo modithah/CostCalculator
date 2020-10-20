@@ -138,7 +138,7 @@ public static void main(String[] args) throws FileNotFoundException {
            			relHandles.put(atom, sname, graph.add(new Relationship("hasName",
         					atomHandles.get(atoms.indexOf(atom)), atomHandles.get(atoms.indexOf(sname)))));
            		                 	
-        	 System.out.println(key+" "+ mp+" "+m);
+//        	 System.out.println(key+" "+ mp+" "+m);
         	 //System.out.println(concepts.indexOf(key)+"---"+attributes.indexOf(m));
         	 
           		
@@ -150,14 +150,14 @@ public static void main(String[] args) throws FileNotFoundException {
         	 
         }
         	 int len = (allAttributes.size()*2)+1;
-        	 System.out.println("i am here" + len);
+//        	 System.out.println("i am here" + len);
         	 HGHandle stationSecondHandle = null;
         	 HGHandle[] allRel = new HGHandle[len];
         	 allRel[0] = atomHandles.get(atoms.indexOf(atom));
         	 int i = 1;
         	 for(Atom a : listAtoms) {
         		
-        		 System.out.println("i am here" + atoms.indexOf(a));
+//        		 System.out.println("i am here" + atoms.indexOf(a));
         		 allRel[i] = atomHandles.get(atoms.indexOf(a));
         		 i++;
         		 allRel[i] = relHandles.get(atom, a);
@@ -182,10 +182,10 @@ public static void main(String[] args) throws FileNotFoundException {
           		logger.info("Relationships Created Succesfully !");
     	
 	}
-        List<String> atomss = Graphoperations.getAllAtoms();
+        List<String> atomss = Graphoperations.getAllAtoms(graph);
 
 		if (atoms.isEmpty()) {
-			System.out.println("No data available Creating the Graph");
+//			System.out.println("No data available Creating the Graph");
 			CreateGraph.main(null);
 			try {
 				Thread.sleep(2000);
@@ -196,16 +196,16 @@ public static void main(String[] args) throws FileNotFoundException {
 
 		}
 
-		System.out.println("The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
-		System.out.println(atomss);
+//		System.out.println("The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
+//		System.out.println(atomss);
     	QueryGenerator g = new QueryGenerator();
 		Scanner scanner = new Scanner(System.in);
-		System.out.print(
-				"Enter the atom names you want to query seperated by commas (type exit to quit): ");
+//		System.out.print(
+//				"Enter the atom names you want to query seperated by commas (type exit to quit): ");
 
 		String input = scanner.next();
 		while (!input.equals("exit")) {
-			System.out.println("------Queries for selected atoms------");
+//			System.out.println("------Queries for selected atoms------");
 
 			AdjacencyList mapp= Graphoperations.makeHashmap(input.split(","));
  

@@ -37,7 +37,7 @@ public class Relationship extends HGPlainLink implements Element {
 		this.Multiplicity = multiplicity;
 		this.multiplicities= new double[2];
 		Arrays.fill(this.multiplicities	, 1);
-		System.out.println("MULTO" + multiplicity);
+//		System.out.println("MULTO" + multiplicity);
 	}
 
 	public Relationship(String iRI, double[] multiplicity, HGHandle... targets) throws Exception {
@@ -52,7 +52,7 @@ public class Relationship extends HGPlainLink implements Element {
 //		}
 		this.multiplicities=multiplicity;
 		
-		System.out.println(this.multiplicities[0]);
+//		System.out.println(this.multiplicities[0]);
 	}
 
 	public Relationship(HGHandle... targets) {

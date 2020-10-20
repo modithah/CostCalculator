@@ -34,14 +34,15 @@ public class run2 {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		List<String> atoms = Graphoperations.getAllAtoms();
+		HyperGraph graph=new HyperGraph(Const.HG_LOCATION_BOOK);
+		List<String> atoms = Graphoperations.getAllAtoms(graph);
 
 		if (atoms.isEmpty()) {
 			System.out.println("No data available Creating the Graph");
 			CreateGraph2.main(null);
 			try {
 				Thread.sleep(2000);
-				atoms = Graphoperations.getAllAtoms();
+				atoms = Graphoperations.getAllAtoms(graph);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -75,7 +76,7 @@ public class run2 {
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Rel)
 						|| ((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Col)) {
 					q.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
-					c.CreateCostFromMap(element, "", map, ((Hyperedge) element).getType());
+					c.CreateCostFromMap(graph,element, "", map, ((Hyperedge) element).getType());
 //				LoadGraph.SaveDesignToCSV((Hyperedge) element, "booksample_design1");
 				}
 			}

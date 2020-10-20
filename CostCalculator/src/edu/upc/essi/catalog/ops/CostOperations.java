@@ -270,8 +270,9 @@ public final class CostOperations {
 
 					multiplier = root.getCount();
 				} else { // find the path to the root
-//System.out.println("OOOOOOOOOOOOOOOOOOOOOO");
+//System.out.println("OOOOOOOOOOOOOOOOOOOOOO" + e.getName());
 ArrayList<RelStructure> relationships = makeRelStructures(graph, e);
+//					System.out.println(relationships);
 Tree<RelStructure> tree = makeTree(graph, e, relationships);
 
 multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
@@ -342,16 +343,39 @@ multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
 	}
 
 	private static ArrayList<RelStructure> makeRelStructures(HyperGraph graph, Hyperedge hyperedge) {
-		List<Relationship> allRelationships = hyperedge.getAll(hg.type(Relationship.class));
+//		=graph.g
+				hyperedge = graph.get(graph.findOne(hg.eq(hyperedge)));
+//		hyperedge.print(0);
+		List<HGHandle> allRelationships = hyperedge.findAll(hg.type(Relationship.class));
+
+		Iterator<HGHandle> seconditer = hyperedge.findAll(hg.type(Relationship.class)).iterator();
 		ArrayList<RelStructure> relationships = new ArrayList<RelStructure>();
-		allRelationships.stream().forEach(r -> {
+		while (seconditer.hasNext()) {
+			HGHandle hgHandle2 = (HGHandle) seconditer.next();
+			Relationship r = graph.get(hgHandle2);
+//			System.out.println("XXXXXXXXXXX" + r);
 			Atom elm1 = graph.get(r.getTargetAt(0));
 			Atom elm2 = graph.get(r.getTargetAt(1));
+
 			if (elm1.getType() == AtomTypeEnum.Class && elm2.getType() == AtomTypeEnum.Class) {
+				System.out.println(elm1+"----"+elm2);
 				RelStructure st = getEmptyRelStructForRelationship(graph, r);
 				relationships.add(st);
+//				System.out.println(relationships);
 			}
-		});
+		}
+
+
+//		allRelationships.stream().forEach(x -> {
+//			Relationship r=graph.get(x);
+//			System.out.println(r.getName());
+//			Atom elm1 = graph.get(r.getTargetAt(0));
+//			Atom elm2 = graph.get(r.getTargetAt(1));
+//			if (elm1.getType() == AtomTypeEnum.Class && elm2.getType() == AtomTypeEnum.Class) {
+//				RelStructure st = getEmptyRelStructForRelationship(graph, r);
+//				relationships.add(st);
+//			}
+//		});
 		return relationships;
 	}
 
@@ -366,6 +390,7 @@ multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
 		HashMap<Atom, Double> map = new HashMap<>();
 		map.put(elm1, r.getMultiplicities()[relorder.indexOf(elm1.getName())]);
 		map.put(elm2, r.getMultiplicities()[relorder.indexOf(elm2.getName())]);
+
 		RelStructure st = new RelStructure(r, null);
 		st.mult = map;
 //		System.out.println("----------------------------------------------");
@@ -375,6 +400,7 @@ multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
 
 	private static Tree<RelStructure> makeTree(HyperGraph graph, Hyperedge parent,
 			ArrayList<RelStructure> relationships) {
+//		System.out.println("makeTree");
 		Node<RelStructure> root = new Node<RelStructure>(
 				new RelStructure(null, null, null, graph.get(parent.getRoot())));
 		Tree<RelStructure> tree = new Tree<>(root);
@@ -384,9 +410,15 @@ multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
 	}
 
 	private static void addRelationshipToTree(ArrayList<RelStructure> relationships, Tree<RelStructure> tree) {
+//		System.out.println(tree.getRoot().getData().to);
+//		System.out.println(relationships.size());
 		while (!relationships.isEmpty()) {
+
 			RelStructure rel = relationships.remove(0);
+			boolean found=false;
 			for (Node<RelStructure> node : tree.getPostOrderTraversal()) {
+//				System.out.println(node.getData().to);
+//				System.out.println(rel.mult.keySet().contains(node.getData().to));
 				if (rel.mult.keySet().contains(node.getData().to)) {
 					rel.from = node.getData().to;
 					for (Atom a : rel.mult.keySet()) {
@@ -395,9 +427,15 @@ multiplier = getMultiplierForLeaf(graph, child, tree)* root.getCount();
 						}
 					}
 					node.addChild(new Node<RelStructure>(rel));
+					found=true;
+//					System.out.println("added " + relationships.size());
+//					break;
 				} else {
-					relationships.add(rel);
+
 				}
+			}
+			if(!found){
+				relationships.add(rel);
 			}
 		}
 	}

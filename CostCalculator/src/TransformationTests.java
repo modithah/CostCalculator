@@ -3,8 +3,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.mutable.MutableDouble;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
@@ -13,16 +15,22 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.hp.hpl.jena.sparql.algebra.Transform;
 
+import edu.upc.essi.catalog.IO.python.SolverWriter;
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
+import edu.upc.essi.catalog.core.constructs.DataIndexMetadata;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
+import edu.upc.essi.catalog.core.constructs.QueryFrequencies;
+import edu.upc.essi.catalog.core.constructs.Workload;
+import edu.upc.essi.catalog.core.constructs.DataIndexMetadata.DataType;
 import edu.upc.essi.catalog.core.constructs.opsparams.EmbedParams;
 import edu.upc.essi.catalog.core.constructs.opsparams.GroupParams;
 import edu.upc.essi.catalog.metadata.GenerateMetadata;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
+import edu.upc.essi.catalog.query.calculation.QueryCalculator;
 
 public class TransformationTests {
 
@@ -52,21 +60,42 @@ public class TransformationTests {
 //		String a ="Hello world!";
 //		System.out.println(a.substring(6,12)+a.substring(12,6));
 
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		HyperGraph graph = new HyperGraph("C:\\hyper\\test\\1\\42a709c0-b9b0-44ae-a1f0-abedf1a06b97");
 //		Transformations.getUnionCandidates(graph);
-//		Graphoperations.printDesign();
+//		Graphoperations.printDesign(graph);
 //		 ArrayList<Pair<Hyperedge, Hyperedge>> x = Transformations.getUnionCandidates(graph);
 //		x.forEach(y->{
 //			System.out.println(graph.getHandle(y.getFirst())+"   "+ graph.getHandle(y.getSecond()));
 //		});
 
-		GenerateMetadata metadataGen = new GenerateMetadata();
+		GenerateMetadata metadataGen =  new GenerateMetadata();
+		metadataGen .setSizeandMultipliers(graph);
+////		Graphoperations.printDesign(graph);
+//
+//		ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload(graph);
+//		QueryFrequencies freq = QueryCalculator.CalculateFrequency(workload, graph);
+//		ArrayList<Pair<ArrayList<Atom>, HashMap<Hyperedge, Map<Atom, Double>>>> queryFrequencies = freq
+//				.getQueryFrequencies();
+//		HashMap<Hyperedge, Map<Atom, Double>> global = freq.getGlobalFrequencies();
+//
+//
+//		// write the dynamic solver
+//		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
+//		HashMap<String, String> elmToString = new HashMap<>();
+//		MutableDouble collectionSize = new MutableDouble(0.0);
+//		ArrayList<ArrayList<DataIndexMetadata>> schema = generateSolverData(graph, global, firstLevels, elmToString,
+//				collectionSize);
+//		SolverWriter solver = new SolverWriter();
+//		solver.generateCode(schema);
+//		GenerateMetadata metadataGen = new GenerateMetadata();
+//		metadataGen.setSizeandMultipliers(graph);
+//		
 //		Hyperedge flattenCand = Transformations.getFlattenCandidates(graph).get(0);
 //		System.out.println("flatten " + flattenCand);
 //		Transformations.flatten(graph, flattenCand);
 
-		metadataGen.setSizeandMultipliers(graph);
-		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph); // GetFirstLevelsOfDesign(hyp);
+//		metadataGen.setSizeandMultipliers(graph);
+//		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph); // GetFirstLevelsOfDesign(hyp);
 //		Hyperedge hyperedge = firstLevels.get(0);
 //		
 //		hyperedge.findAll().forEach(x->{
@@ -142,6 +171,81 @@ public class TransformationTests {
 //		Transformations.embed(graph, embedCandidate);
 //		Graphoperations.printDesign(graph);
 		
+	}
+
+	private static ArrayList<ArrayList<DataIndexMetadata>> generateSolverData(HyperGraph graph,
+			HashMap<Hyperedge, Map<Atom, Double>> global, List<Hyperedge> firstLevels,
+			HashMap<String, String> elmToString, MutableDouble collectionSize) {
+	ArrayList<ArrayList<DataIndexMetadata>> schema = new ArrayList<>();
+	ArrayList<Hyperedge> notUsed = new ArrayList<>();
+
+	int collectionCounter = 0;
+	for (Hyperedge hyperedge : firstLevels) {
+
+		collectionSize.add(hyperedge.getSize());
+		System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFF" + collectionSize);
+		if (global.get(hyperedge).get(new Atom("~dummy")) != 0) {
+			collectionCounter++;
+			String collectionPrefix = "collection_" + collectionCounter;
+			elmToString.put(hyperedge.getName(), collectionPrefix);
+			ArrayList<DataIndexMetadata> col = new ArrayList<>();
+
+//			System.out.println(global.get(hyperedge));
+
+			double hyperedgecount = 0.0;
+			List<HGHandle> secondLevels = hyperedge.findAll();
+
+			if (secondLevels.size() == 1) {
+				int indexCount = 1;
+				Hyperedge secondlevelHyperedge = (Hyperedge) graph.get(secondLevels.get(0));
+				Atom secondLevelRoot = graph.get(secondlevelHyperedge.getRoot());
+				hyperedgecount = hyperedge.getMultipliers().get(secondLevelRoot);
+				if (global.get(hyperedge).get(secondLevelRoot) != 0) {
+//					System.out.println(global.get(hyperedge).get(secondLevelRoot));
+					col.add(new DataIndexMetadata(false, 1, hyperedgecount,
+							global.get(hyperedge).get(secondLevelRoot), DataType.UUID));
+
+					elmToString.put(hyperedge.getName() + "~" + secondLevelRoot.getName(),
+							collectionPrefix + "_index_" + indexCount);
+					indexCount++;
+				}
+
+				for (Atom atom : global.get(hyperedge).keySet()) {
+					if (!atom.getName().equals("~dummy") && !atom.getName().equals(secondLevelRoot.getName())
+							&& global.get(hyperedge).get(atom) != 0) {
+					System.out.println(atom.getName()+"--->"+hyperedge.getMultipliers());
+						col.add(new DataIndexMetadata(false, hyperedge.getMultipliers().get(atom) / hyperedgecount,
+								hyperedge.getMultipliers().get(atom), global.get(hyperedge).get(atom),
+								DataType.INT));
+						elmToString.put(hyperedge.getName() + "~" + atom.getName(),
+								collectionPrefix + "_index_" + indexCount);
+						System.out.println(hyperedge.getName() + "~" + atom.getName());
+						indexCount++;
+					}
+				}
+			} else {
+				for (HGHandle secondLevel : secondLevels) {
+					// TODO : heterogeneous collections
+				}
+			}
+
+			col.add(new DataIndexMetadata(true, hyperedge.getSize() / hyperedgecount, hyperedgecount,
+					global.get(hyperedge).get(new Atom("~dummy")), DataType.DATA));
+//			System.out.println(col);
+			schema.add(col);
+		} else {
+			notUsed.add(hyperedge);
+		}
+	}
+	firstLevels.removeAll(notUsed);
+//	System.out.println(elmToString);
+	return schema;
+
+	}
+
+	private static ArrayList<Pair<Double, ArrayList<Atom>>> getWorkload(HyperGraph graph) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

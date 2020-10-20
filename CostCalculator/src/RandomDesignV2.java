@@ -86,7 +86,7 @@ public class RandomDesignV2 {
 //		for (int i = 0; i < 10; i++) {
 
 		int firstChoice = rand.nextInt(4);
-		System.out.println(firstChoice);
+//		System.out.println(firstChoice);
 
 		chooseOperation(graph, dummyAtom, dummyRelStr, reification, structures, firstPick, refer, firstChoice, allRels);
 
@@ -94,7 +94,7 @@ public class RandomDesignV2 {
 		while (!allRels.isEmpty()) {
 			Relationship newPick = allRels.remove(rand.nextInt(allRels.size()));
 			int newChoice = rand.nextInt(2);
-			refer = rand.nextBoolean();
+//			refer = rand.nextBoolean();
 			int root = newChoice;
 
 			chooseOperation(graph, dummyAtom, dummyRelStr, reification, structures, newPick, refer, newChoice, allRels);
@@ -121,7 +121,7 @@ public class RandomDesignV2 {
 				});
 
 				if (refer && rand.nextDouble() > skip) {
-					System.out.println("SKIPPING");
+//					System.out.println("SKIPPING");
 					RelStructure struct = structures.get(graph.get(newPick.getTargetAt(root)),
 							graph.get(newPick.getTargetAt(root == 1 ? 0 : 1)));
 					struct.op = OperationTypeEnum.RefSkip;
@@ -142,16 +142,16 @@ public class RandomDesignV2 {
 
 		}
 
-		System.out.println(structures);
+//		System.out.println(structures);
 
 		Queue<Atom> q = new LinkedList<Atom>(structures.rowKeySet());
 		while (!q.isEmpty()) {
 			Atom first = q.poll();
-			System.out.println("choosing " + first);
+//			System.out.println("choosing " + first);
 			Map<Atom, RelStructure> row = structures.row(first);
-			System.out.println(row);
+//			System.out.println(row);
 			if (Collections.disjoint(row.keySet(), structures.rowKeySet())) {
-				System.out.println("disjoint");
+//				System.out.println("disjoint");
 				ArrayList<HGHandle> nestedHandles = new ArrayList<>();
 				for (Atom atom : row.keySet()) {
 					if (!atom.equals(dummyAtom)) {
@@ -164,7 +164,7 @@ public class RandomDesignV2 {
 
 						Object x = graph
 								.findOne(hg.and(hg.type(Hyperedge.class), hg.eq("name", atom.getName() + "_Struct")));
-						System.out.println("found" + x);
+//						System.out.println("found" + x);
 						try {
 							nestedHandles.add(graph.getHandle(row.get(atom).rel));
 							HGHandle newHandle = x == null
@@ -187,7 +187,7 @@ public class RandomDesignV2 {
 				}
 
 				Object x = graph.findOne(hg.and(hg.type(Hyperedge.class), hg.eq("name", first.getName() + "_Struct")));
-				System.out.println("found2222   " + x);
+//				System.out.println("found2222   " + x);
 
 				HGHandle rootHandle = graph.getHandle(first);
 				List<HGHandle> handles = new ArrayList<>();
@@ -219,7 +219,7 @@ public class RandomDesignV2 {
 				boolean cando = true;
 				intersection.retainAll(structures.rowKeySet());
 
-				System.out.println(intersection);
+//				System.out.println(intersection);
 				for (Atom atom : intersection) {
 					if ((structures.get(first, atom).op == OperationTypeEnum.Both_Nest
 							&& structures.get(atom, first).op == OperationTypeEnum.Both_Nest)
@@ -232,12 +232,12 @@ public class RandomDesignV2 {
 						cando = false;
 					}
 				}
-				System.out.println("cando" + cando);
+//				System.out.println("cando" + cando);
 				if (cando) {
 
 					ArrayList<HGHandle> nestedHandles = new ArrayList<>();
 
-					System.out.println(row.keySet());
+//					System.out.println(row.keySet());
 					for (Atom atom : row.keySet()) {
 						if (!atom.equals(dummyAtom)) {
 
@@ -366,7 +366,7 @@ public class RandomDesignV2 {
 	}
 
 	private static void finalyzeGraph(HyperGraph graph) {
-		System.out.println("end");
+//		System.out.println("end");
 		List<HGHandle> firstLevels = new ArrayList<>();
 		List<Hyperedge> structhyps = graph
 				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Struct)));
@@ -378,11 +378,11 @@ public class RandomDesignV2 {
 			HGSearchResult<Object> x = graph.find(hg.contains(handle));
 
 			if (x.hasNext()) {
-				System.out.println("not empty");
-				System.out.println(graph.get((HGHandle) x.next()).toString());
+//				System.out.println("not empty");
+//				System.out.println(graph.get((HGHandle) x.next()).toString());
 
 			} else {
-				System.out.println("empty");
+//				System.out.println("empty");
 				hyperedge.setType(HyperedgeTypeEnum.SecondLevel);
 				graph.update(hyperedge);
 				try {
@@ -403,9 +403,9 @@ public class RandomDesignV2 {
 			HGHandle handle = graph.getHandle(hyperedge);
 			HGSearchResult<Object> x = graph.find(hg.contains(handle));
 			if (x.hasNext()) {
-				System.out.println("not empty");
+//				System.out.println("not empty");
 			} else {
-				System.out.println("empty");
+//				System.out.println("empty");
 				hyperedge.findAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Struct)))
 						.forEach(h -> {
 							Hyperedge y = graph.get(h);

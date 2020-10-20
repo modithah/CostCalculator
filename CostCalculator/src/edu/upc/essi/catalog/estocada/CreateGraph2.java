@@ -117,21 +117,21 @@ public class CreateGraph2 {
 //					relHandles.get(station, line), routeSet));
 //			HGHandle docFirstLevel = graph
 //					.add(new Hyperedge("metros-trams", HyperedgeTypeEnum.FirstLevel, docSecondLevel));
-
-			HGHandle bookStruct = graph.add(new Hyperedge(graph, "", HyperedgeTypeEnum.Struct,
-					atomHandles.get(atoms.indexOf(book)), atomHandles.get(atoms.indexOf(bname)),
-					atomHandles.get(atoms.indexOf(pages)), relHandles.get(book, bname), relHandles.get(book, pages)));
-
-			HGHandle bookSet = graph.add(new Hyperedge(graph, "Books", HyperedgeTypeEnum.Set, bookStruct));
-
-			HGHandle authorSecond = graph
-					.add(new Hyperedge(graph, "", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(author)),
-							atomHandles.get(atoms.indexOf(aname)), bookSet, relHandles.get(author, book)));
-			HGHandle authorfirst = graph
-					.add(new Hyperedge(graph, "Authors", HyperedgeTypeEnum.FirstLevel, authorSecond));
-
-			graph.add(new Hyperedge(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc, bookFirstLevel));
-			graph.add(new Hyperedge(graph, "MongoDB-2", HyperedgeTypeEnum.Database_Doc, authorfirst));
+//
+//			HGHandle bookStruct = graph.add(new Hyperedge(graph, "", HyperedgeTypeEnum.Struct,
+//					atomHandles.get(atoms.indexOf(book)), atomHandles.get(atoms.indexOf(bname)),
+//					atomHandles.get(atoms.indexOf(pages)), relHandles.get(book, bname), relHandles.get(book, pages)));
+//
+//			HGHandle bookSet = graph.add(new Hyperedge(graph, "Books", HyperedgeTypeEnum.Set, bookStruct));
+//
+//			HGHandle authorSecond = graph
+//					.add(new Hyperedge(graph, "", HyperedgeTypeEnum.SecondLevel, atomHandles.get(atoms.indexOf(author)),
+//							atomHandles.get(atoms.indexOf(aname)), bookSet, relHandles.get(author, book)));
+//			HGHandle authorfirst = graph
+//					.add(new Hyperedge(graph, "Authors", HyperedgeTypeEnum.FirstLevel, authorSecond));
+//
+//			graph.add(new Hyperedge(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc, bookFirstLevel));
+//			graph.add(new Hyperedge(graph, "MongoDB-2", HyperedgeTypeEnum.Database_Doc, authorfirst));
 
 			graph.close();
 

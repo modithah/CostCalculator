@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.hypergraphdb.HGHandle;
+import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
@@ -34,13 +35,13 @@ public class CostGenerator {
 		return PrefixSuffix.GetprefixSuffix(node, path);
 	}
 
-	public GenericTriple<Double, Double, Double> GetSize(Element node, String path) {
-		return Cost.GetSize(node, path);
+	public GenericTriple<Double, Double, Double> GetSize(HyperGraph graph, Element node, String path) {
+		return Cost.GetSize(graph, node, path);
 	}
 	
 	
 
-	public void CreateCostFromMap(Element node, String path, AdjacencyList l, HyperedgeTypeEnum type) {
+	public void CreateCostFromMap(HyperGraph graph,Element node, String path, AdjacencyList l, HyperedgeTypeEnum type) {
 
 		switch (type) {
 		case Database_Col:
@@ -58,25 +59,25 @@ public class CostGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateCostFromMap(element, path, l));
+			System.out.println(CreateCostFromMap(graph,element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
 
-	public Pair<Double, Double> CreateCostFromMap(Element node, String path, AdjacencyList l) {
+	public Pair<Double, Double> CreateCostFromMap(HyperGraph graph,Element node, String path, AdjacencyList l) {
 //		System.out.println("node -> " + node );
 		Pair<Double, Double> p;
 		double Q = 0;
 		double mult = 1;
 
-		GenericTriple<Double, Double, Double> pair = GetSize(node, path);
+		GenericTriple<Double, Double, Double> pair = GetSize(graph,node, path);
 
 		mult = pair.getVal2();
 		LinkedHashSet<Element> children = l.getAjadacencyList(node);
 
 		if (children != null) {
 			for (Element element : children) {
-				Pair<Double, Double> x = CreateCostFromMap(element, "", l);
+				Pair<Double, Double> x = CreateCostFromMap(graph,element, "", l);
 				Q = Q + x.getFirst();
 
 			}

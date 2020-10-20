@@ -33,7 +33,7 @@ public class combinationsTest {
 //		
 //		
 		String a ="Hello world!";
-		System.out.println(a.substring(6,12)+a.substring(12,6));
+//		System.out.println(a.substring(6,12)+a.substring(12,6));
 	}
 	
 

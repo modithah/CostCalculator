@@ -15,6 +15,7 @@ import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.query.prefixsuffix.DocumentPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.IPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.RelationalPrefixSuffix;
+import org.hypergraphdb.HyperGraph;
 
 public class rewrewr{
 
@@ -92,7 +93,8 @@ public class rewrewr{
 		if (node instanceof Hyperedge) {
 			Iterator<HGHandle> x = ((Hyperedge) node).iterator();
 			while (x.hasNext()) {
-				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(x.next()), pair.getPath());
+				HyperGraph graph= new HyperGraph();
+				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(graph,x.next()), pair.getPath());
 			}
 		}
 		Q = Q + pair.getSuffix();

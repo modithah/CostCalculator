@@ -74,8 +74,8 @@ public class Workflow {
 			result.setStorageSize(collectionSize.getValue());
 			calculateQueryCosts(queryFrequencies, firstLevels, elmToString, missRates, result);
 			
-			System.out.println("-----Final Result------");
-			System.out.println(result);
+//			System.out.println("-----Final Result------");
+//			System.out.println(result);
 			
 			
 		} catch (Exception e) {
@@ -126,7 +126,7 @@ public class Workflow {
 		for (Hyperedge hyperedge : firstLevels) {
 
 			collectionSize.add(hyperedge.getSize());
-//			System.out.println(collectionSize);
+//			System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFF" + collectionSize);
 			if (global.get(hyperedge).get(new Atom("~dummy")) != 0) {
 				collectionCounter++;
 				String collectionPrefix = "collection_" + collectionCounter;

@@ -30,7 +30,7 @@ public class saveTest {
 	public static void main(String[] args) throws IllegalStateException, FileNotFoundException {
 
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		HGHandle root = Graphoperations.getHyperedgebyNameType("AUTHOR", HyperedgeTypeEnum.FirstLevel);// Graphoperations.getAtomByName(graph,
+		HGHandle root = Graphoperations.getHyperedgebyNameType(graph,"AUTHOR", HyperedgeTypeEnum.FirstLevel);// Graphoperations.getAtomByName(graph,
 																								// "A_ID");
 		HGHandle target = Graphoperations.getAtomByName(graph, "B_ID");
 //		System.out.println(GraphClassics.dijkstra(root, target, new SimpleALGenerator(graph)));
