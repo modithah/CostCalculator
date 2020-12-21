@@ -111,10 +111,17 @@ public class Hyperedge extends HGSimpleSubgraph  {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if(type != other.type){
+			return false;
+		}
+		if(incoming.size() != other.incoming.size())
+			return false;
+		for (int i=0;i<incoming.size();i++)
+			if(!incoming.get(i).getPersistent().equals(other.incoming.get(i).getPersistent()))
 		if (getArity() != other.getArity())
 			return false;
 		for (int i = 0; i < getArity(); i++)
-			if (!getTargetAt(i).equals(other.getTargetAt(i)))
+			if (!getTargetAt(i).getPersistent().equals(other.getTargetAt(i).getPersistent()))
 				return false;
 		return true;
 	}
@@ -252,7 +259,7 @@ public class Hyperedge extends HGSimpleSubgraph  {
 				System.out.println(sb.toString() + ((Atom) a).getName());
 			}
 			if (a instanceof Relationship) {
-//				System.out.println(sb.toString() + ((Relationship) a));
+				System.out.println(sb.toString() + ((Relationship) a));
 			}
 		}
 	}
