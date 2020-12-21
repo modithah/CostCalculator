@@ -229,14 +229,14 @@ public class Hyperedge extends HGSimpleSubgraph  {
 	public void print(int tabs) {
 
 		if(!this.getMultipliers().keySet().isEmpty()) {
-			logger.info("Size ->"+ this.getSize());
-			logger.info(String.valueOf(this.getMultipliers()));
+			System.out.println("Size ->"+ this.getSize());
+			System.out.println(String.valueOf(this.getMultipliers()));
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tabs; i++) {
 			sb.append(" ");
 		}
-		logger.info(sb.toString() + type + " -> " + name);
+		System.out.println(sb.toString() + type + " -> " + name);
 		Iterator<HGHandle> seconditer = this.findAll().iterator();
 
 		while (seconditer.hasNext()) {
@@ -249,10 +249,10 @@ public class Hyperedge extends HGSimpleSubgraph  {
 			}
 
 			if (a instanceof Atom) {
-				logger.info(sb.toString() + ((Atom) a).getName());
+				System.out.println(sb.toString() + ((Atom) a).getName());
 			}
 			if (a instanceof Relationship) {
-				logger.info( sb.toString() + ((Relationship) a));
+//				System.out.println(sb.toString() + ((Relationship) a));
 			}
 		}
 	}
