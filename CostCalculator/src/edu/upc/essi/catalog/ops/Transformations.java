@@ -55,12 +55,12 @@ public final class Transformations {
 
         if (!((hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.Set)
                 || (hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.FirstLevel))) {
-            logger.info("Hyperedges must be sets");
+            logger.error("Hyperedges must be sets");
             return false;
         }
 
         if (!(parents1.containsAll(parents2) && parents2.containsAll(parents1))) {
-            logger.info("they should have the same parent");
+            logger.error("they should have the same parent");
             return false;
         }
 
@@ -149,7 +149,7 @@ public final class Transformations {
         Hyperedge parent = graph.get(parentHandle);
 
         if (!(parent.getType() == HyperedgeTypeEnum.Struct || parent.getType() == HyperedgeTypeEnum.SecondLevel)) {
-            logger.info("parent must be a struct to flatten");
+            logger.error("parent must be a struct to flatten");
             return false;
         }
 
@@ -209,7 +209,7 @@ public final class Transformations {
 
     public static boolean group(HyperGraph graph, GroupParams param) {
 
-        logger.info("Grouping graph" + graph.getLocation());
+//        logger.info("Grouping graph" + graph.getLocation());
 //        logger.info(param);
 
         Hyperedge hyp = param.getHyp();
@@ -227,7 +227,7 @@ public final class Transformations {
         Element elm = param.getElm();
         List<HGHandle> found = graph.findAll(hg.eq(elm));
         if(found.size()>1){
-            logger.info("Longer than one" + elm.toString());
+            logger.error("Longer than one");
             elm = graph.get(found.get(0));
         }
         else {
@@ -235,8 +235,8 @@ public final class Transformations {
         }
 
         if (!(hyp.getType() == HyperedgeTypeEnum.Struct || hyp.getType() == HyperedgeTypeEnum.SecondLevel)) {
-            logger.info(String.valueOf(hyp.getType()));
-            logger.info("Group can be only inside a struct");
+//            logger.info(String.valueOf(hyp.getType()));
+            logger.error("Group can be only inside a struct");
             return false;
         } else {
             ArrayList<HGHandle> relHandles = new ArrayList<>();
@@ -246,16 +246,16 @@ public final class Transformations {
             });
             List<HGHandle> parentContents = hyp.findAll();
             if (!parentContents.containsAll(relHandles) || !parentContents.contains(elementHandle)) {
-                logger.info(String.valueOf(parentContents.containsAll(relHandles)));
-                logger.info(String.valueOf(parentContents.contains(elementHandle)));
+//                logger.info(String.valueOf(parentContents.containsAll(relHandles)));
+//                logger.info(String.valueOf(parentContents.contains(elementHandle)));
                 logger.error("relationships and element should be inside the parent");
                 return false;
             } else {
                 if (elm instanceof Relationship) {
-                    logger.info("element cannot be a relationship");
+                    logger.error("element cannot be a relationship");
                     return false;
                 } else if (elm instanceof Hyperedge && ((Hyperedge) elm).getType() != HyperedgeTypeEnum.Struct) {
-                    logger.info("hyperedge element must be a struct");
+                    logger.error("hyperedge element must be a struct");
                     return false;
                 } else {
                     try {
@@ -263,7 +263,7 @@ public final class Transformations {
                         HGHandle newSet = Graphoperations.addSetHyperedgetoGraph(graph, elm.getName() + "Set", rels,
                                 elementHandle);
 //						logger.info((Hyperedge) graph.get(newSet));
-                        ((Hyperedge) graph.get(newSet)).print(0);
+//                        ((Hyperedge) graph.get(newSet)).print(0);
 //						newSet=null;
                         hyp.remove(elementHandle);
 //						logger.info("removing  "+ elementHandle);
@@ -309,14 +309,14 @@ public final class Transformations {
         List<HGHandle> parentContents;
         Set<Relationship> used = new HashSet();
         parentContents = hyp.findAll();
-        logger.info("FFFFFFFFFF \n" + parentContents);
+//        logger.info("FFFFFFFFFF \n" + parentContents);
         parentContents.forEach(hdl -> {
             if (!hdl.equals(except)) {
 //				logger.info(hdl);
 
                 Element e = graph.get(hdl);
 //								logger.info("path to" + e.getName());
-                logger.info(e.toString());
+//                logger.info(e.toString());
                 if (e instanceof Atom) {
                     used.addAll(findRelPath(graph, hyp, (Atom) e));
                 } else if (e instanceof Hyperedge) {
@@ -414,25 +414,21 @@ public final class Transformations {
 
         List<HGHandle> found = graph.findAll(hg.eq(el));
         if(found.size()>1){
-            try {
-                throw new Exception("Longer than one");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                logger.error("Longer than one");
         }
-        else {
+
             el = graph.get(found.get(0));
-        }
+
 //        el = graph.get(graph.findOne(hg.eq(el)));
 
         if (!(set.getType() == HyperedgeTypeEnum.Set || set.getType() == HyperedgeTypeEnum.FirstLevel)) {
-            logger.info("Segregate can be only inside a Set");
+            logger.error("Segregate can be only inside a Set");
             return false;
         } else {
             HGHandle elementHandle = graph.getHandle(el);
             HGHandle setHandle = graph.getHandle(set);
             if (!set.isMember(elementHandle)) {
-                logger.info("Element must be inside the Set");
+                logger.error("Element must be inside the Set");
                 return false;
             } else {
                 try {
@@ -711,7 +707,7 @@ public final class Transformations {
     private static void executeStructCombinations(HyperGraph graph, ArrayList<EmbedParams> candidates,
                                                   ArrayList<Hyperedge> tmpCandidates, Hyperedge grandParent) {
         if (tmpCandidates.size() >= 2) {
-            logger.info(tmpCandidates.toString());
+//            logger.info(tmpCandidates.toString());
             Set<Set<Hyperedge>> combos = Sets.combinations(ImmutableSet.copyOf(tmpCandidates), 2);
             Iterator<Set<Hyperedge>> comboIterator = combos.iterator();
             while (comboIterator.hasNext()) {
@@ -826,7 +822,7 @@ public final class Transformations {
 
             path.put(current.getSecond(), current.getFirst());
             if (atom instanceof Atom && atom.equals(atm)) {
-                logger.info(atom.toString());
+//                logger.info(atom.toString());
                 breakable = true;
                 param.setEmbeddingParent(parent);
             }

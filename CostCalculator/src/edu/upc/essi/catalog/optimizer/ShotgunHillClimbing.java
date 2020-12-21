@@ -59,7 +59,7 @@ public class ShotgunHillClimbing {
 			SingletonMultiObjectiveDesignGoal.INSTANCE.destroy();
 		} while (timesConverged < 20); //timesConverged
 
-		logger.info("You are done, the solution has a cost "+bestSoFar.getSecond()+" with design \n"+bestSoFar.getFirst());
+		System.out.println( "You are done, the solution has a cost "+bestSoFar.getSecond()+" with design \n"+bestSoFar.getFirst());
 
 	}
 
