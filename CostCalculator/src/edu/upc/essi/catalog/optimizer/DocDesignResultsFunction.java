@@ -5,14 +5,17 @@ import aima.core.search.framework.problem.ResultFunction;
 import com.google.common.collect.Sets;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
-import edu.upc.essi.catalog.optimizer.actions.ActionsCatalog;
-import edu.upc.essi.catalog.optimizer.actions.FlattenAction;
-import edu.upc.essi.catalog.optimizer.actions.UnionAction;
+import edu.upc.essi.catalog.optimizer.actions.*;
 import org.hypergraphdb.HyperGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.UUID;
 
 public class DocDesignResultsFunction implements ResultFunction {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+
     @Override
     public Object result(Object o, Action a) {
         HyperGraph newG = null;
@@ -25,6 +28,24 @@ public class DocDesignResultsFunction implements ResultFunction {
             FlattenAction fA = (FlattenAction)a;
             newG = fA.getG();
             Transformations.flatten(newG,fA.getA());
+        }
+        else if(a instanceof GroupAction){
+            GroupAction gA = (GroupAction)a;
+            newG = gA.getG();
+            Transformations.group(newG,gA.getParams());
+        }
+        else if(a instanceof EmbedAction){
+            EmbedAction eA = (EmbedAction)a;
+            newG = eA.getG();
+            Transformations.embed(newG, eA.getParams());
+        }
+        else if(a instanceof SegregateAction){
+            SegregateAction sA = (SegregateAction)a;
+            newG = sA.getG();
+            Transformations.segregate(newG, sA.getA(), sA.getB());
+        }
+        else {
+            logger.error("Unknown action " +a.getClass());
         }
 
         DocDesignHeuristic fh = new DocDesignHeuristic();

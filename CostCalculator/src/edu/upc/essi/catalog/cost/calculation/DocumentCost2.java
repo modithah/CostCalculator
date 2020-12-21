@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.cost.calculation;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,12 +24,15 @@ import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentCost2 implements ICost {
 
 	public DocumentCost2() {
 		// TODO Auto-generated constructor stub
 	}
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 	public double GetSize(HyperGraph graph,Element node) {
 		double size = 0;
@@ -64,13 +68,14 @@ public class DocumentCost2 implements ICost {
 //		HyperGraph graph = Const.graph;
 
 		if (source.getType() == HyperedgeTypeEnum.SecondLevel) {
-			System.out.println(graph.get(source.getRoot()).toString());
+			logger.info("NNNNNNN");
+			logger.info(graph.get(source.getRoot()).toString());
 			multiplier = ((Atom) graph.get(source.getRoot())).getCount();
 		} else if (source.getType() == HyperedgeTypeEnum.Set) {
 			Relationship relationship = source.getNestedRelationship(child);
-//			System.out.println("FFFFFFFFFFFFF");
+//			logger.info("FFFFFFFFFFFFF");
 					
-//			System.out.println(relationship);
+//			logger.info(relationship);
 			ArrayList<String> relorder = new ArrayList<>();
 			relorder.add(((Atom) graph.get(relationship.getTargetAt(0))).getName());
 			relorder.add(((Atom) graph.get(relationship.getTargetAt(1))).getName());
@@ -84,7 +89,7 @@ public class DocumentCost2 implements ICost {
 
 	@Override
 	public GenericTriple<Double, Double, Double> GetSize(HyperGraph graph,Element node, String path) {
-//		System.out.println(node.getName());
+//		logger.info(node.getName());
 		GenericTriple<Double, Double, Double> t = new GenericTriple<>();
 		int size = 0;
 		double multiply = 1.0;
@@ -96,7 +101,7 @@ public class DocumentCost2 implements ICost {
 			size = atm.getSize();
 
 //			if (atm.getType() == AtomTypeEnum.Class) {
-//				System.out.println("count out");
+//				logger.info("count out");
 //				multiply = atm.getCount();
 //			}
 

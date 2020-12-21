@@ -38,11 +38,15 @@ public final class CostOperations {
         HyperGraph graph = Const.graph;
 //		IncidenceSet incidence = graph.getIncidenceSet(hyperedgehandle);
 
-        HGSearchResult<Object> incidence = graph.find(hg.contains(hyperedgehandle));
+//        HGSearchResult<Object> incidence = graph.find(hg.contains(hyperedgehandle));
 
+        
+        
         Hyperedge hyperedge = graph.get(hyperedgehandle);
 
-//		System.out.println(hyperedge);
+        Iterator<HGHandle> incidence = hyperedge.getParents().iterator();
+        
+//		logger.info(hyperedge);
         double count = 0;
         Iterator<HGHandle> iter = hyperedge.findAll().iterator();// findall(hg.anyHandle());
         HGHandle parentAtomHandle, childAtomHandle = null;
@@ -54,7 +58,7 @@ public final class CostOperations {
         while (iter.hasNext()) {
             HGHandle hgHandle = iter.next();
             Hyperedge secondlevel = graph.get(hgHandle); // got the struct/second level
-//			System.out.println("XXXXXXXXXX" + secondlevel);
+//			logger.info("XXXXXXXXXX" + secondlevel);
             Iterator<HGHandle> seconditer = secondlevel.findAll().iterator();
             while (seconditer.hasNext()) {
                 HGHandle hgHandle2 = (HGHandle) seconditer.next();
@@ -64,7 +68,7 @@ public final class CostOperations {
                 if (a.getClass().equals(Atom.class) && ((Atom) a).getType() == AtomTypeEnum.Class) {
 
                     candidateAtoms.put((Atom) a, hgHandle2);
-//					System.out.println("child " + ((Atom) a).getName());
+//					logger.info("child " + ((Atom) a).getName());
                 }
 
                 if (a.getClass().equals(Relationship.class)) {
@@ -76,12 +80,12 @@ public final class CostOperations {
             candidateAtoms.keySet().iterator().forEachRemaining(atoms::add);
 
             if (atoms.size() == 1) {
-//				System.out.println("OOOOOOOONEEEEEEEEE");
+//				logger.info("OOOOOOOONEEEEEEEEE");
                 count = (atoms.get(0)).getCount(); // find the class atom
                 childAtomHandle = candidateAtoms.get(atoms.get(0));
                 childName = atoms.get(0).getName();
             } else {
-//				System.out.println("MMMMMMMMMMMMMMMMMOOOOOOOOOOOORRRRRREEEEEEEEEE");
+//				logger.info("MMMMMMMMMMMMMMMMMOOOOOOOOOOOORRRRRREEEEEEEEEE");
                 for (int i = 0; i < atoms.size(); i++) {
                     ArrayList<Boolean> evals = new ArrayList<>();
                     Atom atom1 = atoms.get(i);
@@ -90,7 +94,7 @@ public final class CostOperations {
                             Atom atom2 = atoms.get(j);
                             HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + atom2.getName(),
                                     candidateAtoms.get(atom1), candidateAtoms.get(atom2));
-//							System.out.println("sssss" + rel);
+//							logger.info("sssss" + rel);
                             if (rel != null && relationships.contains(rel)) {
                                 evals.add(true);
                             } else
@@ -108,13 +112,13 @@ public final class CostOperations {
             }
         }
 
-//		System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUU" + hyperedge.getType());
+//		logger.info("UUUUUUUUUUUUUUUUUUUUUUUUUUUUU" + hyperedge.getType());
         switch (hyperedge.getType()) {
 
             // In first level it contains a second level that has a class that has the count
             case FirstLevel:
 
-//			System.out.println("setting count  " + count);
+//			logger.info("setting count  " + count);
 //			hyperedge.setCount(count);
 
                 break;
@@ -136,7 +140,7 @@ public final class CostOperations {
                             ((Hyperedge) hyper).getType() == HyperedgeTypeEnum.Struct)) {
                         // check the class atom of the parent
                         Hyperedge secondlevel = (Hyperedge) hyper;
-//					System.out.println("LLLLLLLLLLLL" + hyper);
+//					logger.info("LLLLLLLLLLLL" + hyper);
                         Iterator<HGHandle> iteratorOfParent = secondlevel.findAll().iterator();
                         while (iteratorOfParent.hasNext()) {
                             HGHandle hgHandle2 = (HGHandle) iteratorOfParent.next();
@@ -144,13 +148,13 @@ public final class CostOperations {
                             // this is to find the atom
                             if (atomobject.getClass().equals(Atom.class)
                                     && ((Atom) atomobject).getType() == AtomTypeEnum.Class) {
-//							System.out.println("---------------------------------" + ((Atom) atomobject).getName());
+//							logger.info("---------------------------------" + ((Atom) atomobject).getName());
                                 HGHandle rel = Graphoperations.getRelationshipByNameAtoms(graph, "has" + childName,
                                         hgHandle2, childAtomHandle);
 
                                 Relationship relationship = graph.get(rel);
 
-//							System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSS         " + relationship.getMultiplicity());
+//							logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSS         " + relationship.getMultiplicity());
 //									hg.getOne(graph,
 //									hg.and(hg.type(Relationship.class), hg.orderedLink(hgHandle2, childAtomHandle))); // find
                                 // the
@@ -190,6 +194,7 @@ public final class CostOperations {
     }
 
     public static Pair<Double, HashMap<Atom, Double>> CalculateSize(HyperGraph graph, Element e) {
+//        logger.info("--"+e.toString());
         double size = 0.0;
         HashMap<Atom, Double> map = new HashMap<>();
         if (e instanceof Atom) {
@@ -202,18 +207,22 @@ public final class CostOperations {
                 case SecondLevel:
                     break;
                 case Set:
-                    HGHandle parentHandle = Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0);
+                    HGHandle parentHandle = e.getParents().get(0);
+//                            Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0);
                     Hyperedge parent = ((Hyperedge) graph.get(parentHandle));
                     size = ((Hyperedge) e).getName().length()
                             * CalculateMultiplier(graph, parent, graph.get(parent.getRoot()));
                     break;
                 case Struct:
-//				System.out.println(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)));
-                    if (((Hyperedge) graph.get(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0)))
+//				logger.info(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)));
+                    List<HGHandle> parents = e.getParents();
+
+                    if (((Hyperedge) graph.get(parents.get(0)))
                             .getType() == HyperedgeTypeEnum.Set) { // embedded inside a set (always have 1 parent)
                         // name is added by the parent set
                     } else { // embedded set
-                        HGHandle pHandle = Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0);
+                        HGHandle pHandle = e.getParents().get(0);
+//                                Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0);
                         Hyperedge p = ((Hyperedge) graph.get(pHandle));
                         size = ((Hyperedge) e).getName().length() * CalculateMultiplier(graph, p, graph.get(p.getRoot()));
                     }
@@ -221,29 +230,29 @@ public final class CostOperations {
                 default:
                     break;
             }
-//			System.out.println("OOOOOOOOO" + e);
+//			logger.info("OOOOOOOOO" + e);
             for (HGHandle childHandle : ((Hyperedge) e).findAll()) {
                 Element child = graph.get(childHandle);
-//				System.out.println("Child is ---" + child);
+//				logger.info("Child is ---" + child);
                 double multiplier = CalculateMultiplier(graph, (Hyperedge) e, child);
                 Pair<Double, HashMap<Atom, Double>> result = CalculateSize(graph, child);
-//				System.out.println("size before" + size);
+//				logger.info("size before" + size);
                 size = size + result.getFirst() * multiplier;
-//				System.out.println(child + "          " + result.getFirst());
-//				System.out.println("size            " + size);
-//				System.out.println(e + "multiplXXXX         " + multiplier);
-//				System.out.println("existing = "+map);System.out.println(e+"multipl         "+multiplier);
-//				System.out.println("existing = " + map);
-//				System.out.println("new = " + result.getSecond());
+//				logger.info(child + "          " + result.getFirst());
+//				logger.info("size            " + size);
+//				logger.info(e + "multiplXXXX         " + multiplier);
+//				logger.info("existing = "+map);logger.info(e+"multipl         "+multiplier);
+//				logger.info("existing = " + map);
+//				logger.info("new = " + result.getSecond());
 
 
                 // TODO: hetetogeneous collections
 //				if (((Hyperedge) e).getType() == HyperedgeTypeEnum.FirstLevel) {
 //					for (Atom key : result.getSecond().keySet()) {
-//						System.out.println("putting  " + key + " before " + map.get(key) + "getting "
+//						logger.info("putting  " + key + " before " + map.get(key) + "getting "
 //								+ result.getSecond().get(key));
 //					}
-//					System.out.println("Size is " +size);
+//					logger.info("Size is " +size);
 //				}
 
                 for (Atom key : result.getSecond().keySet()) {
@@ -259,24 +268,24 @@ public final class CostOperations {
     private static double CalculateMultiplier(HyperGraph graph, Hyperedge e, Element child) {
         double multiplier = 1.0;
 
-//		System.out.println(e + "----->" + child);
+//		logger.info(e + "----->" + child);
         if (!(child instanceof Relationship)) {
 
             if (e.getType() == HyperedgeTypeEnum.SecondLevel && child instanceof Atom) {
                 Atom root = (Atom) graph.get(e.getRoot());
                 List<HGHandle> attributes = Graphoperations.getAttributesClass(graph, e.getRoot());
                 if (attributes.contains(graph.getHandle(child)) || root == child) {
-//                    System.out.println("FFFFFFFFFFFFF");
+//                    logger.info("FFFFFFFFFFFFF");
 
                     multiplier = root.getCount();
                 } else { // find the path to the root
-//System.out.println("OOOOOOOOOOOOOOOOOOOOOO" + e.getName());
+//logger.info("OOOOOOOOOOOOOOOOOOOOOO" + e.getName());
                     ArrayList<RelStructure> relationships = makeRelStructures(graph, e);
-//					System.out.println(relationships);
+//					logger.info(relationships);
                     Tree<RelStructure> tree = makeTree(graph, e, relationships);
 //                    ArrayList<Node<RelStructure>> y = tree.getPreOrderTraversal();
 //                    y.forEach(x->{
-//                        System.out.println(x.getData().from+"-->"+x.getData().to);
+//                        logger.info(x.getData().from+"-->"+x.getData().to);
 //                    });
 
                     multiplier = getMultiplierForLeaf(graph, child, tree) * root.getCount();
@@ -285,10 +294,10 @@ public final class CostOperations {
             } else if (e.getType() == HyperedgeTypeEnum.Set) {
                 Hyperedge parentStruct = ((Hyperedge) graph
                         .get(Graphoperations.getParentHyperedges(graph, graph.getHandle(e)).get(0)));
-//				System.out.println("making for" + parentStruct);
+//				logger.info("making for" + parentStruct);
                 ArrayList<RelStructure> parentRels = makeRelStructures(graph, parentStruct);
 
-//				System.out.println(parentRels);
+//				logger.info(parentRels);
 
                 Tree<RelStructure> tree = makeTree(graph, parentStruct, parentRels);
                 ArrayList<RelStructure> setRels = new ArrayList<>();
@@ -314,12 +323,12 @@ public final class CostOperations {
                     multiplier = multiplier * ((Atom) graph.get(e.getRoot())).getCount();
                 }
 
-//				System.out.println("MMMMMMMMMM" + multiplier);
+//				logger.info("MMMMMMMMMM" + multiplier);
             }
 
 //			else if ((e.getType() == HyperedgeTypeEnum.Struct || e.getType() == HyperedgeTypeEnum.SecondLevel) && child instanceof Hyperedge
 //					&& ((Hyperedge) child).getType() == HyperedgeTypeEnum.Set) {
-//				System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+//				logger.info("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
 //				multiplier =
 //			}
         }
@@ -328,7 +337,7 @@ public final class CostOperations {
 
     private static double getMultiplierForLeaf(HyperGraph graph, Element leafChild, Tree<RelStructure> tree) {
         double multiplier = 1.0;
-//        System.out.println("#####" + leafChild.getName());
+//        logger.info("#####" + leafChild.getName());
         ArrayList<ArrayList<Node<RelStructure>>> paths = tree.getPathsFromRootToAnyLeaf();
         boolean pathFound = false;
         Atom leafAtom = leafChild instanceof Hyperedge ? graph.get(((Hyperedge) leafChild).getRoot())
@@ -337,7 +346,7 @@ public final class CostOperations {
             if (path.get(path.size() - 1).getData().to == leafAtom) {
                 pathFound = true;
                 for (Node<RelStructure> node : path) {
-//                    System.out.println(node.getData().from + "-->" + node.getData().to + "  " + node.getData().mult);
+//                    logger.info(node.getData().from + "-->" + node.getData().to + "  " + node.getData().mult);
                     HashMap<Atom, Double> map = node.getData().mult;
                     if (map != null) {
                         multiplier = multiplier * map.get(node.getData().to);
@@ -377,22 +386,22 @@ public final class CostOperations {
         while (seconditer.hasNext()) {
             HGHandle hgHandle2 = (HGHandle) seconditer.next();
             Relationship r = graph.get(hgHandle2);
-//			System.out.println("XXXXXXXXXXX" + r);
+//			logger.info("XXXXXXXXXXX" + r);
             Atom elm1 = graph.get(r.getTargetAt(0));
             Atom elm2 = graph.get(r.getTargetAt(1));
 
             if (elm1.getType() == AtomTypeEnum.Class && elm2.getType() == AtomTypeEnum.Class) {
-//				System.out.println(elm1+"----"+elm2);
+//				logger.info(elm1+"----"+elm2);
                 RelStructure st = getEmptyRelStructForRelationship(graph, r);
                 relationships.add(st);
-//				System.out.println(relationships);
+//				logger.info(relationships);
             }
         }
 
 
 //		allRelationships.stream().forEach(x -> {
 //			Relationship r=graph.get(x);
-//			System.out.println(r.getName());
+//			logger.info(r.getName());
 //			Atom elm1 = graph.get(r.getTargetAt(0));
 //			Atom elm2 = graph.get(r.getTargetAt(1));
 //			if (elm1.getType() == AtomTypeEnum.Class && elm2.getType() == AtomTypeEnum.Class) {
@@ -417,14 +426,14 @@ public final class CostOperations {
 
         RelStructure st = new RelStructure(r, null);
         st.mult = map;
-//		System.out.println("----------------------------------------------");
-//		System.out.println(map);
+//		logger.info("----------------------------------------------");
+//		logger.info(map);
         return st;
     }
 
     private static Tree<RelStructure> makeTree(HyperGraph graph, Hyperedge parent,
                                                ArrayList<RelStructure> relationships) {
-//		System.out.println("makeTree");
+//		logger.info("makeTree");
         Node<RelStructure> root = new Node<RelStructure>(
                 new RelStructure(null, null, null, graph.get(parent.getRoot())));
         Tree<RelStructure> tree = new Tree<>(root);
@@ -434,15 +443,15 @@ public final class CostOperations {
     }
 
     private static void addRelationshipToTree(ArrayList<RelStructure> relationships, Tree<RelStructure> tree) {
-//		System.out.println(tree.getRoot().getData().to);
-//		System.out.println(relationships.size());
+//		logger.info(tree.getRoot().getData().to);
+//		logger.info(relationships.size());
         while (!relationships.isEmpty()) {
 
             RelStructure rel = relationships.remove(0);
             boolean found = false;
             for (Node<RelStructure> node : tree.getPostOrderTraversal()) {
-//				System.out.println(node.getData().to);
-//				System.out.println(rel.mult.keySet().contains(node.getData().to));
+//				logger.info(node.getData().to);
+//				logger.info(rel.mult.keySet().contains(node.getData().to));
                 if (rel.mult.keySet().contains(node.getData().to)) {
                     rel.from = node.getData().to;
                     for (Atom a : rel.mult.keySet()) {
@@ -452,7 +461,7 @@ public final class CostOperations {
                     }
                     node.addChild(new Node<RelStructure>(rel));
                     found = true;
-//					System.out.println("added " + relationships.size());
+//					logger.info("added " + relationships.size());
 //					break;
                 } else {
 

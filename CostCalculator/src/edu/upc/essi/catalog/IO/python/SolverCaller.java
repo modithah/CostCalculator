@@ -3,6 +3,7 @@ package edu.upc.essi.catalog.IO.python;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,9 +11,11 @@ import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SolverCaller {
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static JSONObject getMissRates() {
 		JSONObject jsonObject =null;
 		try {
@@ -23,7 +26,7 @@ public final class SolverCaller {
 			conn.setRequestProperty("Accept", "application/json");
 
 			if (conn.getResponseCode() != 200) {
-				System.out.println("Failed : HTTP error code : "
+				logger.error("Failed : HTTP error code : "
 						+ conn.getResponseCode());
 				return jsonObject;
 			}
@@ -32,11 +35,11 @@ public final class SolverCaller {
 				(conn.getInputStream())));
 
 			String output;
-//			System.out.println("Output from Server .... \n");
+//			logger.info("Output from Server .... \n");
 			String x = br.lines().collect(Collectors.joining());
 			
 			
-//			System.out.println(x);
+//			logger.info(x);
 
 			 jsonObject = new JSONObject(x);
 			conn.disconnect();

@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.cost;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
@@ -16,11 +17,13 @@ import edu.upc.essi.catalog.query.prefixsuffix.DocumentPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.IPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.RelationalPrefixSuffix;
 import org.hypergraphdb.HyperGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class rewrewr{
 
 	IPrefixSuffix PrefixSuffix;
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public rewrewr() {
 		// TODO Auto-generated constructor stub
 	}
@@ -79,7 +82,7 @@ public class rewrewr{
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateQueryFromMap(element, path, l));
+			logger.info(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -105,7 +108,7 @@ public class rewrewr{
 
 	public String CreateQueryFromMap(Element node, String path, AdjacencyList l) {
 
-		// System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
+		// logger.info("node -> " + node + "path ->" + path + "l-->" + l);
 		String Q = "";
 
 		Triple pair = GetPrefixSuffix(node, path);

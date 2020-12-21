@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.cost;
 
+import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -14,6 +15,8 @@ import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DepthandHeterogeniety {
 
@@ -21,15 +24,16 @@ public class DepthandHeterogeniety {
 		// TODO Auto-generated constructor stub
 
 	}
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static void main(String[] args) {
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		System.out.println(CalculateDepth(graph));
-		System.out.println(CalculateHeterogeniety(graph));
+		logger.info(String.valueOf(CalculateDepth(graph)));
+		logger.info(String.valueOf(CalculateHeterogeniety(graph)));
 //		Graphoperations.printDesign();
 	}
 
 	public static double CalculateDepth(HyperGraph graph) {
+//		logger.info("Graph is "+graph.getLocation());
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
 		double max = 0.0;
 		Queue<Pair<Hyperedge, Double>> queue = new LinkedList<Pair<Hyperedge, Double>>();

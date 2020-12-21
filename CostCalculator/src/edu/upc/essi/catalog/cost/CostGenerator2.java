@@ -67,15 +67,15 @@ public class CostGenerator2 {
 			break;
 		}
 
-//		System.out.println(CalculateSize(graph,node));
+//		logger.info(CalculateSize(graph,node));
 
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
 
 	public Pair<Double, HashMap<Atom, Double>> CalculateSize(HyperGraph graph,Element node) {
-//		System.out.println("node -> " + node);
+//		logger.info("node -> " + node);
 		double size = GetSize(graph, node);
-//		System.out.println("size   " + size);
+//		logger.info("size   " + size);
 		HashMap<Atom, Double> map = new HashMap<>();
 		Pair<Double, HashMap<Atom, Double>> p;
 

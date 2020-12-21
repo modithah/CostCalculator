@@ -1,6 +1,9 @@
 package edu.upc.essi.catalog.core.constructs;
 
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
+import org.hypergraphdb.HGHandle;
+
+import java.util.ArrayList;
 
 public class Atom implements Element, Comparable<Atom> {
 
@@ -14,6 +17,7 @@ public class Atom implements Element, Comparable<Atom> {
 	 */
 	private int count;
 	private int distinctVals;
+	private ArrayList<HGHandle> incoming;
 	/**
 	 * 
 	 *  For attributes
@@ -28,6 +32,7 @@ public class Atom implements Element, Comparable<Atom> {
 	
 
 	public Atom() {
+		this.incoming=new ArrayList<>();
 	}
 
 	/**
@@ -47,6 +52,7 @@ public class Atom implements Element, Comparable<Atom> {
 		this.average = average;
 		this.size = size;
 		this.type = AtomTypeEnum.Attribute;
+		this.incoming=new ArrayList<>();
 	}
 
 	/**
@@ -58,6 +64,7 @@ public class Atom implements Element, Comparable<Atom> {
 		this.name = name;
 		this.dataType = dataType;
 		this.type = AtomTypeEnum.Attribute;
+		this.incoming=new ArrayList<>();
 	}
 
 	/**
@@ -67,7 +74,7 @@ public class Atom implements Element, Comparable<Atom> {
 	public Atom(String name) {
 		this.name = name;
 		this.type = AtomTypeEnum.Class;
-
+		this.incoming=new ArrayList<>();
 	}
 	/**
 	 * @param name
@@ -78,13 +85,32 @@ public class Atom implements Element, Comparable<Atom> {
 		this.name=name;
 		this.count=count;
 		this.type = AtomTypeEnum.Class;
+		this.incoming=new ArrayList<>();
 	}
 
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;
 	}
-	
+
+	@Override
+	public ArrayList<HGHandle> getParents() {
+		return incoming;
+	}
+
+	public ArrayList<HGHandle> getIncoming() {
+		return incoming;
+	}
+
+	@Override
+	public void addToIncoming(HGHandle parent) {
+		this.incoming.add(parent);
+	}
+
+	@Override
+	public void removeFromIncoming(HGHandle parent) {
+		this.incoming.remove(parent);
+	}
 
 	public AtomTypeEnum getType() {
 		return type;
@@ -178,6 +204,10 @@ public class Atom implements Element, Comparable<Atom> {
 	    public int hashCode() {
 	        return name.hashCode();
 	    }
+
+	public void setIncoming(ArrayList<HGHandle> incoming) {
+		this.incoming = incoming;
+	}
 
 //	@Override
 //	public int compareTo(Element arg0) {

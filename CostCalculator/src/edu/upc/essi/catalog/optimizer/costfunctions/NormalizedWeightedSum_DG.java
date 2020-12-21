@@ -30,7 +30,7 @@ public class NormalizedWeightedSum_DG extends DesignGoal {
         maximumPoints.put(StorageSpace_CF.class.getName(),storageCostMinMax.getSecond());
 
         costFunctions.add(new Pair<>(new TotalQueryCost_CF(), queryCostWeight));
-        Pair<Double,Double> queryCostMinMax = Transformations.getCostMinMax(G,Workload.getWorkload(G));
+        Pair<Double,Double> queryCostMinMax = Transformations.getCostMinMax(G,Workload.getWorkload2(G));
         minimumPoints.put(TotalQueryCost_CF.class.getName(),queryCostMinMax.getFirst());
         maximumPoints.put(TotalQueryCost_CF.class.getName(),queryCostMinMax.getSecond());
 
@@ -65,6 +65,7 @@ public class NormalizedWeightedSum_DG extends DesignGoal {
             double eval = ( (Fi - Fo) / (Fmax - Fo) );
             V += (CF.getSecond() * eval);
         }
+//        G.close();
         return V;
     }
 

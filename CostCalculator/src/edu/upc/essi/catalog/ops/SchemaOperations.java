@@ -78,7 +78,7 @@ public class SchemaOperations {
 //			graph.update(parent);
 
 				HGHandle firstlevel = Graphoperations.getFirstLevelHyperedgesContainingAtom(graph, otherAtom);
-//			System.out.println(graph.get(firstlevel).toString());
+//			logger.info(graph.get(firstlevel).toString());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

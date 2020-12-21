@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.cost;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
@@ -20,11 +21,14 @@ import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.query.prefixsuffix.DocumentPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.IPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.RelationalPrefixSuffix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CostGenerator {
 
 	IPrefixSuffix PrefixSuffix;
 	ICost Cost;
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 	public CostGenerator() {
 		Cost = new DocumentCost();
@@ -59,13 +63,13 @@ public class CostGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateCostFromMap(graph,element, path, l));
+			logger.info(CreateCostFromMap(graph,element, path, l).toString());
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
 
 	public Pair<Double, Double> CreateCostFromMap(HyperGraph graph,Element node, String path, AdjacencyList l) {
-//		System.out.println("node -> " + node );
+//		logger.info("node -> " + node );
 		Pair<Double, Double> p;
 		double Q = 0;
 		double mult = 1;
@@ -83,12 +87,12 @@ public class CostGenerator {
 			}
 		}
 
-//		System.out.println("mult Ss  " + mult);
+//		logger.info("mult Ss  " + mult);
 		Q = Q * mult;
 		Q = Q + pair.getVal1();
-//		System.out.println("WWWWWWWWWWWWW    "+Q);
+//		logger.info("WWWWWWWWWWWWW    "+Q);
 		p = new Pair<Double, Double>(Q, mult);
-//		System.out.println(node.getName() + "--out$$$--" + p);
+//		logger.info(node.getName() + "--out$$$--" + p);
 		return p;
 	}
 }

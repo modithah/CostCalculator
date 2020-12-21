@@ -28,7 +28,10 @@ public class DocDesignActionsFunction implements ActionsFunction {
             if (!WorkflowExecutions.usedConfigurations.contains(Graphoperations.stringDesign(dummy))) {
                 WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
                 actions.add(new UnionAction(newG, uCandidate.getFirst(), uCandidate.getSecond()));
+            }else {
+                newG.close();
             }
+            dummy.close();
         });
 
         //Flatten
@@ -41,7 +44,10 @@ public class DocDesignActionsFunction implements ActionsFunction {
             if (!WorkflowExecutions.usedConfigurations.contains(Graphoperations.stringDesign(dummy))) {
                 WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
                 actions.add(new FlattenAction(newG,fCandidate));
+            }else {
+                newG.close();
             }
+            dummy.close();
         });
 
         //Group
@@ -54,7 +60,10 @@ public class DocDesignActionsFunction implements ActionsFunction {
             if (!WorkflowExecutions.usedConfigurations.contains(Graphoperations.stringDesign(dummy))) {
                 WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
                 actions.add(new GroupAction(newG,gCandidate));
+            }else {
+                newG.close();
             }
+            dummy.close();
         });
 
         //Embed
@@ -67,7 +76,10 @@ public class DocDesignActionsFunction implements ActionsFunction {
             if (!WorkflowExecutions.usedConfigurations.contains(Graphoperations.stringDesign(dummy))) {
                 WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
                 actions.add(new EmbedAction(newG,eCandidate));
+            }else {
+                newG.close();
             }
+            dummy.close();
         });
 
         //Segregate
@@ -81,6 +93,10 @@ public class DocDesignActionsFunction implements ActionsFunction {
                 WorkflowExecutions.usedConfigurations.add(Graphoperations.stringDesign(dummy));
                 actions.add(new SegregateAction(newG,sCandidate.getFirst(),sCandidate.getSecond()));
             }
+            else {
+                newG.close();
+            }
+            dummy.close();
         });
 
         return actions;

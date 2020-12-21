@@ -9,12 +9,18 @@ import edu.upc.essi.catalog.optimizer.costfunctions.SingletonMultiObjectiveDesig
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 public class ShotgunHillClimbing {
 
 	public ShotgunHillClimbing() {
 		// TODO Auto-generated constructor stub
 	}
+
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 	public static void main(String[] args) {
 		//Shotgun hill-climbing
@@ -24,7 +30,7 @@ public class ShotgunHillClimbing {
 		int iterations = 0;
 
 		do {
-			System.out.println("ITERATIONS "+iterations);
+//			logger.info("ITERATIONS "+iterations);
 			++iterations;
 
 			WorkflowExecutions worker = new WorkflowExecutions();
@@ -40,17 +46,20 @@ public class ShotgunHillClimbing {
 			else {
 				if (solution.getSecond() < bestSoFar.getSecond()) {
 					timesConverged = 0;
+//					logger.info(bestSoFar.getFirst());
 					bestSoFar = solution;
+					
 				} else {
 					++timesConverged;
 				}
 			}
-			System.out.println("bestSoFar cost = "+bestSoFar.getSecond());
-
+//			logger.info(solution.getSecond()+","+ bestSoFar.getSecond());
+//			logger.info("bestSoFar cost = "+bestSoFar.getSecond());
+			logger.info("!!!!!!!!  "+timesConverged);
 			SingletonMultiObjectiveDesignGoal.INSTANCE.destroy();
-		} while (/*timesConverged*/iterations < 3);
+		} while (timesConverged < 20); //timesConverged
 
-		System.out.println("You are done, the solution has a cost "+bestSoFar.getSecond()+" with design "+bestSoFar.getFirst());
+		logger.info("You are done, the solution has a cost "+bestSoFar.getSecond()+" with design \n"+bestSoFar.getFirst());
 
 	}
 

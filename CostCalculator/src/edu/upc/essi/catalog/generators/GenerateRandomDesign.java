@@ -1,6 +1,7 @@
 package edu.upc.essi.catalog.generators;
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 
 import javax.swing.plaf.synth.SynthSpinnerUI;
@@ -29,6 +30,8 @@ import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.enums.OperationTypeEnum;
 import edu.upc.essi.catalog.loaders.LoadGraph;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenerateRandomDesign {
 
@@ -38,13 +41,13 @@ public class GenerateRandomDesign {
 
 	final double pSet = 0.5;
 	final static double skip = 0;
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static HyperGraph get() throws IOException {
 		// TODO Auto-generated method stub
 		File serverDir = new File(Const.HG_LOCATION_BOOK );
 //		FileUtils.cleanDirectory(serverDir);
 		HyperGraph graph = new HyperGraph(serverDir.getAbsolutePath()+ File.separator + UUID.randomUUID().toString());
-		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json",graph);
+		LoadGraph.LoadBaseFromJSONFile("data/schemas/tpcc-sample-3EntityRels.json",graph);
 		
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
@@ -62,40 +65,40 @@ public class GenerateRandomDesign {
 		allAtoms.addAll(Graphoperations.getClassAtomList(graph));
 		allRels.addAll(Graphoperations.getClassRelList(graph));
 
-//		System.out.println("FFFFFFFFFFF" + allAtoms.get(0));
+//		logger.info("FFFFFFFFFFF" + allAtoms.get(0));
 //		Graphoperations.getAtomClassRelList(graph,graph.getHandle(allAtoms.get(0))).forEach(r -> {
-//			System.out.println(r);
+//			logger.info(r);
 //		});
-//		System.out.println("Xxxxxxxx");
+//		logger.info("Xxxxxxxx");
 //		allRels.forEach(r -> {
-//			System.out.println(r);
+//			logger.info(r);
 //		});
 
 //		Graphoperations.getAttributeRelsofClass(graph, graph.getHandle(allAtoms.get(1))).forEach(r -> {
-//			System.out.println(graph.get(r).toString());
+//			logger.info(graph.get(r).toString());
 //		});
 //
 //		Graphoperations.getAttributesClass(graph, graph.getHandle(allAtoms.get(1))).forEach(r -> {
-//			System.out.println(graph.get(r).toString());
+//			logger.info(graph.get(r).toString());
 //		});
 
 		// pick a random relationship first
 		Relationship firstPick = allRels.remove(rand.nextInt(allRels.size()));
 		usedRels.add(firstPick);
-//		System.out.println("BEGINING SSSSSSS");
+//		logger.info("BEGINING SSSSSSS");
 		boolean refer = rand.nextBoolean();
 //		for (int i = 0; i < 10; i++) {
 
 		int firstChoice = rand.nextInt(3);
-//		System.out.println("first choice" + firstChoice);
+//		logger.info("first choice" + firstChoice);
 
 		chooseOperation(graph, dummyAtom, dummyRelStr, reification, paths, firstPick, refer, firstChoice, allRels,
 				components);
 		List<Relationship> edges = Graphoperations.getAtomClassRelList(graph,
 				firstPick.getTargetAt(firstChoice == 2 ? rand.nextInt(2) : firstChoice));
 		edges.removeAll(usedRels);
-//		System.out.println("END SSSSSSS");
-//		System.out.println(paths);
+//		logger.info("END SSSSSSS");
+//		logger.info(paths);
 		while (!(allRels.isEmpty() && edges.isEmpty())) {
 			Relationship newPick = null;
 			if (!edges.isEmpty()) {
@@ -106,7 +109,7 @@ public class GenerateRandomDesign {
 			allRels.remove(newPick);
 
 			int newChoice = rand.nextInt(2);
-//			System.out.println("second choice" + newChoice);
+//			logger.info("second choice" + newChoice);
 			refer = rand.nextBoolean();
 			int root = newChoice;
 
@@ -118,10 +121,10 @@ public class GenerateRandomDesign {
 
 		}
 
-//		System.out.println(paths);
+//		logger.info(paths);
 //		for (Tree<RelStructure> tree : components) {
 //			tree.getPostOrderTraversal().forEach(r -> {
-//				System.out.println(r);
+//				logger.info(r);
 //			});
 //		}
 
@@ -174,7 +177,7 @@ public class GenerateRandomDesign {
 				rels.add(new RelStructure(rel, refer ? OperationTypeEnum.Refer : OperationTypeEnum.Nest,
 						graph.get(rel.getTargetAt(0)), graph.get(rel.getTargetAt(1))));
 				components.add(tree);
-//				System.out.println(rels);
+//				logger.info(rels);
 
 				structures.add(rels);
 
@@ -246,14 +249,14 @@ public class GenerateRandomDesign {
 			break;
 		}
 
-//		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXX");
+//		logger.info("XXXXXXXXXXXXXXXXXXXXXXXXXX");
 //		for (Tree<RelStructure> tree : components) {
-//			System.out.println("--------------");
+//			logger.info("--------------");
 //			tree.getPostOrderTraversal().forEach(r -> {
-//				System.out.println(r);
+//				logger.info(r);
 //			});
 //		}
-//		System.out.println("SSSSSSSSSSSS");
+//		logger.info("SSSSSSSSSSSS");
 	}
 
 	private static boolean isRootInPAth(ArrayList<LinkedList<RelStructure>> path, Atom root, Atom child,
@@ -268,7 +271,7 @@ public class GenerateRandomDesign {
 //				linkedList.add(new RelStructure(rel, op, root, child));
 //			}
 			if (linkedList.stream().anyMatch(l -> l.to == root && l.from != child)) {
-//				System.out.println("yessssssssssssssss");
+//				logger.info("yessssssssssssssss");
 				ret = true;
 				LinkedList<RelStructure> list = new LinkedList<>();
 				boolean found = false;
@@ -287,7 +290,7 @@ public class GenerateRandomDesign {
 					}
 				}
 				if (update) {
-//					System.out.println("updateing");
+//					logger.info("updateing");
 					linkedList.add(new RelStructure(rel, op, root, child));
 				} else {
 					list.add(new RelStructure(rel, op, root, child));
@@ -299,17 +302,17 @@ public class GenerateRandomDesign {
 		for (Tree<RelStructure> tree : components) {
 			if (tree.getPostOrderTraversal().stream()
 					.anyMatch(l -> l.getData().to == root && l.getData().from != child)) {
-//				System.out.println("yessssssssssssssss");
+//				logger.info("yessssssssssssssss");
 				ret = true;
 
 				for (Node<RelStructure> node : tree.getPostOrderTraversal()) {
 
-//					System.out.println(node.getData().to +"->"+ node.getData().from);
-//				System.out.println( node.getChildren().isEmpty() || node.getChildren().stream().anyMatch(c -> c.getData().rel != rel));
+//					logger.info(node.getData().to +"->"+ node.getData().from);
+//				logger.info( node.getChildren().isEmpty() || node.getChildren().stream().anyMatch(c -> c.getData().rel != rel));
 				
 					if (node.getData().to == root && node.getData().from != child
 							&& (node.getChildren().isEmpty() || !node.getChildren().stream().anyMatch(c -> c.getData().rel == rel))) {
-//						System.out.println("found node");
+//						logger.info("found node");
 						node.addChild(new Node<RelStructure>(new RelStructure(rel, op, root, child)));
 						if (node.getChildren().size() == 1 && Math.random() < skip) {
 							RelStructure data = node.getData();
@@ -330,7 +333,7 @@ public class GenerateRandomDesign {
 
 	private static ArrayList<HGHandle> dooperation(Node<RelStructure> node, HyperGraph graph,
 			ArrayList<Atom> allAtoms) {
-//		System.out.println(node.getData().from+"->"+node.getData().to);
+//		logger.info(node.getData().from+"->"+node.getData().to);
 		ArrayList<HGHandle> handles = new ArrayList<>();
 		for (Node<RelStructure> child : node.getChildren()) {
 			handles.addAll(dooperation(child, graph, allAtoms));
@@ -374,9 +377,9 @@ public class GenerateRandomDesign {
 			break;
 		}
 		
-//		System.out.println(node.getData().from+"->"+node.getData().to);
+//		logger.info(node.getData().from+"->"+node.getData().to);
 //		for (HGHandle hgHandle : handles) {
-//			System.out.println(graph.get(hgHandle).toString());
+//			logger.info(graph.get(hgHandle).toString());
 //		}
 
 		if (node.getParent() == null) {
@@ -397,7 +400,7 @@ public class GenerateRandomDesign {
 	}
 
 	private static void finalyzeGraph(HyperGraph graph) {
-//		System.out.println("end");
+//		logger.info("end");
 		List<HGHandle> firstLevels = new ArrayList<>();
 		List<Hyperedge> structhyps = graph
 				.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Struct)));
@@ -406,14 +409,16 @@ public class GenerateRandomDesign {
 
 		for (Hyperedge hyperedge : structhyps) {
 			HGHandle handle = graph.getHandle(hyperedge);
-			HGSearchResult<Object> x = graph.find(hg.contains(handle));
+//			logger.info(hyperedge.getName()+" ---- "+hyperedge.getParents().size());
+//			HGSearchResult<Object> x = graph.find(hg.contains(handle));
 
-			if (x.hasNext()) {
-//				System.out.println("not empty");
-//				System.out.println(graph.get((HGHandle) x.next()).toString());
+
+			if (hyperedge.getParents().size()>0) {
+//				logger.info("not empty");
+//				logger.info(graph.get((HGHandle) x.next()).toString());
 
 			} else {
-//				System.out.println("empty");
+//				logger.info("empty");
 				hyperedge.setType(HyperedgeTypeEnum.SecondLevel);
 				graph.update(hyperedge);
 				try {
@@ -431,12 +436,13 @@ public class GenerateRandomDesign {
 
 		// make sets without parents second level
 		for (Hyperedge hyperedge : sethyps) {
+//			logger.info(hyperedge.getName()+"  "+hyperedge.getParents().size());
 			HGHandle handle = graph.getHandle(hyperedge);
-			HGSearchResult<Object> x = graph.find(hg.contains(handle));
-			if (x.hasNext()) {
-//				System.out.println("not empty");
+//			HGSearchResult<Object> x = graph.find(hg.contains(handle));
+			if (hyperedge.getParents().size()>0) {
+//				logger.info("not empty");
 			} else {
-//				System.out.println("empty");
+//				logger.info("empty");
 				hyperedge.findAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Struct)))
 						.forEach(h -> {
 							Hyperedge y = graph.get(h);

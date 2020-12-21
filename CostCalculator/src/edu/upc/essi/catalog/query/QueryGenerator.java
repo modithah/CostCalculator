@@ -79,7 +79,7 @@ public class QueryGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-//			System.out.println(CreateQueryFromMap(element, path, l));
+//			logger.info(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -101,7 +101,7 @@ public class QueryGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-//			System.out.println(CreateQueryFromMap(element, path, l));
+//			logger.info(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -127,7 +127,7 @@ public class QueryGenerator {
 
 	public String CreateQueryFromMap(Element node, String path, AdjacencyList l) {
 
-//		System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
+//		logger.info("node -> " + node + "path ->" + path + "l-->" + l);
 		String Q = "";
 
 		Triple pair = GetPrefixSuffix(node, path);

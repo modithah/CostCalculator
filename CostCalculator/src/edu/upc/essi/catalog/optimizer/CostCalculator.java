@@ -14,19 +14,24 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CostCalculator {
-
-    public static CostResult calculateCost(HyperGraph graph) throws JSONException {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+    public static CostResult calculateCost(HyperGraph graph)  {
+//        logger.info("RRRRRRRRRR" + graph.getLocation());
         GenerateMetadata metadataGen = new GenerateMetadata();
         metadataGen.setSizeandMultipliers(graph);
 
-        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload(graph);
+//        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload(graph);
+        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload2(graph);
 
         // get query frequencies
         QueryFrequencies freq = QueryCalculator.CalculateFrequency(workload, graph);
@@ -78,20 +83,20 @@ public class CostCalculator {
                 HashMap<Hyperedge, Map<Atom, Double>> costmap = pairs.getSecond();
                 double cost = 0.0;
                 for (Hyperedge hyp : firstLevels) {
-//					System.out.println(hyp.getName());
+//					logger.info(hyp.getName());
                     Map<Atom, Double> collectionMap = costmap.get(hyp);
 
                     cost += collectionMap.get(new Atom("~dummy")) * missRates.getDouble(elmToString.get(hyp.getName()));
 
-//					System.out.println("---" + cost);
+//					logger.info("---" + cost);
                     for (Atom at : collectionMap.keySet()) {
                         if (!at.getName().equals("~dummy")
                                 && elmToString.containsKey(hyp.getName() + "~" + at.getName())) {
-//							System.out.println(at);
-//							System.out.println(elmToString.get(hyp.getName() + "~" + at.getName()));
+//							logger.info(at);
+//							logger.info(elmToString.get(hyp.getName() + "~" + at.getName()));
                             cost += collectionMap.get(at)
                                     * missRates.getDouble(elmToString.get(hyp.getName() + "~" + at.getName()));
-//							System.out.println("+++"+cost);
+//							logger.info("+++"+cost);
                         }
 
                     }
@@ -101,7 +106,8 @@ public class CostCalculator {
 
             }
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
+            // TODO here is the error
+            result.AddtoQueryCost(9999);
             e.printStackTrace();
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -120,14 +126,14 @@ public class CostCalculator {
         for (Hyperedge hyperedge : firstLevels) {
 
             collectionSize.add(hyperedge.getSize());
-//			System.out.println("FFFFFFFFFFFFFFFFFFFF" + hyperedge.getSize() + "    "+ hyperedge.getName());
+//			logger.info("FFFFFFFFFFFFFFFFFFFF" + hyperedge.getSize() + "    "+ hyperedge.getName());
             if (global.get(hyperedge).get(new Atom("~dummy")) != 0) {
                 collectionCounter++;
                 String collectionPrefix = "collection_" + collectionCounter;
                 elmToString.put(hyperedge.getName(), collectionPrefix);
                 ArrayList<DataIndexMetadata> col = new ArrayList<>();
 
-//				System.out.println(global.get(hyperedge));
+//				logger.info(hyperedge);
 
                 double hyperedgecount = 0.0;
                 List<HGHandle> secondLevels = hyperedge.findAll();
@@ -138,7 +144,7 @@ public class CostCalculator {
                     Atom secondLevelRoot = graph.get(secondlevelHyperedge.getRoot());
                     hyperedgecount = hyperedge.getMultipliers().get(secondLevelRoot);
                     if (global.get(hyperedge).get(secondLevelRoot) != 0) {
-//						System.out.println(global.get(hyperedge).get(secondLevelRoot));
+//						logger.info(global.get(hyperedge).get(secondLevelRoot));
                         col.add(new DataIndexMetadata(false, 1, hyperedgecount,
                                 global.get(hyperedge).get(secondLevelRoot), DataIndexMetadata.DataType.UUID));
 
@@ -150,19 +156,19 @@ public class CostCalculator {
                     for (Atom atom : global.get(hyperedge).keySet()) {
                         if (!atom.getName().equals("~dummy") && !atom.getName().equals(secondLevelRoot.getName())
                                 && global.get(hyperedge).get(atom) != 0) {
-//						System.out.println(hyperedge.getMultipliers().get(atom));
+//						logger.info(hyperedge.getMultipliers().get(atom));
                             col.add(new DataIndexMetadata(false, hyperedge.getMultipliers().get(atom) / hyperedgecount,
                                     hyperedge.getMultipliers().get(atom), global.get(hyperedge).get(atom),
                                     DataIndexMetadata.DataType.INT));
                             elmToString.put(hyperedge.getName() + "~" + atom.getName(),
                                     collectionPrefix + "_index_" + indexCount);
-//							System.out.println(collectionPrefix+"_index_"+indexCount);
+//							logger.info(collectionPrefix+"_index_"+indexCount);
                             indexCount++;
                         }
                     }
                 } else {
-                    System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-//                	System.out.println(global);
+                    logger.info("XXXXXXXXXXXXXXXXXXXXXXXX");
+//                	logger.info(global);
                     int indexCount = 1;
                     for (HGHandle secondLevel : secondLevels) {
                         Hyperedge secondlevelHyperedge = (Hyperedge) graph.get(secondLevel);
@@ -170,14 +176,14 @@ public class CostCalculator {
                         hyperedgecount += hyperedge.getMultipliers().get(secondLevelRoot);
                     }
 
-                    System.out.println("GGGGGGGGGGGGGGGG  " + hyperedgecount);
+                    logger.info("GGGGGGGGGGGGGGGG  " + hyperedgecount);
                     for (HGHandle secondLevel : secondLevels) {
 
                         Hyperedge secondlevelHyperedge = (Hyperedge) graph.get(secondLevel);
                         Atom secondLevelRoot = graph.get(secondlevelHyperedge.getRoot());
 //                        hyperedgecount += hyperedge.getMultipliers().get(secondLevelRoot);
                         if (global.get(hyperedge).get(secondLevelRoot) != 0) {
-//    						System.out.println(global.get(hyperedge).get(secondLevelRoot));
+//    						logger.info(global.get(hyperedge).get(secondLevelRoot));
 //                            col.add(new DataIndexMetadata(false, 1, hyperedgecount,
 //                                    global.get(hyperedge).get(secondLevelRoot), DataIndexMetadata.DataType.UUID));
 
@@ -189,14 +195,14 @@ public class CostCalculator {
                         for (Atom atom : global.get(hyperedge).keySet()) {
                             if (!atom.getName().equals("~dummy") && !atom.getName().equals(secondLevelRoot.getName())
                                     && global.get(hyperedge).get(atom) != 0) {
-//    						System.out.println(hyperedge.getMultipliers().get(atom));
+//    						logger.info(hyperedge.getMultipliers().get(atom));
                                 col.add(new DataIndexMetadata(false,
                                         hyperedge.getMultipliers().get(atom) / hyperedgecount,
                                         hyperedge.getMultipliers().get(atom), global.get(hyperedge).get(atom),
                                         DataIndexMetadata.DataType.INT));
                                 elmToString.put(hyperedge.getName() + "~" + atom.getName(),
                                         collectionPrefix + "_index_" + indexCount);
-                                System.out.println(collectionPrefix + "_index_" + indexCount);
+                                logger.info(collectionPrefix + "_index_" + indexCount);
                                 indexCount++;
                             }
                         }
@@ -206,7 +212,7 @@ public class CostCalculator {
 
                 col.add(new DataIndexMetadata(true, hyperedge.getSize() / hyperedgecount, hyperedgecount,
                         global.get(hyperedge).get(new Atom("~dummy")), DataIndexMetadata.DataType.DATA));
-//				System.out.println(col);
+//				logger.info(col);
                 schema.add(col);
             } else {
                 notUsed.add(hyperedge);

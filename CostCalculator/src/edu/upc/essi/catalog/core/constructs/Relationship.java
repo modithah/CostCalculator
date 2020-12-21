@@ -14,6 +14,8 @@ import edu.upc.essi.catalog.enums.MultiplicityEnum;
 
 public class Relationship extends HGPlainLink implements Element {
 
+
+
 	public Relationship() {
 	}
 
@@ -21,11 +23,13 @@ public class Relationship extends HGPlainLink implements Element {
 	private CardinalityEnum Cardinality = CardinalityEnum.ONE_TO_ONE;
 	private double Multiplicity = 1.0;
 	private double[] multiplicities;
+	private ArrayList<HGHandle> incoming;
 
 	public Relationship(String iRI, HGHandle... targets) throws Exception {
 		super(targets);
 		assertBinary();
 		this.IRI = iRI;
+		this.incoming=new ArrayList<>();
 	}
 
 	public Relationship(String iRI, CardinalityEnum cardinality, double multiplicity, HGHandle... targets)
@@ -37,7 +41,8 @@ public class Relationship extends HGPlainLink implements Element {
 		this.Multiplicity = multiplicity;
 		this.multiplicities= new double[2];
 		Arrays.fill(this.multiplicities	, 1);
-//		System.out.println("MULTO" + multiplicity);
+		this.incoming=new ArrayList<>();
+//		logger.info("MULTO" + multiplicity);
 	}
 
 	public Relationship(String iRI, double[] multiplicity, HGHandle... targets) throws Exception {
@@ -46,17 +51,19 @@ public class Relationship extends HGPlainLink implements Element {
 		this.IRI = iRI;
 		this.Cardinality = Arrays.stream(multiplicity).anyMatch(m -> (m == 1)) ? Cardinality.ONE_TO_MANY
 				: Cardinality.MANY_TO_MANY;
+		this.incoming=new ArrayList<>();
 //		for (int i = 0; i < targets.length; i++) {
-//			System.out.println(targets[i]+"   YYYYYYYYYYYY  "+ multiplicity[i]);
+//			logger.info(targets[i]+"   YYYYYYYYYYYY  "+ multiplicity[i]);
 //			
 //		}
 		this.multiplicities=multiplicity;
 		
-//		System.out.println(this.multiplicities[0]);
+//		logger.info(this.multiplicities[0]);
 	}
 
 	public Relationship(HGHandle... targets) {
 		super(targets);
+		this.incoming=new ArrayList<>();
 	}
 
 	private void assertBinary() throws Exception {
@@ -86,6 +93,29 @@ public class Relationship extends HGPlainLink implements Element {
 	public String getName() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ArrayList<HGHandle> getParents() {
+		return incoming;
+	}
+
+	public ArrayList<HGHandle> getIncoming() {
+		return incoming;
+	}
+
+	public void setIncoming(ArrayList<HGHandle> incoming) {
+		this.incoming = incoming;
+	}
+
+	@Override
+	public void addToIncoming(HGHandle parent) {
+		this.incoming.add(parent);
+	}
+
+	@Override
+	public void removeFromIncoming(HGHandle parent) {
+		this.incoming.remove(parent);
 	}
 
 	public CardinalityEnum getCardinality() {

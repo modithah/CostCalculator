@@ -2,30 +2,27 @@ package edu.upc.essi.catalog.core.constructs;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import javax.management.relation.Relation;
-
-import org.apache.jena.tdb.store.Hash;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGPlainLink;
+import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.atom.HGSubgraph;
-import org.hypergraphdb.util.Pair;
 
-import edu.upc.essi.catalog.enums.AtomTypeEnum;
+
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import edu.upc.essi.catalog.ops.Graphoperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Hyperedge extends HGSubgraph2 implements Element {
+public class Hyperedge extends HGSimpleSubgraph  {
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+	private ArrayList<HGHandle> outgoingSet = new ArrayList<>();
 
 	public Hyperedge() {
 	}
 
-	private String name;
 	private String id;
 	private HyperedgeTypeEnum type;
 	private double count = 1;
@@ -50,8 +47,17 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 			add(targetSet[i]);
 
 		}
-//		System.out.println("printing");
+//		logger.info("printing");
 //		print(0);
+	}
+
+
+	@Override
+	public HGHandle add(HGHandle atom) {
+		HGHandle y = super.add(atom);
+//		logger.info((y.equals(atom))+ "--- " + (y==atom));
+//		outgoingSet.add(y);
+		return y;
 	}
 
 	public Hyperedge(HGHandle... targets) {
@@ -80,7 +86,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	}
 
 	public String toString() {
-		return name + "  " + type + "[" + count(hg.memberOf(thisHandle)) + "]" + getCount() + relMap;
+		return name + "  " + type + "[" + count(HGQuery.hg.memberOf(thisHandle)) + "]" + getCount() + relMap;
 	}
 
 	@Override
@@ -124,7 +130,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 //		for (HGHandle a : multipliers.keySet()) {
 //			this.multipliers.put(a, multipliers.get(a));
 //		}
-//		System.out.println("Setting" );
+//		logger.info("Setting" );
 		this.multipliers = multipliers;
 	}
 	
@@ -202,7 +208,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 				HGHandle hgHandle2 = (HGHandle) seconditer.next();
 
 				Object a = graph.get(hgHandle2);
-//		System.out.println(a);
+//		logger.info(a);
 				if (a instanceof Hyperedge) {
 					((Hyperedge) a).print(myWriter, tabs + 4);
 				}
@@ -223,30 +229,30 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 	public void print(int tabs) {
 
 		if(!this.getMultipliers().keySet().isEmpty()) {
-			System.out.println("Size ->"+ this.getSize());
-			System.out.println(this.getMultipliers());
+			logger.info("Size ->"+ this.getSize());
+			logger.info(String.valueOf(this.getMultipliers()));
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tabs; i++) {
 			sb.append(" ");
 		}
-		System.out.println(sb.toString() + type + " -> " + name);
+		logger.info(sb.toString() + type + " -> " + name);
 		Iterator<HGHandle> seconditer = this.findAll().iterator();
 
 		while (seconditer.hasNext()) {
 			HGHandle hgHandle2 = (HGHandle) seconditer.next();
 
 			Object a = graph.get(hgHandle2);
-//		System.out.println(a);
+//		logger.info(a);
 			if (a instanceof Hyperedge) {
 				((Hyperedge) a).print(tabs + 4);
 			}
 
 			if (a instanceof Atom) {
-				System.out.println(sb.toString() + ((Atom) a).getName());
+				logger.info(sb.toString() + ((Atom) a).getName());
 			}
 			if (a instanceof Relationship) {
-				System.out.println(sb.toString() + ((Relationship) a));
+				logger.info( sb.toString() + ((Relationship) a));
 			}
 		}
 	}
@@ -268,7 +274,7 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 			HGHandle hgHandle2 = (HGHandle) seconditer.next();
 
 			Object a = graph.get(hgHandle2);
-//		System.out.println(a);
+//		logger.info(a);
 			if (a instanceof Hyperedge) {
 				out.append( ((Hyperedge) a).printToString(tabs + 4) +"\n");
 			}
@@ -277,10 +283,13 @@ public class Hyperedge extends HGSubgraph2 implements Element {
 				out.append(sb.toString() + ((Atom) a).getName() + "\n");
 			}
 			if (a instanceof Relationship) {
-				out.append(sb.toString() + ((Relationship) a) + "\n");
+//				out.append(sb.toString() + ((Relationship) a) + "\n");
 			}
 		}
 		return out.toString();
 	}
 
+	public Iterator<HGHandle> iterator() {
+		return findAll().iterator();
+	}
 }

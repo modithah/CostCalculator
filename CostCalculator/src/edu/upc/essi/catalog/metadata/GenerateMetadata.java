@@ -25,11 +25,11 @@ public final class GenerateMetadata {
 
 //	for (Hyperedge hyp : designs) {
 
-//		System.out.println("============================"+ hyp.getName() + "==================");
+//		logger.info("============================"+ hyp.getName() + "==================");
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph); // GetFirstLevelsOfDesign(hyp);
 
 		for (Hyperedge hyperedge : firstLevels) {
-//			System.out.println("000000000000000000000       " + graph.getHandle(hyperedge));
+//			logger.info("000000000000000000000       " + graph.getHandle(hyperedge));
 //		c.CalculateSize(hyperedge, HyperedgeTypeEnum.Database_Doc);
 			Pair<Double, HashMap<Atom, Double>> data = CostOperations.CalculateSize(graph, hyperedge);
 			hyperedge.setSize(data.getFirst());

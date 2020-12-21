@@ -18,7 +18,7 @@ public class DocumentCost implements ICost {
 
 	@Override
 	public GenericTriple<Double,Double,Double> GetSize(HyperGraph graph,Element node, String path) {
-//		System.out.println(node.getName());
+//		logger.info(node.getName());
 		GenericTriple<Double, Double, Double> t = new GenericTriple<>();
 		int size = 0;
 		double multiply = 1.0;
@@ -30,7 +30,7 @@ public class DocumentCost implements ICost {
 			size = atm.getSize();
 
 //			if (atm.getType() == AtomTypeEnum.Class) {
-//				System.out.println("count out");
+//				logger.info("count out");
 //				multiply = atm.getCount();
 //			}
 

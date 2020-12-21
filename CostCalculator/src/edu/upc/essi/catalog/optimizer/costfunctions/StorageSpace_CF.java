@@ -10,7 +10,7 @@ public class StorageSpace_CF extends CostFunction {
     public double evaluate(HyperGraph G) {
         try {
             return CostCalculator.calculateCost(G).getStorageSize();
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //Only for errors

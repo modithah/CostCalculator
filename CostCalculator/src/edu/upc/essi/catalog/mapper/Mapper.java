@@ -47,16 +47,16 @@ static void getAllAttributes() {
 }
 
 public static void main(String[] args) throws FileNotFoundException {
-	//System.out.println("Hello World");
+	//logger.info("Hello World");
 	final Model model = ModelFactory.createDefaultModel();
         
         try {
-        	//System.out.println("Hello before file");
+        	//logger.info("Hello before file");
            model.read(new FileInputStream("emp.owl"), null, "TURTLE");
            //model.read(new FileInputStream(args[1]), null, "TURTLE");
-           // System.out.println("Hello file");
+           // logger.info("Hello file");
         } catch (Exception e) {
-        	// System.out.println("Hello Exception");
+        	// logger.info("Hello Exception");
         }
       
      // create map to store
@@ -138,8 +138,8 @@ public static void main(String[] args) throws FileNotFoundException {
            			relHandles.put(atom, sname, graph.add(new Relationship("hasName",
         					atomHandles.get(atoms.indexOf(atom)), atomHandles.get(atoms.indexOf(sname)))));
            		                 	
-//        	 System.out.println(key+" "+ mp+" "+m);
-        	 //System.out.println(concepts.indexOf(key)+"---"+attributes.indexOf(m));
+//        	 logger.info(key+" "+ mp+" "+m);
+        	 //logger.info(concepts.indexOf(key)+"---"+attributes.indexOf(m));
         	 
           		
      		} catch (Exception e) {
@@ -150,14 +150,14 @@ public static void main(String[] args) throws FileNotFoundException {
         	 
         }
         	 int len = (allAttributes.size()*2)+1;
-//        	 System.out.println("i am here" + len);
+//        	 logger.info("i am here" + len);
         	 HGHandle stationSecondHandle = null;
         	 HGHandle[] allRel = new HGHandle[len];
         	 allRel[0] = atomHandles.get(atoms.indexOf(atom));
         	 int i = 1;
         	 for(Atom a : listAtoms) {
         		
-//        		 System.out.println("i am here" + atoms.indexOf(a));
+//        		 logger.info("i am here" + atoms.indexOf(a));
         		 allRel[i] = atomHandles.get(atoms.indexOf(a));
         		 i++;
         		 allRel[i] = relHandles.get(atom, a);
@@ -185,7 +185,7 @@ public static void main(String[] args) throws FileNotFoundException {
         List<String> atomss = Graphoperations.getAllAtoms(graph);
 
 		if (atoms.isEmpty()) {
-//			System.out.println("No data available Creating the Graph");
+//			logger.info("No data available Creating the Graph");
 			CreateGraph.main(null);
 			try {
 				Thread.sleep(2000);
@@ -196,8 +196,8 @@ public static void main(String[] args) throws FileNotFoundException {
 
 		}
 
-//		System.out.println("The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
-//		System.out.println(atomss);
+//		logger.info("The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
+//		logger.info(atomss);
     	QueryGenerator g = new QueryGenerator();
 		Scanner scanner = new Scanner(System.in);
 //		System.out.print(
@@ -205,7 +205,7 @@ public static void main(String[] args) throws FileNotFoundException {
 
 		String input = scanner.next();
 		while (!input.equals("exit")) {
-//			System.out.println("------Queries for selected atoms------");
+//			logger.info("------Queries for selected atoms------");
 
 			AdjacencyList mapp= Graphoperations.makeHashmap(input.split(","));
  

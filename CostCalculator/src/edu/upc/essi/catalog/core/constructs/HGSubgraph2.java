@@ -40,6 +40,9 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	private static final String REVIDX_NAME = "revsubgraph.index";
 	protected ArrayList<HGHandle> outgoingSet = new ArrayList<>();
 
+	HGIndex<HGPersistentHandle, HGPersistentHandle> idx = getIndex();
+	HGIndex<HGPersistentHandle, HGPersistentHandle> revIdx = getReverseIndex();
+
 	@HGIgnore
 	protected HyperGraph graph;
 	protected HGHandle thisHandle;
@@ -71,29 +74,35 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	 * DO NOT USE: internal method, implementation dependent, may disappear at any
 	 * time.
 	 */
-	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getReverseIndex(HyperGraph atGraph) {
-		return atGraph.getStore().getIndex(REVIDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
-				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
-	}
-
-	/**
-	 * DO NOT USE: internal method, implementation dependent, may disappear at any
-	 * time.
-	 */
-	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getIndex(HyperGraph atGraph) {
-		return atGraph.getStore().getIndex(IDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
-				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
-	}
+//	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getReverseIndex(HyperGraph atGraph) {
+//		return atGraph.getStore().getIndex(REVIDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
+//				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
+//	}
+//
+//	/**
+//	 * DO NOT USE: internal method, implementation dependent, may disappear at any
+//	 * time.
+//	 */
+//	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getIndex(HyperGraph atGraph) {
+//		return atGraph.getStore().getIndex(IDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
+//				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
+//	}
 
 	private void index(HGHandle h) {
-		getIndex().addEntry(thisHandle.getPersistent(), h.getPersistent());
-		getReverseIndex().addEntry(h.getPersistent(), thisHandle.getPersistent());
+		idx.addEntry(thisHandle.getPersistent(), h.getPersistent());
+		revIdx.addEntry(h.getPersistent(), thisHandle.getPersistent());
+//		idx.close();
+//		revIdx.close();
 	}
 
 	private void unindex(HGHandle h) {
 		outgoingSet.remove(h);
-		getIndex().removeEntry(thisHandle.getPersistent(), h.getPersistent());
-		getReverseIndex().removeEntry(h.getPersistent(), thisHandle.getPersistent());
+//		HGIndex<HGPersistentHandle, HGPersistentHandle> idx = getIndex();
+//		HGIndex<HGPersistentHandle, HGPersistentHandle> revIdx = getReverseIndex();
+		idx.removeEntry(thisHandle.getPersistent(), h.getPersistent());
+		revIdx.removeEntry(h.getPersistent(), thisHandle.getPersistent());
+//		idx.close();
+//		revIdx.close();
 	}
 
 	public boolean isMember(HGHandle atom) {
@@ -121,7 +130,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 //		return graph.getTransactionManager().ensureTransaction(new Callable<HGHandle>() {
 //			public HGHandle call() {
 		index(atom);
-//		System.out.println("Adding" +atom);
+//		logger.info("Adding" +atom);
 		this.outgoingSet.add(atom);
 		return atom;
 //			}
@@ -304,6 +313,8 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 		// TODO Auto-generated method stub
 
 	}
+
+
 
 	public ArrayList<HGHandle> getOutgoingSet() {
 		return outgoingSet;

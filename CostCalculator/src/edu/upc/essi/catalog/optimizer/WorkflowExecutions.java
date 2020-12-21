@@ -49,7 +49,7 @@ public class WorkflowExecutions {
 		worstConfigurations = Sets.newHashSet();
 		optimalh = Double.POSITIVE_INFINITY;
 		worsth = Double.NEGATIVE_INFINITY;
-
+		Pair<String, Double> val = null;
 		//GenerateRandomDesign generator = new GenerateRandomDesign();
 		try {
 			// Generate a random design
@@ -62,12 +62,16 @@ public class WorkflowExecutions {
 			HillClimbingSearch search =  new HillClimbingSearch(new DocDesignHeuristic());
 			SearchAgent agent = new SearchAgent(problem,search);
 			out = (HyperGraph)search.getLastSearchState();
+			 val = new Pair<>(Graphoperations.stringDesign(out), SingletonMultiObjectiveDesignGoal.INSTANCE.getDG().evaluate(out));
+			G.close();
+			out.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return new Pair<>(Graphoperations.stringDesign(out), SingletonMultiObjectiveDesignGoal.INSTANCE.getDG().evaluate(out));
+		
+		return val ;
 	}
 
 

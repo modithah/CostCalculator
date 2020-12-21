@@ -59,8 +59,8 @@ public class BookSample {
 //
 //				while (keys.hasNext()) {
 //					String key = keys.next(); // name of the class atom (only one)
-//					System.out.println(key + "-----");
-//					System.out.println(keyatom.getJSONObject(key).names());
+//					logger.info(key + "-----");
+//					logger.info(keyatom.getJSONObject(key).names());
 //					Iterator<String> keys2 = keyatom.getJSONObject(key).keys();
 //					String id = "";
 //					ArrayList<String> others = new ArrayList<>();
@@ -111,14 +111,14 @@ public class BookSample {
 //
 //				while (keys.hasNext()) {
 //					String from = keys.next(); // name of the main atom (only one)
-//					System.out.println(from + "-----");
-//					System.out.println(keyatom.getJSONObject(from).names());
+//					logger.info(from + "-----");
+//					logger.info(keyatom.getJSONObject(from).names());
 //					Iterator<String> keys2 = keyatom.getJSONObject(from).keys();
 //
 //					while (keys2.hasNext()) { // all other atoms
 //						String to = keys2.next();
 //
-//						System.out.println(from + " ->" + to + "  " + keyatom.getJSONObject(from).getDouble(to));
+//						logger.info(from + " ->" + to + "  " + keyatom.getJSONObject(from).getDouble(to));
 //						makeRelation(graph, atomHandles, relHandles, from, to, keyatom.getJSONObject(from).getDouble(to));
 //
 //					}
@@ -126,7 +126,7 @@ public class BookSample {
 //
 //			}
 //
-//			System.out.println(relHandles);
+//			logger.info(relHandles);
 //			graph.close();
 //		} catch (IOException e1) {
 //			// TODO Auto-generated catch block

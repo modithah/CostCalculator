@@ -9,7 +9,7 @@ public class TotalQueryCost_CF extends CostFunction {
     public double evaluate(HyperGraph G) {
         try {
             return CostCalculator.calculateCost(G).getQueryCosts().stream().reduce(Double::sum).get();
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.query.calculation;
 
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,13 +24,15 @@ import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.QueryFrequencies;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QueryCalculator {
 
 	public QueryCalculator() {
 		// TODO Auto-generated constructor stub
 	}
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static QueryFrequencies CalculateFrequency(ArrayList<Pair<Double, ArrayList<Atom>>> workload,
 			HyperGraph graph) {
 		List<Hyperedge> firstLevels = Graphoperations.getAllFirstLevels(graph);
@@ -91,9 +94,9 @@ public class QueryCalculator {
 				frequencies.put(first, entry);
 
 				while (!winners.isEmpty() && !remaining.isEmpty()) {
-//					System.out.println(remaining);
+//					logger.info(remaining);
 					Hyperedge main = winners.poll();
-//					System.out.println(main);
+//					logger.info(main);
 					Set<Atom> covered = new HashSet<>();
 					covered.addAll(main.getMultipliers().keySet());
 					covered.retainAll(remaining);
@@ -138,7 +141,7 @@ public class QueryCalculator {
 									frequencies.put(first, entry);
 									winners.add(first);
 									alraedyDone.addAll(first.getMultipliers().keySet());
-//									System.out.println("done" + alraedyDone);
+//									logger.info("done" + alraedyDone);
 								}
 							}
 						}
@@ -162,7 +165,7 @@ public class QueryCalculator {
 				}
 
 			} else {
-				System.out.println("cant answer query");
+				logger.info("cant answer query");
 			}
 
 		}
@@ -183,7 +186,7 @@ public class QueryCalculator {
 		}
 		
 
-//		System.out.println("#################### ------>"+totalSum);
+//		logger.info("#################### ------>"+totalSum);
 		
 		for (Map<Atom, Double> map : globalfrequencies.values()) {
 			for (Atom key : map.keySet()) {

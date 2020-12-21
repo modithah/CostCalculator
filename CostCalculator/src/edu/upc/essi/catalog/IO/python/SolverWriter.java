@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
@@ -16,9 +17,11 @@ import com.google.common.collect.Sets;
 import edu.upc.essi.catalog.IO.TabbedPrintStream;
 import edu.upc.essi.catalog.core.constructs.DataIndexMetadata;
 import edu.upc.essi.catalog.core.constructs.DataIndexMetadata.DataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SolverWriter {
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ArrayList<ArrayList<DataIndexMetadata>> schema = new ArrayList<>();
@@ -145,9 +148,9 @@ public class SolverWriter {
 //			list = ['larry', 'curly', 'moe']
 //			  list.append('shemp')
 			writer.close();
-//			System.out.println("Successfully wrote to the file.");
+//			logger.info("Successfully wrote to the file.");
 		} catch (IOException e) {
-			System.out.println("An error occurred.");
+			logger.info("An error occurred.");
 			e.printStackTrace();
 		}
 	}
