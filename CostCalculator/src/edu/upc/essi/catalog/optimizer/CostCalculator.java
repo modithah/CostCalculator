@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.optimizer;
 
+import edu.upc.essi.catalog.IO.FileReaderWriter;
 import edu.upc.essi.catalog.IO.python.SolverCaller;
 import edu.upc.essi.catalog.IO.python.SolverWriter;
 import edu.upc.essi.catalog.core.constructs.*;
@@ -31,7 +32,8 @@ public class CostCalculator {
         metadataGen.setSizeandMultipliers(graph);
 
 //        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload(graph);
-        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload2(graph);
+//        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload2(graph);
+        ArrayList<Pair<Double, ArrayList<Atom>>> workload = FileReaderWriter.getWorkload(graph,"data/schemas/rubis/workload.json");
 
         // get query frequencies
         QueryFrequencies freq = QueryCalculator.CalculateFrequency(workload, graph);

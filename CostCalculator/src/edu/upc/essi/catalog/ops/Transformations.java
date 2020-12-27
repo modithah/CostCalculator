@@ -53,6 +53,8 @@ public final class Transformations {
         List<HGHandle> parents1= hyp1.getParents();
         List<HGHandle> parents2=hyp2.getParents();
 
+//        System.out.println(hyp1);
+//        System.out.println(hyp2);
         if (!((hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.Set)
                 || (hyp1.getType() == hyp2.getType() && hyp2.getType() == HyperedgeTypeEnum.FirstLevel))) {
             logger.error("Hyperedges must be sets");

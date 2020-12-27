@@ -1,0 +1,74 @@
+{
+  "atoms": [{
+    "USER": {
+      "*U_ID": {
+        "count": 100000,
+        "size": 4
+      },
+      "U_F_NAME": 20,
+      "U_L_NAME": 25,
+      "U_ABOUT": 70
+    }
+  }, {
+    "BID": {
+      "*B_ID": {
+        "count": 1500000,
+        "size": 4
+      },
+      "B_PRICE": 4,
+      "B_DATE": 30
+    }
+  }, {
+    "COMMENT": {
+      "*C_ID": {
+        "count": 1000000,
+        "size": 4
+      },
+      "C_TITLE": 20,
+      "C_TEXT": 70,
+      "C_DATE": 30
+    }
+  }, {
+    "REGION": {
+      "*R_ID": {
+        "count": 4,
+        "size": 4
+      },
+      "R_NAME": 10
+    }
+  },
+    {
+      "ITEM": {
+        "*I_ID": {
+          "count": 500000,
+          "size": 4
+        },
+        "I_TITLE": 10,
+        "I_PRICE": 4,
+        "I_TYPE": 5,
+        "I_DATE": 30,
+        "I_DESCRIPTION": 80
+
+      }
+    }
+  ],
+  "relationships": [{
+    "R_ID": {
+      "U_ID": "1~25000"
+    }
+  },
+    {
+      "U_ID": {
+        "B_ID": "1~15",
+        "C_ID": "1~10",
+        "I_ID": "1~5"
+      }
+    },
+    {
+      "I_ID": {
+        "B_ID": "1~3",
+        "C_ID": "1~2"
+      }
+    }
+  ]
+}

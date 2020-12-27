@@ -1,5 +1,6 @@
 package edu.upc.essi.catalog.metadata;
 
+import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +12,8 @@ import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.cost.CostGenerator2;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GenerateMetadata {
 
@@ -20,6 +23,7 @@ public final class GenerateMetadata {
 		// TODO Auto-generated constructor stub
 		c = new CostGenerator2();
 	}
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 	public void setSizeandMultipliers(HyperGraph graph) {
 

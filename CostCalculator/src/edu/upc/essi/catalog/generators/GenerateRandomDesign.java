@@ -47,8 +47,8 @@ public class GenerateRandomDesign {
 		File serverDir = new File(Const.HG_LOCATION_BOOK );
 //		FileUtils.cleanDirectory(serverDir);
 		HyperGraph graph = new HyperGraph(serverDir.getAbsolutePath()+ File.separator + UUID.randomUUID().toString());
-		LoadGraph.LoadBaseFromJSONFile("data/schemas/tpcc-sample-3EntityRels.json",graph);
-		
+//		LoadGraph.LoadBaseFromJSONFile("data/schemas/tpcc-sample-3EntityRels.json",graph);
+		LoadGraph.LoadBaseFromJSONFile("data/schemas/rubis/rubis.json",graph);
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
 		RelStructure dummyRelStr = new RelStructure(dummyRel, null);
@@ -358,12 +358,13 @@ public class GenerateRandomDesign {
 			try {
 //				handles.add();
 //				handles.add(graph.getHandle(node.getData().rel));
-				
-				
-				handles.add(Graphoperations.addHyperedgetoGraph(graph, node.getData().to.getName() + "Struct",
+
+				String name=node.getData().to.getName()+UUID.randomUUID().toString();
+
+				handles.add(Graphoperations.addHyperedgetoGraph(graph, name+ "Struct",
 						HyperedgeTypeEnum.Struct, elms.toArray(new HGHandle[elms.size()])));
 				
-				HGHandle x=Graphoperations.addSetHyperedgetoGraph(graph, node.getData().to.getName() + "Set",
+				HGHandle x=Graphoperations.addSetHyperedgetoGraph(graph, name + "Set",
 						node.getData().rel, handles.toArray(new HGHandle[handles.size()]));
 				handles.clear();
 				handles.add(x);
@@ -388,7 +389,7 @@ public class GenerateRandomDesign {
 				handles.add(0,rootHandle);
 				handles.addAll(Graphoperations.getAttributesClass(graph, rootHandle));
 				handles.addAll(Graphoperations.getAttributeRelsofClass(graph, rootHandle));
-				Graphoperations.addHyperedgetoGraph(graph, node.getData().to.getName() + "Struct",
+				Graphoperations.addHyperedgetoGraph(graph, node.getData().to.getName()+UUID.randomUUID().toString() + "Struct",
 						HyperedgeTypeEnum.Struct, handles.toArray(new HGHandle[handles.size()]));
 				allAtoms.remove(node.getData().to);
 			} catch (Exception e) {
