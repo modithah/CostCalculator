@@ -44,8 +44,8 @@ public class DocDesignActionsFunction implements ActionsFunction {
             //Apply the transformation to check if its already tested
             HyperGraph dummy = Graphoperations.makeGraphCopy(G);
             Transformations.union(dummy,uCandidate.getFirst(), uCandidate.getSecond());
-            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             messageDigest.reset();
+            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             String hash = new String(messageDigest.digest());
             if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
                 WorkflowExecutions.usedConfigurations.add(hash);
@@ -76,8 +76,8 @@ public class DocDesignActionsFunction implements ActionsFunction {
             HyperGraph dummy = Graphoperations.makeGraphCopy(G);
             Transformations.flatten(dummy,fCandidate);
             messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
-            messageDigest.reset();
             String hash = new String(messageDigest.digest());
+            messageDigest.reset();
             if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
                 WorkflowExecutions.usedConfigurations.add(hash);
                 actions.add(new FlattenAction(newG,fCandidate));
@@ -107,8 +107,8 @@ public class DocDesignActionsFunction implements ActionsFunction {
             //Apply the transformation to check if its already tested
             HyperGraph dummy = Graphoperations.makeGraphCopy(G);
             Transformations.group(dummy,gCandidate);
-            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             messageDigest.reset();
+            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             String hash = new String(messageDigest.digest());
             if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
                 WorkflowExecutions.usedConfigurations.add(hash);
@@ -139,9 +139,9 @@ public class DocDesignActionsFunction implements ActionsFunction {
             //Apply the transformation to check if its already tested
             HyperGraph dummy = Graphoperations.makeGraphCopy(G);
             Transformations.embed(dummy,eCandidate);
+            messageDigest.reset();
             messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             String hash = new String(messageDigest.digest());
-            messageDigest.reset();
             if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
                 WorkflowExecutions.usedConfigurations.add(hash);
                 actions.add(new EmbedAction(newG,eCandidate));
@@ -171,8 +171,8 @@ public class DocDesignActionsFunction implements ActionsFunction {
             //Apply the transformation to check if its already tested
             HyperGraph dummy = Graphoperations.makeGraphCopy(G);
             Transformations.segregate(dummy,sCandidate.getFirst(),sCandidate.getSecond());
-            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             messageDigest.reset();
+            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
             String hash = new String(messageDigest.digest());
             if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
                 logger.info("segregate added");

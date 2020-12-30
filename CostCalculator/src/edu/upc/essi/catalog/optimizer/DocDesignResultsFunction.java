@@ -48,6 +48,7 @@ public class DocDesignResultsFunction implements ResultFunction {
             logger.error("Unknown action " +a.getClass());
         }
 
+        logger.info(a.getClass().toString());
         DocDesignHeuristic fh = new DocDesignHeuristic();
         double h = fh.h(newG);
         //logger.debug("Old optimal = "+ForgeProcess.optimalh+", current h = "+h);
