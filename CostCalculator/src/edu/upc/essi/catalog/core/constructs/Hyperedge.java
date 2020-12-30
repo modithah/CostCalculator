@@ -140,7 +140,7 @@ public class Hyperedge extends HGSimpleSubgraph  {
 //		logger.info("Setting" );
 		this.multipliers = multipliers;
 	}
-	
+
 	public HGHandle getTargetAt(int i) {
 		// TODO Auto-generated method stub
 		return outgoingSet.get(i);
@@ -199,7 +199,7 @@ public class Hyperedge extends HGSimpleSubgraph  {
 		this.id = id;
 	}
 
-	
+
 	public void print(FileWriter myWriter, int tabs) {
 
 		StringBuilder sb = new StringBuilder();
@@ -290,7 +290,7 @@ public class Hyperedge extends HGSimpleSubgraph  {
 				out.append(sb.toString() + ((Atom) a).getName() + "\n");
 			}
 			if (a instanceof Relationship) {
-//				out.append(sb.toString() + ((Relationship) a) + "\n");
+				out.append(sb.toString() + ((Relationship) a) + "\n");
 			}
 		}
 		return out.toString();

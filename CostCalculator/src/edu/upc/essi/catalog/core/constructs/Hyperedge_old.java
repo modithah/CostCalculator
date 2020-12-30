@@ -1,9 +1,7 @@
 package edu.upc.essi.catalog.core.constructs;
 
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGQuery;
-import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,15 +11,16 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
-public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
+public class Hyperedge extends HGSubgraph2 implements Element {
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	private ArrayList<HGHandle> outgoingSet = new ArrayList<>();
 
-	public Hyperedge_old() {
+	public Hyperedge() {
 	}
 
-	private String id;
+	private String name;
 	private HyperedgeTypeEnum type;
 	private double count = 1;
 	private HGHandle root = null;
@@ -29,7 +28,7 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 	private HashMap<Atom, Double> multipliers=null;
 	private double size=0.0;
 
-	public Hyperedge_old(HyperGraph graph, HGHandle handle, String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
+	public Hyperedge(HyperGraph graph, HGHandle handle, String name, HyperedgeTypeEnum type, HGHandle... targetSet) {
 		super();
 		this.name = name;
 		this.type = type;
@@ -58,7 +57,7 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 		return y;
 	}
 
-	public Hyperedge_old(HGHandle... targets) {
+	public Hyperedge(HGHandle... targets) {
 		for (int i = 0; i < targets.length; i++) {
 //			if (i == 0) {
 //				this.root = targets[i];
@@ -71,10 +70,18 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 		return name;
 	}
 
-	@Override
-	public ArrayList<HGHandle> getParents() {
-		return null;
-	}
+//	@Override
+//	public ArrayList<HGHandle> getParents() {
+//		HGHandle handle = graph.getHandle(thisHandle);
+//		HGSearchResult<Object> x = graph.find(HGQuery.hg.contains(handle));
+////				hg.contains(handle));
+//		IncidenceSet set = getIncidenceSet();
+//		ArrayList<HGHandle> arr = new ArrayList<HGHandle>();
+//		set.forEach(s->{
+//			arr.add(s);
+//		});
+//		return arr;
+//	}
 
 	@Override
 	public void addToIncoming(HGHandle parent) {
@@ -118,7 +125,7 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Hyperedge_old other = (Hyperedge_old) obj;
+		Hyperedge other = (Hyperedge) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -197,15 +204,6 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 		this.relMap = relMap;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	
 	public void print(FileWriter myWriter, int tabs) {
 
 		StringBuilder sb = new StringBuilder();
@@ -222,8 +220,8 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 
 				Object a = graph.get(hgHandle2);
 //		logger.info(a);
-				if (a instanceof Hyperedge_old) {
-					((Hyperedge_old) a).print(myWriter, tabs + 4);
+				if (a instanceof Hyperedge) {
+					((Hyperedge) a).print(myWriter, tabs + 4);
 				}
 
 				if (a instanceof Atom) {
@@ -242,14 +240,14 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 	public void print(int tabs) {
 
 		if(!this.getMultipliers().keySet().isEmpty()) {
-			logger.info("Size ->"+ this.getSize());
-			logger.info(this.getMultipliers().toString());
+			System.out.println("Size ->"+ this.getSize());
+			System.out.println(this.getMultipliers().toString());
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < tabs; i++) {
 			sb.append(" ");
 		}
-		logger.info(sb.toString() + type + " -> " + name);
+		System.out.println(sb.toString() + type + " -> " + name);
 		Iterator<HGHandle> seconditer = this.findAll().iterator();
 
 		while (seconditer.hasNext()) {
@@ -257,15 +255,15 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 
 			Object a = graph.get(hgHandle2);
 //		logger.info(a);
-			if (a instanceof Hyperedge_old) {
-				((Hyperedge_old) a).print(tabs + 4);
+			if (a instanceof Hyperedge) {
+				((Hyperedge) a).print(tabs + 4);
 			}
 
 			if (a instanceof Atom) {
-				logger.info(sb.toString() + ((Atom) a).getName());
+				System.out.println(sb.toString() + ((Atom) a).getName());
 			}
 			if (a instanceof Relationship) {
-				logger.info(sb.toString() + ((Relationship) a));
+				System.out.println(sb.toString() + ((Relationship) a));
 			}
 		}
 	}
@@ -288,8 +286,8 @@ public class Hyperedge_old extends HGSimpleSubgraph2 implements Element {
 
 			Object a = graph.get(hgHandle2);
 //		logger.info(a);
-			if (a instanceof Hyperedge_old) {
-				out.append( ((Hyperedge_old) a).printToString(tabs + 4) +"\n");
+			if (a instanceof Hyperedge) {
+				out.append( ((Hyperedge) a).printToString(tabs + 4) +"\n");
 			}
 
 			if (a instanceof Atom) {

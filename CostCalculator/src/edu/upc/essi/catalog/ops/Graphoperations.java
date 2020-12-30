@@ -11,10 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGLink;
-import org.hypergraphdb.HGPersistentHandle;
 import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.HGSearchResult;
 
 import com.google.common.collect.Table;
 
@@ -22,13 +19,11 @@ import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.internal.junit.ArrayAsserts;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
-import edu.upc.essi.catalog.core.constructs.HGSubgraph2;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
@@ -77,7 +72,12 @@ private static final Logger logger = LoggerFactory.getLogger(MethodHandles.looku
         try {
             //logger.info(destDir);
 //			source.close();
-            FileUtils.copyDirectory(srcDir, destDir);
+            for (File file : srcDir.listFiles()) {
+                if(!file.isDirectory()){
+                    FileUtils.copyToDirectory(file,destDir);
+                }
+            }
+//            FileUtils.copyDirectory(srcDir, destDir);
         } catch (IOException e) {
             e.printStackTrace();
         }
