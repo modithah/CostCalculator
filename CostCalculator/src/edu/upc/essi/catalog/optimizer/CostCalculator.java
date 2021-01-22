@@ -3,12 +3,14 @@ package edu.upc.essi.catalog.optimizer;
 import edu.upc.essi.catalog.IO.FileReaderWriter;
 import edu.upc.essi.catalog.IO.python.SolverCaller;
 import edu.upc.essi.catalog.IO.python.SolverWriter;
+import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.*;
 import edu.upc.essi.catalog.cost.CostResult;
 import edu.upc.essi.catalog.metadata.GenerateMetadata;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
 import edu.upc.essi.catalog.query.calculation.QueryCalculator;
+import edu.upc.essi.server.WebServer;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
@@ -26,14 +28,21 @@ import java.util.Map;
 
 public class CostCalculator {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
+
+
     public static CostResult calculateCost(HyperGraph graph)  {
 //        logger.info("RRRRRRRRRR" + graph.getLocation());
         GenerateMetadata metadataGen = new GenerateMetadata();
         metadataGen.setSizeandMultipliers(graph);
 
+        String wlLocation = WebServer.getWorkload();
+            logger.info(wlLocation);
+
+        if (wlLocation==null)
+            wlLocation = Const.WL_LOCATION;
 //        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload(graph);
 //        ArrayList<Pair<Double, ArrayList<Atom>>> workload = Workload.getWorkload2(graph);
-        ArrayList<Pair<Double, ArrayList<Atom>>> workload = FileReaderWriter.getWorkload(graph,"data/schemas/rubis/workload.json");
+        ArrayList<Pair<Double, ArrayList<Atom>>> workload = FileReaderWriter.getWorkload(graph,wlLocation);
 
         // get query frequencies
         QueryFrequencies freq = QueryCalculator.CalculateFrequency(workload, graph);

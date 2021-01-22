@@ -4,6 +4,8 @@ import org.hypergraphdb.HyperGraph;
 
 public final class Const {
 
+    public static final String WL_LOCATION = "data/schemas/rubis/workload-mini.json";
+	public static final String SCHEMA_LOCATION = "data/schemas/rubis/rubis-mini.json";
 	private Const() {
 	}
 
