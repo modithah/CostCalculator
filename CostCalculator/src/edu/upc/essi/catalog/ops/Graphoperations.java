@@ -17,6 +17,8 @@ import com.google.common.collect.Table;
 
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.IncidenceSet;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -665,8 +667,30 @@ private static final Logger logger = LoggerFactory.getLogger(MethodHandles.looku
         }
     }
 
+    public static JSONObject JSONDesign(HyperGraph graph2) {
+        JSONObject obj = new JSONObject();
+        JSONArray arr = new JSONArray();
+        try {
+            List<Hyperedge> hyperedges = graph2
+                    .getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
+            for (Hyperedge hyperedge : hyperedges) {
+//                s.append(hyperedge.printToJSON());
+                arr.put(hyperedge.printToJSON());
+            }
+            obj.put("collections",arr);
+        } catch (Exception e) {
+            // TODO: handle exception
+
+            e.printStackTrace();
+            logger.info("XXXXXXXXXX" + graph2);
+        }
+
+        return obj;
+    }
+
     public static String stringDesign(HyperGraph graph2) {
         StringBuilder s = new StringBuilder();
+        s.append(graph2.getLocation()+"\n");
         try {
             List<Hyperedge> hyperedges = graph2
                     .getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));

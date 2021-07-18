@@ -37,67 +37,68 @@ public class DocDesignActionsFunction implements ActionsFunction {
 
         String stringHash = new String(messageDigest.digest());
         // Union
-        Transformations.getUnionCandidates(G).forEach(uCandidate -> {
-            //Create a copy
-            HyperGraph newG = Graphoperations.makeGraphCopy(G);
-            logger.info("union");
-            //Apply the transformation to check if its already tested
-            HyperGraph dummy = Graphoperations.makeGraphCopy(G);
-            Transformations.union(dummy,uCandidate.getFirst(), uCandidate.getSecond());
-            messageDigest.reset();
-            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
-            String hash = new String(messageDigest.digest());
-            if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
-                WorkflowExecutions.usedConfigurations.add(hash);
-                actions.add(new UnionAction(newG, uCandidate.getFirst(), uCandidate.getSecond()));
-                logger.info("union added");
-            }else {
-                newG.close();
-                try {
-                    FileUtils.deleteDirectory(new File(newG.getLocation()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            dummy.close();
-            try {
-                FileUtils.deleteDirectory(new File(dummy.getLocation()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+//        Transformations.getUnionCandidates(G).forEach(uCandidate -> {
+//            //Create a copy
+//            HyperGraph newG = Graphoperations.makeGraphCopy(G);
+//            logger.info("union");
+//            //Apply the transformation to check if its already tested
+//            HyperGraph dummy = Graphoperations.makeGraphCopy(G);
+//            Transformations.union(dummy,uCandidate.getFirst(), uCandidate.getSecond());
+//            messageDigest.reset();
+//            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
+//            String hash = new String(messageDigest.digest());
+//            if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
+//                WorkflowExecutions.usedConfigurations.add(hash);
+//                actions.add(new UnionAction(newG, uCandidate.getFirst(), uCandidate.getSecond()));
+//                logger.info("union added");
+//            }else {
+//                newG.close();
+//                try {
+//                    FileUtils.deleteDirectory(new File(newG.getLocation()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            dummy.close();
+//            try {
+//                FileUtils.deleteDirectory(new File(dummy.getLocation()));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
 
         //Flatten
-        Transformations.getFlattenCandidates(G).forEach(fCandidate -> {
-            logger.info("flatten");
-            //Create a copy
-            HyperGraph newG = Graphoperations.makeGraphCopy(G);
-            //Apply the transformation to check if its already tested
-            HyperGraph dummy = Graphoperations.makeGraphCopy(G);
-            Transformations.flatten(dummy,fCandidate);
-            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
-            String hash = new String(messageDigest.digest());
-            messageDigest.reset();
-            if (!WorkflowExecutions.usedConfigurations.contains(hash)) {
-                WorkflowExecutions.usedConfigurations.add(hash);
-                actions.add(new FlattenAction(newG,fCandidate));
-                logger.info("flatten added");
-            }else {
-                newG.close();
-                try {
-                    FileUtils.deleteDirectory(new File(newG.getLocation()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            dummy.close();
-            try {
-                FileUtils.deleteDirectory(new File(dummy.getLocation()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        });
+//        Transformations.getFlattenCandidates(G).forEach(fCandidate -> {
+//            logger.info("flatten");
+//            //Create a copy
+//            HyperGraph newG = Graphoperations.makeGraphCopy(G);
+//            //Apply the transformation to check if its already tested
+//            HyperGraph dummy = Graphoperations.makeGraphCopy(G);
+//            Transformations.flatten(dummy,fCandidate);
+//            messageDigest.update(Graphoperations.stringDesign(dummy).getBytes());
+//            String hash = new String(messageDigest.digest());
+//            messageDigest.reset();
+////            logger.info("HASH" + hash);
+//            if (!WorkflowExecutions.usedConfigurations.contains(hash)){
+//                WorkflowExecutions.usedConfigurations.add(hash);
+//                actions.add(new FlattenAction(newG,fCandidate));
+//                logger.info("flatten added");
+//            }else {
+//                newG.close();
+//                try {
+//                    FileUtils.deleteDirectory(new File(newG.getLocation()));
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            dummy.close();
+//            try {
+//                FileUtils.deleteDirectory(new File(dummy.getLocation()));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        });
 
         //Group
         Transformations.getGroupCandidates(G).forEach(gCandidate -> {
@@ -194,7 +195,7 @@ public class DocDesignActionsFunction implements ActionsFunction {
                 e.printStackTrace();
             }
         });
-
+logger.info("ACTIONS  "+actions.size());
         return actions;
     }
 

@@ -2,7 +2,7 @@
   "atoms": [{
     "USER": {
       "*U_ID": {
-        "count": 100000,
+        "count": 500000,
         "size": 4
       },
       "U_F_NAME": 20,
@@ -12,7 +12,7 @@
   }, {
     "BID": {
       "*B_ID": {
-        "count": 1500000,
+        "count": 7500000,
         "size": 4
       },
       "B_PRICE": 4,
@@ -21,7 +21,7 @@
   }, {
     "COMMENT": {
       "*C_ID": {
-        "count": 1000000,
+        "count": 5000000,
         "size": 4
       },
       "C_TITLE": 20,
@@ -38,34 +38,34 @@
     }
   },
     {
-      "ITEM": {
-        "*I_ID": {
-          "count": 500000,
+      "PRODUCT": {
+        "*P_ID": {
+          "count": 2500000,
           "size": 4
         },
-        "I_TITLE": 10,
-        "I_PRICE": 4,
-        "I_TYPE": 5,
-        "I_DATE": 30,
-        "I_DESCRIPTION": 80
+        "P_TITLE": 10,
+        "P_PRICE": 4,
+        "P_TYPE": 5,
+        "P_DATE": 30,
+        "P_DESCRIPTION": 80
 
       }
     }
   ],
   "relationships": [{
     "R_ID": {
-      "U_ID": "1~25000"
+      "U_ID": "1~125000"
     }
   },
     {
       "U_ID": {
         "B_ID": "1~15",
         "C_ID": "1~10",
-        "I_ID": "1~5"
+        "P_ID": "1~5"
       }
     },
     {
-      "I_ID": {
+      "P_ID": {
         "B_ID": "1~3",
         "C_ID": "1~2"
       }

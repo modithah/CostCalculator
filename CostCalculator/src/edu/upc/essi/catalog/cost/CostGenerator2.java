@@ -2,24 +2,16 @@ package edu.upc.essi.catalog.cost;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.util.Pair;
 
-import edu.upc.essi.catalog.constants.Const;
-import edu.upc.essi.catalog.core.constructs.AdjacencyList;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
-import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.core.constructs.Triple;
-import edu.upc.essi.catalog.cost.calculation.DocumentCost;
 import edu.upc.essi.catalog.cost.calculation.DocumentCost2;
 import edu.upc.essi.catalog.cost.calculation.ICost;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
@@ -46,11 +38,11 @@ public class CostGenerator2 {
 		return Cost.GetSize(graph,node);
 	}
 
-	public double GetMultiplier(HyperGraph graph,Hyperedge source, HGHandle child) {
+	public double GetMultiplier(HyperGraph graph, Hyperedge source, HGHandle child) {
 		return Cost.GetMultiplier( graph,source, child);
 	}
 
-	public void CalculateSize(HyperGraph graph,Hyperedge node, HyperedgeTypeEnum type) {
+	public void CalculateSize(HyperGraph graph, Hyperedge node, HyperedgeTypeEnum type) {
 
 		switch (type) {
 		case Database_Col:

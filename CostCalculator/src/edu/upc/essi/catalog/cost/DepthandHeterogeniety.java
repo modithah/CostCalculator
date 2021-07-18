@@ -14,7 +14,6 @@ import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
-import edu.upc.essi.catalog.ops.Transformations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

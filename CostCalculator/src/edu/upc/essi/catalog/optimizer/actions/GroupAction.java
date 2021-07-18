@@ -1,7 +1,7 @@
 package edu.upc.essi.catalog.optimizer.actions;
 
 import aima.core.agent.impl.DynamicAction;
-import edu.upc.essi.catalog.core.constructs.Hyperedge;
+import com.google.common.base.Objects;
 import edu.upc.essi.catalog.core.constructs.opsparams.GroupParams;
 import org.hypergraphdb.HyperGraph;
 
@@ -30,5 +30,20 @@ public class GroupAction extends DynamicAction {
 
     public void setParams(GroupParams params) {
         this.params = params;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        GroupAction that = (GroupAction) o;
+        return Objects.equal(G, that.G) &&
+                Objects.equal(params, that.params);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), G, params);
     }
 }

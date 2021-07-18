@@ -3,7 +3,6 @@ package edu.upc.essi.catalog.query.calculation;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,16 +12,13 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 
 import edu.upc.essi.catalog.core.constructs.Atom;
-import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.QueryFrequencies;
-import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,7 +199,7 @@ public class QueryCalculator {
 
 
 	private static void initializeFreqMap(List<Hyperedge> firstLevels,
-			HashMap<Hyperedge, Map<Atom, Double>> frequencies, Atom dummy) {
+										  HashMap<Hyperedge, Map<Atom, Double>> frequencies, Atom dummy) {
 		for (Hyperedge hyperedge : firstLevels) {
 			HashMap<Atom, Double> map = new HashMap<Atom, Double>();
 

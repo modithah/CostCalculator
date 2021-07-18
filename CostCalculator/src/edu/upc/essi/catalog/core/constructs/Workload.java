@@ -1,7 +1,9 @@
 package edu.upc.essi.catalog.core.constructs;
 
 import edu.upc.essi.catalog.IO.FileReaderWriter;
+import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import edu.upc.essi.server.WebServer;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 
@@ -10,7 +12,14 @@ import java.util.ArrayList;
 public class Workload {
 
     public static ArrayList<Pair<Double, ArrayList<Atom>>> getWorkload2(HyperGraph graph) {
-        return FileReaderWriter.getWorkload(graph,"data/schemas/rubis/workload.json");
+
+        String wlLocation = WebServer.getWorkload();
+//            logger.info(wlLocation);
+        System.out.println(wlLocation);
+        if (wlLocation==null)
+            wlLocation = Const.WL_LOCATION;
+
+        return FileReaderWriter.getWorkload(graph, wlLocation);
 
 //        ArrayList<Atom> query = new ArrayList<>();
 //        query.add(graph.get(Graphoperations.getAtomByName(graph, "D_ID")));

@@ -1,33 +1,33 @@
 {
   "queries": [{
-    "name": "User Bids Items Seller",
+    "name": "User Bids Products Seller",
     "frequency": 0.06097561,
-    "projections": ["B_ID","I_ID","U_ID", "U_F_NAME","U_L_NAME"],
+    "projections": ["B_ID","P_ID","U_ID", "U_F_NAME","U_L_NAME"],
     "selectName": "U_ID"
   },{
-    "name": "User Bids Items",
+    "name": "User Bids Products",
     "frequency": 0.203252033,
-    "projections": ["B_ID","B_PRICE","B_DATE","I_ID","I_TITLE","I_PRICE","I_DATE","I_DESCRIPTION"],
+    "projections": ["B_ID","B_PRICE","B_DATE","P_ID","P_TITLE","P_PRICE","P_DATE","P_DESCRIPTION"],
     "selectName": "U_ID"
   },{
-    "name": "Item Bids",
+    "name": "Product Bids",
     "frequency": 0.203252033,
     "projections": ["B_ID","B_PRICE","B_DATE"],
-    "selectName": "I_ID"
+    "selectName": "P_ID"
   },{
-    "name": "Bids Items",
+    "name": "Bids Products",
     "frequency": 0.020325203,
-    "projections": ["I_ID","I_TITLE","I_PRICE","I_DATE","I_DESCRIPTION"],
+    "projections": ["P_ID","P_TITLE","P_PRICE","P_DATE","P_DESCRIPTION"],
     "selectName": "B_ID"
   },{
-    "name": "Item Users",
+    "name": "Product Users",
     "frequency": 0.06097561,
     "projections": ["U_ID","U_F_NAME","U_L_NAME"],
-    "selectName": "I_ID"
+    "selectName": "P_ID"
   },{
-    "name": "User Items",
+    "name": "User Products",
     "frequency": 0.06097561,
-    "projections": ["I_ID","I_TITLE","I_PRICE","I_DATE","I_DESCRIPTION"],
+    "projections": ["P_ID","P_TITLE","P_PRICE","P_DATE","P_DESCRIPTION"],
     "selectName": "U_ID"
   },{
     "name": "User Comments",
@@ -35,15 +35,15 @@
     "projections": ["C_ID","C_TITLE","C_TEXT","C_DATE"],
     "selectName": "U_ID"
   },{
-    "name": "Item Comments",
+    "name": "Product Comments",
     "frequency": 0.203252033,
     "projections": ["C_ID","C_TITLE","C_TEXT","C_DATE"],
-    "selectName": "I_ID"
+    "selectName": "P_ID"
   },{
-    "name": "Item Comments Users",
+    "name": "Product Comments Users",
     "frequency": 0.081300813,
     "projections": ["C_ID","C_TITLE","C_TEXT","C_DATE","U_ID","U_F_NAME","U_L_NAME"],
-    "selectName": "I_ID"
+    "selectName": "P_ID"
   },{
     "name": "Bids Users",
     "frequency": 0.040650407,

@@ -36,7 +36,7 @@ public class CostCalculator {
         metadataGen.setSizeandMultipliers(graph);
 
         String wlLocation = WebServer.getWorkload();
-            logger.info(wlLocation);
+//            logger.info(wlLocation);
 
         if (wlLocation==null)
             wlLocation = Const.WL_LOCATION;

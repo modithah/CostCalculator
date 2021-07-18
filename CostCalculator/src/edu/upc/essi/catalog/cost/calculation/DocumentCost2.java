@@ -3,24 +3,15 @@ package edu.upc.essi.catalog.cost.calculation;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.IncidenceSet;
-import org.hypergraphdb.query.HGQueryCondition;
-import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.HGSearchResult;
 
-import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
-import edu.upc.essi.catalog.core.constructs.Triple;
-import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
@@ -62,7 +53,7 @@ public class DocumentCost2 implements ICost {
 		return size;
 	}
 
-	public double GetMultiplier(HyperGraph graph,Hyperedge source, HGHandle child) {
+	public double GetMultiplier(HyperGraph graph, Hyperedge source, HGHandle child) {
 
 		double multiplier = 1.0;
 //		HyperGraph graph = Const.graph;

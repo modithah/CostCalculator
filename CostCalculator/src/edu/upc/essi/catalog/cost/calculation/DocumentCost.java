@@ -6,8 +6,6 @@ import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
-import edu.upc.essi.catalog.core.constructs.Triple;
-import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import org.hypergraphdb.HyperGraph;
@@ -76,7 +74,7 @@ public class DocumentCost implements ICost {
 
 
 	@Override
-	public double GetMultiplier(HyperGraph graph,Hyperedge source, HGHandle child) {
+	public double GetMultiplier(HyperGraph graph, Hyperedge source, HGHandle child) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

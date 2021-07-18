@@ -1,7 +1,6 @@
 package edu.upc.essi.catalog.core.constructs;
 
 import org.hypergraphdb.*;
-import org.hypergraphdb.atom.HGSubgraph;
 import org.hypergraphdb.query.HGAtomPredicate;
 import org.hypergraphdb.query.HGQueryCondition;
 import org.hypergraphdb.query.SubgraphContainsCondition;

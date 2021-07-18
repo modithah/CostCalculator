@@ -1,7 +1,5 @@
 package edu.upc.essi.catalog.util;
 
-import org.hypergraphdb.HGLink;
-import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;

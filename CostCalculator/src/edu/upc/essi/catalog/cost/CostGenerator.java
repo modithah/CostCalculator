@@ -1,23 +1,18 @@
 package edu.upc.essi.catalog.cost;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
 
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
-import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.GenericTriple;
-import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Triple;
 import edu.upc.essi.catalog.cost.calculation.DocumentCost;
 import edu.upc.essi.catalog.cost.calculation.ICost;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.query.prefixsuffix.DocumentPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.IPrefixSuffix;
 import edu.upc.essi.catalog.query.prefixsuffix.RelationalPrefixSuffix;

@@ -7,7 +7,6 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
-import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Triple;

@@ -13,6 +13,8 @@ import org.hypergraphdb.HyperGraph;
 
 
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -294,6 +296,48 @@ public class Hyperedge extends HGSimpleSubgraph  {
 			}
 		}
 		return out.toString();
+	}
+
+	public JSONObject printToJSON() {
+		JSONObject obj = new JSONObject();
+		try {
+//		StringBuilder out = new StringBuilder();
+		if(!this.getMultipliers().keySet().isEmpty()) {
+//			out.append("Size :"+ this.getSize()+",\n");
+//			out.append(this.getMultipliers()+"\n");
+			obj.put("collection",this.getName());
+		}
+		StringBuilder sb = new StringBuilder();
+
+
+//		out.append( name+"\n");
+
+		Iterator<HGHandle> seconditer = this.findAll().iterator();
+
+		while (seconditer.hasNext()) {
+			HGHandle hgHandle2 = (HGHandle) seconditer.next();
+
+			Object a = graph.get(hgHandle2);
+//		logger.info(a);
+			if (a instanceof Hyperedge) {
+				obj.put(((Hyperedge) a).getName(),((Hyperedge) a).printToJSON());
+//				out.append( ((Hyperedge) a).printToJSON(tabs + 4) +"\n");
+			}
+
+			if (a instanceof Atom) {
+					obj.put(((Atom) a).getName(),(((Atom) a).getName().contains("ID")?"int":"varchar"));
+				}
+//				out.append(sb.toString() + ((Atom) a).getName() +":<"+ (((Atom) a).getName().contains("ID")?"int":"varchar")+">\n");
+			}
+//			if (a instanceof Relationship) {
+//				out.append(sb.toString() + ((Relationship) a) + "\n");
+//			}
+		}
+		catch (JSONException e) {
+			e.printStackTrace();
+		}
+//		out.append(sb.toString()+"}");
+		return obj;
 	}
 
 	public Iterator<HGHandle> iterator() {

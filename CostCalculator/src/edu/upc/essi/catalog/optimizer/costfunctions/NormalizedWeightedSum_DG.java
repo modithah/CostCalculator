@@ -6,13 +6,17 @@ import edu.upc.essi.catalog.core.constructs.Workload;
 import edu.upc.essi.catalog.ops.Transformations;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Map;
 import java.util.Set;
 
 public class NormalizedWeightedSum_DG extends DesignGoal {
 
     private Set<Pair<CostFunction, Double>> costFunctions;
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
     //The utopian points are mapped by class name.
     private Map<String, Double> minimumPoints;

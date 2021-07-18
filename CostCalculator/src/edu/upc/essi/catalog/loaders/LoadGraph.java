@@ -1,6 +1,5 @@
 package edu.upc.essi.catalog.loaders;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,17 +13,14 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
-import org.apache.lucene.util.StringHelper;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.github.jsonldjava.utils.Obj;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -35,7 +31,6 @@ import edu.upc.essi.catalog.core.constructs.CSVRow;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
-import edu.upc.essi.catalog.enums.CardinalityEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.samples.BookSample;

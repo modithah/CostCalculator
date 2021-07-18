@@ -4,25 +4,17 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 
-import javax.swing.plaf.synth.SynthSpinnerUI;
-
-import org.apache.commons.io.FileUtils;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.util.Pair;
 import org.hypergraphdb.HGQuery.hg;
 
 import com.c05mic.generictree.Node;
 import com.c05mic.generictree.Tree;
-import com.github.andrewoma.dexx.collection.HashMap;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.ibm.icu.impl.StringUCharacterIterator;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
-import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.RelStructure;
 import edu.upc.essi.catalog.core.constructs.Relationship;
@@ -42,13 +34,22 @@ public class GenerateRandomDesign {
 	final double pSet = 0.5;
 	final static double skip = 0;
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
-	public static HyperGraph get() throws IOException {
+
+	public static HyperGraph get() throws IOException{
+//		File serverDir = new File(Const.HG_LOCATION_BOOK );
+//		LoadGraph.LoadBaseFromJSONFile("data/schemas/rubis/rubis.json",graph);
+		return get(Const.HG_LOCATION_BOOK,Const.SCHEMA_LOCATION);
+	}
+
+	public static HyperGraph get(String location, String schema) throws IOException {
+		if(schema ==null)
+			schema=Const.SCHEMA_LOCATION;
 		// TODO Auto-generated method stub
-		File serverDir = new File(Const.HG_LOCATION_BOOK );
+		File serverDir = new File(location );
 //		FileUtils.cleanDirectory(serverDir);
 		HyperGraph graph = new HyperGraph(serverDir.getAbsolutePath()+ File.separator + UUID.randomUUID().toString());
-//		LoadGraph.LoadBaseFromJSONFile("data/schemas/tpcc-sample-3EntityRels.json",graph);
-		LoadGraph.LoadBaseFromJSONFile("data/schemas/rubis/rubis.json",graph);
+//		LoadGraph.LoadBaseFromJSONFile("data/schemas/booksample2.json",graph);
+		LoadGraph.LoadBaseFromJSONFile(schema,graph);
 		Atom dummyAtom = new Atom();
 		Relationship dummyRel = new Relationship();
 		RelStructure dummyRelStr = new RelStructure(dummyRel, null);
@@ -91,7 +92,7 @@ public class GenerateRandomDesign {
 
 		int firstChoice = rand.nextInt(3);
 //		logger.info("first choice" + firstChoice);
-
+//		logger.info(refer+"  "+ firstChoice);
 		chooseOperation(graph, dummyAtom, dummyRelStr, reification, paths, firstPick, refer, firstChoice, allRels,
 				components);
 		List<Relationship> edges = Graphoperations.getAtomClassRelList(graph,
@@ -389,7 +390,7 @@ public class GenerateRandomDesign {
 				handles.add(0,rootHandle);
 				handles.addAll(Graphoperations.getAttributesClass(graph, rootHandle));
 				handles.addAll(Graphoperations.getAttributeRelsofClass(graph, rootHandle));
-				Graphoperations.addHyperedgetoGraph(graph, node.getData().to.getName()+UUID.randomUUID().toString() + "Struct",
+				Graphoperations.addHyperedgetoGraph(graph, node.getData().to.getName()+ UUID.randomUUID().toString() + "Struct",
 						HyperedgeTypeEnum.Struct, handles.toArray(new HGHandle[handles.size()]));
 				allAtoms.remove(node.getData().to);
 			} catch (Exception e) {

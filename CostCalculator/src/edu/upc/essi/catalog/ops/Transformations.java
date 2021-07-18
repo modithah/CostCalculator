@@ -49,9 +49,13 @@ public final class Transformations {
 
         hyp1 = graph.get(graph.findOne(hg.and(hg.eq(hyp1),hg.eq("name",hyp1.getName()),hg.eq("type",hyp1.getType()))));
         hyp2 = graph.get(graph.findOne(hg.and(hg.eq(hyp2),hg.eq("name",hyp2.getName()),hg.eq("type",hyp2.getType()))));
-
+//
         List<HGHandle> parents1= hyp1.getParents();
         List<HGHandle> parents2=hyp2.getParents();
+
+//        List<HGHandle> parents1= graph.findAll(hg.contains(graph.findOne(hg.eq(hyp1))));
+//        List<HGHandle> parents2=graph.findAll(hg.contains(graph.findOne(hg.eq(hyp2))));
+
 
 //        System.out.println(hyp1);
 //        System.out.println(hyp2);
@@ -127,6 +131,7 @@ public final class Transformations {
                 }
             }
         }
+//        candidates = new ArrayList<>();
         return candidates;
     }
 
@@ -147,7 +152,7 @@ public final class Transformations {
     public static boolean flatten(HyperGraph graph, Hyperedge hyp) {
         hyp = graph.get(graph.findOne(hg.and(hg.eq(hyp),hg.eq("name",hyp.getName()),hg.eq("type",hyp.getType()))));
         HGHandle hypHandle = graph.getHandle(hyp);
-        HGHandle parentHandle = hyp.getParents().get(0); //graph.findAll(hg.contains(hypHandle)).get(0);
+        HGHandle parentHandle =  hyp.getParents().get(0);//graph.findAll(hg.contains(hypHandle)).get(0); //
         Hyperedge parent = graph.get(parentHandle);
 
         if (!(parent.getType() == HyperedgeTypeEnum.Struct || parent.getType() == HyperedgeTypeEnum.SecondLevel)) {
@@ -454,11 +459,13 @@ public final class Transformations {
                                 Element child = graph.get(c);
                                 if (child instanceof Atom) {
                                     used.addAll(findRelPath(graph, grandParent, (Atom) child));
-                                } else {
+                                } else if (child instanceof Hyperedge) {
                                     HGHandle rootofStruct = ((Hyperedge) child).getRoot();
                                     used.addAll(findRelPath(graph, grandParent, graph.get(rootofStruct)));
                                 }
-
+                                else if (child instanceof Relationship) {
+                                    used.add((Relationship) child);
+                                }
                             }
                         });
 

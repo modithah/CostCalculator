@@ -5,13 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.IncidenceSet;
-import org.hypergraphdb.atom.HGAtomSet;
 import org.hypergraphdb.util.Pair;
 
 import com.c05mic.generictree.Node;
@@ -27,7 +23,6 @@ import edu.upc.essi.catalog.core.constructs.RelStructure;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import edu.upc.essi.catalog.enums.OperationTypeEnum;
 
 public final class CostOperations {
 

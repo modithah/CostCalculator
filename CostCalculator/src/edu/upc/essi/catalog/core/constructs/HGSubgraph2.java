@@ -40,8 +40,6 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	private static final String REVIDX_NAME = "revsubgraph.index";
 	protected ArrayList<HGHandle> outgoingSet = new ArrayList<>();
 
-	HGIndex<HGPersistentHandle, HGPersistentHandle> idx = getIndex();
-	HGIndex<HGPersistentHandle, HGPersistentHandle> revIdx = getReverseIndex();
 
 	@HGIgnore
 	protected HyperGraph graph;
@@ -74,33 +72,33 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	 * DO NOT USE: internal method, implementation dependent, may disappear at any
 	 * time.
 	 */
-//	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getReverseIndex(HyperGraph atGraph) {
-//		return atGraph.getStore().getIndex(REVIDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
-//				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
-//	}
-//
-//	/**
-//	 * DO NOT USE: internal method, implementation dependent, may disappear at any
-//	 * time.
-//	 */
-//	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getIndex(HyperGraph atGraph) {
-//		return atGraph.getStore().getIndex(IDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
-//				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
-//	}
+	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getReverseIndex(HyperGraph atGraph) {
+		return atGraph.getStore().getIndex(REVIDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
+				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
+	}
+
+	/**
+	 * DO NOT USE: internal method, implementation dependent, may disappear at any
+	 * time.
+	 */
+	public static HGIndex<HGPersistentHandle, HGPersistentHandle> getIndex(HyperGraph atGraph) {
+		return atGraph.getStore().getIndex(IDX_NAME, BAtoHandle.getInstance(atGraph.getHandleFactory()),
+				BAtoHandle.getInstance(atGraph.getHandleFactory()), null, true);
+	}
 
 	private void index(HGHandle h) {
-		idx.addEntry(thisHandle.getPersistent(), h.getPersistent());
-		revIdx.addEntry(h.getPersistent(), thisHandle.getPersistent());
+		getIndex().addEntry(thisHandle.getPersistent(), h.getPersistent());
+		getReverseIndex().addEntry(h.getPersistent(), thisHandle.getPersistent());
 //		idx.close();
 //		revIdx.close();
 	}
 
 	private void unindex(HGHandle h) {
+
 		outgoingSet.remove(h);
+		getIndex().removeEntry(thisHandle.getPersistent(), h.getPersistent());
 //		HGIndex<HGPersistentHandle, HGPersistentHandle> idx = getIndex();
-//		HGIndex<HGPersistentHandle, HGPersistentHandle> revIdx = getReverseIndex();
-		idx.removeEntry(thisHandle.getPersistent(), h.getPersistent());
-		revIdx.removeEntry(h.getPersistent(), thisHandle.getPersistent());
+		getReverseIndex().removeEntry(h.getPersistent(), thisHandle.getPersistent());
 //		idx.close();
 //		revIdx.close();
 	}
@@ -217,7 +215,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	 * Removes the atom globally from the database as well as from the nested graph.
 	 * 
 	 * @param handle The atom to remove.
-	 * @return The result of {@link HyperGraph.remove}.
+	 * @return The result of {@link HyperGraph}.
 	 */
 	public boolean removeGlobally(HGHandle handle) {
 		unindex(handle);
@@ -231,7 +229,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	 * @param keepIncidentLinks - whether to also remove links pointing to the
 	 *                          removed atom. This parameter applies recursively to
 	 *                          the links removed.
-	 * @return The result of {@link HyperGraph.remove}.
+	 * @return The result of {@link HyperGraph}.
 	 */
 	public boolean removeGlobally(HGHandle handle, boolean keepIncidentLinks) {
 		unindex(handle);
@@ -241,7 +239,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	/**
 	 * Removes an atom from this scope. The atom is not deleted from the global
 	 * {@link HyperGraph} database. If you wish to delete it globally, use
-	 * {@link HyperGraph.remove}.
+	 * {@link HyperGraph}.
 	 * 
 	 * @return Return value is unreliable
 	 */
