@@ -1,7 +1,5 @@
 package edu.upc.essi.catalog.util;
 
-import org.hypergraphdb.HGLink;
-import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
@@ -34,11 +32,11 @@ public class TargetSetALGenerator implements HGALGenerator
 		{
 			this.srcHandle = src;
 			Object srcObject = graph.get(src);
-//			System.out.println(srcObject.getClass().getSuperclass().getSuperclass();
+//			logger.info(srcObject.getClass().getSuperclass().getSuperclass();
 			if (srcObject instanceof Hyperedge) {
 				this.srcAsLink = (Hyperedge) srcObject;
 				this.srcArity = srcAsLink.getArity();
-//				System.out.println(this.srcArity);
+//				logger.info(this.srcArity);
 			} else {
 				//don't fail, let hasPrev/hasNext be false.
 				this.srcAsLink = null;

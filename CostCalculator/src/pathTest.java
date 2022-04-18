@@ -14,7 +14,7 @@ public class pathTest {
 
 	// TODO Auto-generated method stub
 	public static void main(String[] args) throws IllegalStateException, FileNotFoundException {
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample.json");
+//		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample.json");
 //		Graphoperations.changeDir("C:\\hyper\\test\\3");
 		CsvToBean<CSVRow> bb = new CsvToBeanBuilder<CSVRow>(
 				new FileReader(Const.DESIGN_LOCATION + "books-nested.csv")).withSeparator(',')

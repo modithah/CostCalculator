@@ -11,7 +11,7 @@ import edu.upc.essi.catalog.loaders.LoadGraph;
 
 public class ReadTest {
 	public static void main(String[] args) throws IllegalStateException, FileNotFoundException {
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample.json");
+//		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\booksample.json");
 		CsvToBean<CSVRow> bb = new CsvToBeanBuilder<CSVRow>(
 				new FileReader(Const.DESIGN_LOCATION + "booksample_design-3nf - Copy.csv")).withSeparator(',')
 						.withIgnoreLeadingWhiteSpace(true).withType(CSVRow.class).build();

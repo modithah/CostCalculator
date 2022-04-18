@@ -1,34 +1,31 @@
 package edu.upc.essi.catalog.cost.calculation;
 
-import java.util.Iterator;
-import java.util.List;
+import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.IncidenceSet;
-import org.hypergraphdb.query.HGQueryCondition;
-import org.hypergraphdb.HGQuery.hg;
-import org.hypergraphdb.HGSearchResult;
 
-import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
-import edu.upc.essi.catalog.core.constructs.Triple;
-import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentCost2 implements ICost {
 
 	public DocumentCost2() {
 		// TODO Auto-generated constructor stub
 	}
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
-	public double GetSize(Element node) {
+	public double GetSize(HyperGraph graph,Element node) {
 		double size = 0;
 		if (node instanceof Atom) {
 			Atom atm = (Atom) node;
@@ -56,24 +53,34 @@ public class DocumentCost2 implements ICost {
 		return size;
 	}
 
-	public double GetMultiplier(Hyperedge source, HGHandle child) {
+	public double GetMultiplier(HyperGraph graph, Hyperedge source, HGHandle child) {
 
 		double multiplier = 1.0;
-		HyperGraph graph = Const.graph;
+//		HyperGraph graph = Const.graph;
 
 		if (source.getType() == HyperedgeTypeEnum.SecondLevel) {
+			logger.info("NNNNNNN");
+			logger.info(graph.get(source.getRoot()).toString());
 			multiplier = ((Atom) graph.get(source.getRoot())).getCount();
 		} else if (source.getType() == HyperedgeTypeEnum.Set) {
 			Relationship relationship = source.getNestedRelationship(child);
-			multiplier = relationship.getMultiplicity();
+//			logger.info("FFFFFFFFFFFFF");
+					
+//			logger.info(relationship);
+			ArrayList<String> relorder = new ArrayList<>();
+			relorder.add(((Atom) graph.get(relationship.getTargetAt(0))).getName());
+			relorder.add(((Atom) graph.get(relationship.getTargetAt(1))).getName());
+			Collections.sort(relorder);
+			int index=relorder.indexOf(((Atom) graph.get(((Hyperedge) graph.get(child)).getRoot())).getName());
+			multiplier = relationship.getMultiplicities()[index];
 		}
 
 		return multiplier;
 	}
 
 	@Override
-	public GenericTriple<Double, Double, Double> GetSize(Element node, String path) {
-//		System.out.println(node.getName());
+	public GenericTriple<Double, Double, Double> GetSize(HyperGraph graph,Element node, String path) {
+//		logger.info(node.getName());
 		GenericTriple<Double, Double, Double> t = new GenericTriple<>();
 		int size = 0;
 		double multiply = 1.0;
@@ -85,7 +92,7 @@ public class DocumentCost2 implements ICost {
 			size = atm.getSize();
 
 //			if (atm.getType() == AtomTypeEnum.Class) {
-//				System.out.println("count out");
+//				logger.info("count out");
 //				multiply = atm.getCount();
 //			}
 
@@ -94,7 +101,7 @@ public class DocumentCost2 implements ICost {
 			case FirstLevel: // nultiply by the count
 				size = 0;
 				multiply = CostOperations.CalculateCounts(
-						Graphoperations.getHyperedgebyNameType(node.getName(), ((Hyperedge) node).getType()));
+						Graphoperations.getHyperedgebyNameType(graph,node.getName(), ((Hyperedge) node).getType()));
 				noop = 0;
 				break;
 			case Struct:
@@ -103,7 +110,7 @@ public class DocumentCost2 implements ICost {
 			case Set:
 				size = node.getName().split("~")[0].length();
 				multiply = CostOperations.CalculateCounts(
-						Graphoperations.getHyperedgebyNameType(node.getName(), ((Hyperedge) node).getType()));
+						Graphoperations.getHyperedgebyNameType(graph,node.getName(), ((Hyperedge) node).getType()));
 				noop = 0;
 				break;
 			case SecondLevel:

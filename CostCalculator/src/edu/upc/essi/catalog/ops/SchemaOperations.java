@@ -1,13 +1,10 @@
 package edu.upc.essi.catalog.ops;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.UUID;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGPlainLink;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.HGQuery.hg;
 
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
@@ -78,7 +75,7 @@ public class SchemaOperations {
 //			graph.update(parent);
 
 				HGHandle firstlevel = Graphoperations.getFirstLevelHyperedgesContainingAtom(graph, otherAtom);
-//			System.out.println(graph.get(firstlevel).toString());
+//			logger.info(graph.get(firstlevel).toString());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

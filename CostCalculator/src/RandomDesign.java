@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,8 @@ import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.loaders.LoadGraph;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.util.TargetSetALGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RandomDesign {
 
@@ -44,11 +47,11 @@ public class RandomDesign {
 	final double PinternalSet = 0.75;
 //	static int atoms = 0;
 //	static int structs = 0;
-
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static void main(String[] args) throws IOException {
 		File serverDir = new File(Const.HG_LOCATION_BOOK);
 		FileUtils.cleanDirectory(serverDir);
-		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample.json");
+//		LoadGraph.LoadBaseFromJSONFile("C:\\Users\\Moditha\\Documents\\PhD\\SVN\\Schemas\\demo\\booksample.json");
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		for (int i = 0; i < 100; i++) {
 			String path = "C:\\hyper\\test\\designs\\" + i;
@@ -68,19 +71,19 @@ public class RandomDesign {
 			picks.addAll(Graphoperations.getClassAtomList(graph));
 			atoms = allAtoms.size();
 
-//		System.out.println(setProb(atoms, structs));
+//		logger.info(setProb(atoms, structs));
 
-			System.out.println(allAtoms.size());
+			logger.info(String.valueOf(allAtoms.size()));
 	
 
 			int loopcount = 0;
 			ArrayList<Element> prevPicks = picks;
 			while (!allAtoms.isEmpty() && !allRels.isEmpty()) {
-				System.out.println("##################");
-				System.out.println(allAtoms);
-				System.out.println(allRels);
-				System.out.println(picks);
-				System.out.println("##################");
+				logger.info("##################");
+				logger.info(allAtoms.toString());
+				logger.info(allRels.toString());
+				logger.info(picks.toString());
+				logger.info("##################");
 
 				Element start = picks.get(rand.nextInt(picks.size()));
 
@@ -91,19 +94,19 @@ public class RandomDesign {
 				}
 
 				if (loopcount > 50) {
-					System.out.println("couldnt make");
+					logger.info("couldnt make");
 					break;
 				}
 
-				System.out.println("atoms  rels" + allAtoms + "  " + allRels);
+				logger.info("atoms  rels" + allAtoms + "  " + allRels);
 				if (start instanceof Atom) {
-					System.out.println(graph.getHandle(start));
+					logger.info(graph.getHandle(start).toString());
 					int walkLength = rand.nextInt(allAtoms.size()) + 1;
 					randomWalk(graph, start, walkLength, picks, allAtoms, allRels, nestedStructs);
 				}
 				if (start instanceof Hyperedge) {
 
-					System.out.println(graph.getHandle(start));
+					logger.info(graph.getHandle(start).toString());
 					int walkLength = rand.nextInt(allAtoms.size()) + 1;
 					randomWalk(graph, start, walkLength, picks, allAtoms, allRels, nestedStructs);
 				}
@@ -113,7 +116,7 @@ public class RandomDesign {
 			if (loopcount > 49) {
 				Graphoperations.printDesign(path, null);
 			} else {
-				System.out.println("end");
+				logger.info("end");
 				List<HGHandle> firstLevels = new ArrayList<>();
 				List<Hyperedge> structhyps = graph
 						.getAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Struct)));
@@ -122,14 +125,14 @@ public class RandomDesign {
 
 				for (Hyperedge hyperedge : structhyps) {
 					HGHandle handle = graph.getHandle(hyperedge);
-					HGSearchResult<Object> x = graph.find(hg.contains(handle));
+					// HGSearchResult<Object> x = graph.find(hg.contains(handle));
 
-					if (x.hasNext()) {
-						System.out.println("not empty");
-						System.out.println(graph.get((HGHandle) x.next()).toString());
+					if (hyperedge.getParents().size()>0) {
+						logger.info("not empty");
+//						logger.info(graph.get((HGHandle) x.next()).toString());
 
 					} else {
-						System.out.println("empty");
+						logger.info("empty");
 						hyperedge.setType(HyperedgeTypeEnum.SecondLevel);
 						graph.update(hyperedge);
 						try {
@@ -149,11 +152,11 @@ public class RandomDesign {
 				// make sets without parents second level
 				for (Hyperedge hyperedge : sethyps) {
 					HGHandle handle = graph.getHandle(hyperedge);
-					HGSearchResult<Object> x = graph.find(hg.contains(handle));
-					if (x.hasNext()) {
-						System.out.println("not empty");
+//					HGSearchResult<Object> x = graph.find(hg.contains(handle));
+					if (hyperedge.getParents().size()>0) {
+						logger.info("not empty");
 					} else {
-						System.out.println("empty");
+						logger.info("empty");
 						hyperedge.findAll(hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.Struct)))
 								.forEach(h -> {
 									Hyperedge y = graph.get(h);
@@ -213,7 +216,7 @@ public class RandomDesign {
 		while (it.hasNext()) {
 			HGHandle hgHandle = (HGHandle) it.next();
 			Atom atm = graph.get(hgHandle);
-//			System.out.println(atm);
+//			logger.info(atm);
 			if (atm != a) {
 				ret = hgHandle;
 				break;
@@ -225,85 +228,85 @@ public class RandomDesign {
 
 	private static void randomWalk(HyperGraph graph, Element e, int elements, ArrayList<Element> picks,
 			ArrayList<Element> allAtoms, ArrayList<Element> allRels, ArrayList<Element> nestedStructs) {
-		System.out.println("picking  " + elements);
+		logger.info("picking  " + elements);
 		ArrayList<HGHandle> handles = new ArrayList<>();
 		ArrayList<HGHandle> setHandles = new ArrayList<>();
 		HGHandle atomHAndle = null;
 		HGHandle updated = null;
 		if (e instanceof Atom) {
-//			System.out.println(e);
+//			logger.info(e);
 			atomHAndle = graph.getHandle(e);
-			System.out.println("starting with" + e);
+			logger.info("starting with" + e);
 			handles.add(atomHAndle);
 			picks.remove(picks.indexOf(e));
 
-			System.out.println(allAtoms);
+			logger.info(allAtoms.toString());
 			if (allAtoms.contains(e)) {
 				allAtoms.remove(allAtoms.indexOf(e));
 			}
 		}
 
 		if (e instanceof Hyperedge) {
-//				System.out.println(e);
+//				logger.info(e);
 			if (((Hyperedge) e).getType() == HyperedgeTypeEnum.Struct) {
 
 				atomHAndle = ((Hyperedge) e).getRoot();
-				System.out.println("starting with" + e);
+				logger.info("starting with" + e);
 //				picks.remove(picks.indexOf(e));
 				updated = graph.getHandle(e);
 			}
 
 			else {
-				System.out.println("set");
-				System.out.println(e);
+				logger.info("set");
+				logger.info(e.toString());
 				List<HGHandle> hypList = ((Hyperedge) e).findAll(hg.type(Hyperedge.class));
 
-				System.out.println(hypList.get(0).getClass());
+				logger.info(hypList.get(0).getClass().toString());
 
 				// MAybe use atom too and grow into a set
 				HGHandle tmpHandle = hypList.get(new Random().nextInt(hypList.size()));
 
-				System.out.println(tmpHandle);
-				System.out.println(((Hyperedge) graph.get(tmpHandle)).getRoot());
+				logger.info(tmpHandle.toString());
+				logger.info(((Hyperedge) graph.get(tmpHandle)).getRoot().toString());
 
 				atomHAndle = ((Hyperedge) graph.get(tmpHandle)).getRoot();
 
-//				System.out.println(atomHAndle);
-				System.out.println("starting with" + graph.get(atomHAndle));
+//				logger.info(atomHAndle);
+				logger.info("starting with" + graph.get(atomHAndle));
 //				picks.remove(picks.indexOf(e));
 				updated = tmpHandle;
 			}
 		}
 
-		System.out.println("here");
+		logger.info("here");
 
 		HGBreadthFirstTraversal traversal = new HGBreadthFirstTraversal(atomHAndle, new SimpleALGenerator(graph));
 
-		System.out.println("Traversing");
+		logger.info("Traversing");
 		while (traversal.hasNext() && elements > 0) {
 
 			Pair<HGHandle, HGHandle> current = traversal.next();
 			Object atom = graph.get(current.getSecond());
 //
 			if (canDoOperation(0.75)) {
-				System.out.println("going in" + atom);
-				System.out.println("Continuing");
+				logger.info("going in" + atom);
+				logger.info("Continuing");
 				continue;
 			}
 
 			if (atom instanceof Atom) {
-				System.out.println("going in" + atom);
+				logger.info("going in" + atom);
 				ArrayList<Element> everything = new ArrayList<>();
 				everything.addAll(picks);
 				everything.addAll(nestedStructs);
 				everything.addAll(allAtoms);
 				if (updated != null) {
-					System.out.println("updated is" + updated);
-					System.out.println((Hyperedge) graph.get(updated));
-					System.out.println(everything.contains(graph.get(updated)));
-					System.out.println(everything);
+					logger.info("updated is" + updated);
+					logger.info(((Hyperedge) graph.get(updated)).toString());
+					logger.info(String.valueOf(everything.contains(graph.get(updated))));
+					logger.info(everything.toString());
 					everything.remove(graph.get(updated));
-					System.out.println(everything);
+					logger.info(everything.toString());
 				}
 //				if() 
 
@@ -316,79 +319,79 @@ public class RandomDesign {
 				Collections.shuffle(everything);
 				Relationship relationship = graph.get(current.getFirst());
 				Atom atm = graph.get(current.getSecond());
-				System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-				System.out.println(everything);
+				logger.info("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+				logger.info(everything.toString());
 				for (Element el : everything) {
-					System.out.println("everything" + el);
+					logger.info("everything" + el);
 					if (el == atom) {
-						System.out.println("ATOM");
+						logger.info("ATOM");
 						// cant add relationship if its not already there
 						if (e instanceof Hyperedge) {
 							if (((Hyperedge) e).getType() == HyperedgeTypeEnum.Struct
 									&& !((Hyperedge) e).isMember(getOther(graph, relationship, atm))) {
-								System.out.println("breaking 1");
+								logger.info("breaking 1");
 								continue;
 							}
 							if (((Hyperedge) e).getType() == HyperedgeTypeEnum.Set
 									&& (!((Hyperedge) graph.get(updated)).isMember(getOther(graph, relationship, atm))
 											|| !((Hyperedge) graph.get(updated))
 													.isMember(getOther(graph, relationship, atm)))) {
-								System.out.println("breaking 2");
+								logger.info("breaking 2");
 								continue;
 							}
 						}
 
 						if (e instanceof Atom) {
 
-							System.out.println("other   ->" + getOther(graph, relationship, atm));
+							logger.info("other   ->" + getOther(graph, relationship, atm));
 							if (!handles.contains(getOther(graph, relationship, atm))) {
-								System.out.println("breaking 3");
+								logger.info("breaking 3");
 								continue;
 							}
 						}
-						System.out.println("XXXXXXXXXXXXX");
+						logger.info("XXXXXXXXXXXXX");
 						handles.add(current.getFirst());
 						handles.add(current.getSecond());
-						System.out.println((Element) graph.get(current.getFirst()));
+						logger.info(((Element) graph.get(current.getFirst())).toString());
 						if (picks.contains(graph.get(current.getSecond())))
 							picks.remove(picks.indexOf(graph.get(current.getSecond())));
 						if (allAtoms.contains(graph.get(current.getSecond())))
 							allAtoms.remove(allAtoms.indexOf(graph.get(current.getSecond())));
 						if (allRels.contains(graph.get(current.getFirst())))
 							allRels.remove(allRels.indexOf(graph.get(current.getFirst())));
-						System.out.println("Visiting atom " + atom);
+						logger.info("Visiting atom " + atom);
 						elements--;
 						break;
 					}
 					if (el instanceof Hyperedge) {
-						System.out.println("HYPEREDGE");
+						logger.info("HYPEREDGE");
 						Hyperedge hyp = (Hyperedge) el;
-						System.out.println(hyp);
+						logger.info(hyp.toString());
 						if (hyp.getType() == HyperedgeTypeEnum.Struct && (hyp.getRoot() == current.getSecond()
 								|| hyp.getRoot() == getOther(graph, relationship, atm))) {
 
-							System.out.println("KKKKKKKKKKKKKKKKKKKKKKK");
+							logger.info("KKKKKKKKKKKKKKKKKKKKKKK");
 
-//							System.out.println(hyp);
+//							logger.info(hyp);
 							if (updated != null)
-								System.out.println(graph.get(updated).toString());
+								logger.info(graph.get(updated).toString());
 
 							if (e instanceof Hyperedge) {
 								if (((Hyperedge) e).getType() == HyperedgeTypeEnum.Struct
 										&& !((Hyperedge) e).isMember(getOther(graph, relationship, atm))) {
-									System.out.println("breaking 4");
+									logger.info("breaking 4");
 									continue;
 								}
 
 							}
 							if (e instanceof Atom) {
 								if (!handles.contains(getOther(graph, relationship, atm))) {
-									System.out.println("breaking 6");
+									logger.info("breaking 6");
 									continue;
 								}
 
 							}
-							System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+							logger.info("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 							handles.add(graph.getHandle(hyp));
 //							handles.add(current.getSecond());
 							handles.add(current.getFirst());
@@ -396,7 +399,7 @@ public class RandomDesign {
 								allAtoms.remove(allAtoms.indexOf(graph.get(current.getSecond())));
 							if (allRels.contains(graph.get(current.getFirst())))
 								allRels.remove(allRels.indexOf(graph.get(current.getFirst())));
-							System.out.println("Adding struct " + hyp);
+							logger.info("Adding struct " + hyp);
 							picks.remove(picks.indexOf(hyp));
 							elements--;
 							break;
@@ -405,7 +408,7 @@ public class RandomDesign {
 //									&& (!((Hyperedge) graph.get(updated)).isMember(getOther(graph, relationship, atm))
 //											|| !((Hyperedge) graph.get(updated))
 //													.isMember(getOther(graph, relationship, atm)))) {
-//								System.out.println("breaking 5");
+//								logger.info("breaking 5");
 //								continue;
 //							}
 //
@@ -428,17 +431,17 @@ public class RandomDesign {
 
 							if (e instanceof Hyperedge && hyp.getType() == HyperedgeTypeEnum.Set
 									&& ((Hyperedge) e).getType() == HyperedgeTypeEnum.Struct) {
-								System.out.println("FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
+								logger.info("FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU");
 //								handles.add(current.getFirst());
 //								handles.add(current.getSecond());
-//								System.out.println((Element) graph.get(current.getFirst()));
+//								logger.info((Element) graph.get(current.getFirst()));
 //								if (picks.contains(graph.get(current.getSecond())))
 //									picks.remove(picks.indexOf(graph.get(current.getSecond())));
 //								if (allAtoms.contains(graph.get(current.getSecond())))
 //									allAtoms.remove(allAtoms.indexOf(graph.get(current.getSecond())));
 //								if (allRels.contains(graph.get(current.getFirst())))
 //									allRels.remove(allRels.indexOf(graph.get(current.getFirst())));
-//								System.out.println("Visiting atom by set" + atom);
+//								logger.info("Visiting atom by set" + atom);
 //								elements--;
 								break;
 							}
@@ -459,7 +462,7 @@ public class RandomDesign {
 						handles.toArray(new HGHandle[handles.size()]));
 
 				if (canDoOperation(setProb())) {
-					System.out.println("making set");
+					logger.info("making set");
 					HGHandle set = Graphoperations.addSetHyperedgetoGraph(graph, e.getName(), new ArrayList<>(),
 							struct);
 					picks.add(graph.get(set));
@@ -476,7 +479,7 @@ public class RandomDesign {
 				}
 				graph.update(updatedElm);
 				if (!setHandles.isEmpty()) {
-					System.out.println("WHOOO not empty");
+					logger.info("WHOOO not empty");
 					Hyperedge updatedset = (Hyperedge) graph.get(updated);
 					List<HGHandle> existingrels = updatedset.findAll();
 					for (HGHandle handle : setHandles) {

@@ -1,0 +1,64 @@
+{
+  "queries": [{
+    "name": "User Bids Products Seller",
+    "frequency": 0.06097561,
+    "projections": ["B_ID","P_ID","U_ID", "U_F_NAME","U_L_NAME"],
+    "selectName": "U_ID"
+  },{
+    "name": "User Bids Products",
+    "frequency": 0.203252033,
+    "projections": ["B_ID","B_PRICE","B_DATE","P_ID","P_TITLE","P_PRICE","P_DATE","P_DESCRIPTION"],
+    "selectName": "U_ID"
+  },{
+    "name": "Product Bids",
+    "frequency": 0.203252033,
+    "projections": ["B_ID","B_PRICE","B_DATE"],
+    "selectName": "P_ID"
+  },{
+    "name": "Bids Products",
+    "frequency": 0.020325203,
+    "projections": ["P_ID","P_TITLE","P_PRICE","P_DATE","P_DESCRIPTION"],
+    "selectName": "B_ID"
+  },{
+    "name": "Product Users",
+    "frequency": 0.06097561,
+    "projections": ["U_ID","U_F_NAME","U_L_NAME"],
+    "selectName": "P_ID"
+  },{
+    "name": "User Products",
+    "frequency": 0.06097561,
+    "projections": ["P_ID","P_TITLE","P_PRICE","P_DATE","P_DESCRIPTION"],
+    "selectName": "U_ID"
+  },{
+    "name": "User Comments",
+    "frequency": 0.040650407,
+    "projections": ["C_ID","C_TITLE","C_TEXT","C_DATE"],
+    "selectName": "U_ID"
+  },{
+    "name": "Product Comments",
+    "frequency": 0.203252033,
+    "projections": ["C_ID","C_TITLE","C_TEXT","C_DATE"],
+    "selectName": "P_ID"
+  },{
+    "name": "Product Comments Users",
+    "frequency": 0.081300813,
+    "projections": ["C_ID","C_TITLE","C_TEXT","C_DATE","U_ID","U_F_NAME","U_L_NAME"],
+    "selectName": "P_ID"
+  },{
+    "name": "Bids Users",
+    "frequency": 0.040650407,
+    "projections": ["U_ID","U_F_NAME","U_L_NAME"],
+    "selectName": "B_ID"
+  },{
+    "name": "User Regions",
+    "frequency": 0.020325203,
+    "projections": ["R_ID","R_NAME"],
+    "selectName": "U_ID"
+  },{
+    "name": "Region Users",
+    "frequency": 0.004065041,
+    "projections": ["U_ID","U_F_NAME","U_L_NAME"],
+    "selectName": "R_ID"
+  }
+  ]
+}

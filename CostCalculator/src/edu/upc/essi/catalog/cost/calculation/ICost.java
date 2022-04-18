@@ -5,12 +5,12 @@ import org.hypergraphdb.HGHandle;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
-import edu.upc.essi.catalog.core.constructs.Triple;
+import org.hypergraphdb.HyperGraph;
 
 public interface ICost {
-	public GenericTriple<Double, Double, Double> GetSize(Element node, String path);
+	public GenericTriple<Double, Double, Double> GetSize(HyperGraph graph,Element node, String path);
 
-	public double GetMultiplier(Hyperedge source, HGHandle child);
+	public double GetMultiplier(HyperGraph graph, Hyperedge source, HGHandle child);
 
-	public double GetSize(Element node);
+	public double GetSize(HyperGraph graph,Element node);
 }

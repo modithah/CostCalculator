@@ -22,19 +22,19 @@ public class run {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		Graphoperations.printDesign();
+//		Graphoperations.printDesign();
 
 		System.out.println("FFFFFFFF");
-
-		System.out.println(Graphoperations.isConsistant(new HyperGraph(Const.HG_LOCATION_BOOK)));
-		List<String> atoms = Graphoperations.getAllAtoms();
+		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+		System.out.println(Graphoperations.isConsistant(graph));
+		List<String> atoms = Graphoperations.getAllAtoms(graph);
 
 		if (atoms.isEmpty()) {
 			System.out.println("No data available Creating the Graph");
 			CreateGraph.main(null);
 			try {
 				Thread.sleep(2000);
-				atoms = Graphoperations.getAllAtoms();
+				atoms = Graphoperations.getAllAtoms(graph);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

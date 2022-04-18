@@ -6,18 +6,17 @@ import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.GenericTriple;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
-import edu.upc.essi.catalog.core.constructs.Triple;
-import edu.upc.essi.catalog.enums.AtomTypeEnum;
 import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
+import org.hypergraphdb.HyperGraph;
 
 public class DocumentCost implements ICost {
 
 	
 
 	@Override
-	public GenericTriple<Double,Double,Double> GetSize(Element node, String path) {
-//		System.out.println(node.getName());
+	public GenericTriple<Double,Double,Double> GetSize(HyperGraph graph,Element node, String path) {
+//		logger.info(node.getName());
 		GenericTriple<Double, Double, Double> t = new GenericTriple<>();
 		int size = 0;
 		double multiply = 1.0;
@@ -29,7 +28,7 @@ public class DocumentCost implements ICost {
 			size = atm.getSize();
 
 //			if (atm.getType() == AtomTypeEnum.Class) {
-//				System.out.println("count out");
+//				logger.info("count out");
 //				multiply = atm.getCount();
 //			}
 
@@ -38,7 +37,7 @@ public class DocumentCost implements ICost {
 			case FirstLevel: // nultiply by the count
 				size = 0;
 				multiply = CostOperations.CalculateCounts(
-						Graphoperations.getHyperedgebyNameType(node.getName(), ((Hyperedge) node).getType()));
+						Graphoperations.getHyperedgebyNameType(graph,node.getName(), ((Hyperedge) node).getType()));
 				noop = 0;
 				break;
 			case Struct:
@@ -47,7 +46,7 @@ public class DocumentCost implements ICost {
 			case Set:
 				size = node.getName().split("~")[0].length();
 				multiply = CostOperations.CalculateCounts(
-						Graphoperations.getHyperedgebyNameType(node.getName(), ((Hyperedge) node).getType()));
+						Graphoperations.getHyperedgebyNameType(graph,node.getName(), ((Hyperedge) node).getType()));
 				noop = 0;
 				break;
 			case SecondLevel:
@@ -67,7 +66,7 @@ public class DocumentCost implements ICost {
 
 
 	@Override
-	public double GetSize(Element node) {
+	public double GetSize(HyperGraph graph,Element node) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -75,7 +74,7 @@ public class DocumentCost implements ICost {
 
 
 	@Override
-	public double GetMultiplier(Hyperedge source, HGHandle child) {
+	public double GetMultiplier(HyperGraph graph, Hyperedge source, HGHandle child) {
 		// TODO Auto-generated method stub
 		return 0;
 	}

@@ -1,0 +1,72 @@
+{
+	"atoms": [{
+			"WAREHOUSE": {
+				"*W_ID": {
+					"count": 10,
+					"size": 4
+				},
+				"W_NAME": 10,
+				"W_STREET_1": 20,
+				"W_STREET_2": 20,
+				"W_CITY": 20,
+				"W_STATE":2,
+				"W_ZIP": 9,
+				"W_TAX":4,
+				"W_YTD":4
+			}
+		}, {
+			"DISTRICT": {
+				"*D_ID": {
+					"count": 200,
+					"size": 4
+				},
+				"D_NAME": 10,
+				"D_STREET_1": 20,
+				"D_STREET_2": 20,
+				"D_CITY": 20,
+				"D_STATE": 2,
+				"D_ZIP": 9,
+				"D_TAX": 4,
+				"D_YTD": 4,
+				"D_NEXT_O_ID": 4
+			}
+		}, {
+			"CUSTOMER": {
+				"*C_ID": {
+					"count": 600000,
+					"size": 4
+				},
+				"C_FIRST": 16,
+				"C_MIDDLE": 2,
+				"C_LAST": 16,
+				"C_STREET_1": 20,
+				"C_STREET_2": 20,
+				"C_CITY": 20,
+				"C_STATE": 2,
+				"C_ZIP": 9,
+				"C_PHONE":16,
+				"C_SINCE": 10,
+				"C_CREDIT": 2,
+				"C_CREDIT_LIM": 4,
+				"C_DISCOUNT": 4,
+				"C_BALANCE": 4,
+				"C_YTD_PAYMENT":4,
+				"C_PAYMENT_CNT": 4,
+				"C_DELIVERY_CNT": 4,
+				"C_DATA": 500
+			}
+		}
+	],
+	"relationships": [{
+			"D_ID": {
+				"W_ID": "10~1"
+			},
+			"C_ID":{
+				"D_ID": "3000~1"
+			}			
+		}
+	]
+}
+
+
+

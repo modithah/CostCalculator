@@ -1,6 +1,5 @@
 package edu.upc.essi.catalog.loaders;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,17 +13,14 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
-import org.apache.lucene.util.StringHelper;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.github.jsonldjava.utils.Obj;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -35,7 +31,6 @@ import edu.upc.essi.catalog.core.constructs.CSVRow;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.AtomTypeEnum;
-import edu.upc.essi.catalog.enums.CardinalityEnum;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.samples.BookSample;
@@ -45,9 +40,9 @@ public class LoadGraph {
 	static final Logger logger = Logger.getLogger(BookSample.class);
 	JSONObject jo;
 
-	public static void LoadBaseFromJSONFile(String filename) {
+	public static void LoadBaseFromJSONFile(String filename,HyperGraph graph) {
 		try {
-			LoadBaseFromJSONString(new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8));
+			LoadBaseFromJSONString(new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8),graph);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -57,17 +52,17 @@ public class LoadGraph {
 		}
 	}
 
-	public static void LoadBaseFromJSONString(String schema) throws Exception {
+	public static void LoadBaseFromJSONString(String schema, HyperGraph graph) throws Exception {
 		// TODO Auto-generated method stub
 
 //			FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
-		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		HashMap<String, Atom> atoms = new HashMap<>();
 //			ArrayList<Atom> atoms = new ArrayList<>();
 		HashMap<String, HGHandle> atomHandles = new HashMap<>();
 		Table<String, String, HGHandle> relHandles = HashBasedTable.create();
 
-		logger.info("Creating Atoms");
+//		logger.info("Creating Atoms");
 		JSONObject jo = new JSONObject(schema);
 		JSONArray atomstrings = jo.getJSONArray("atoms");
 
@@ -77,8 +72,8 @@ public class LoadGraph {
 
 			while (keys.hasNext()) {
 				String key = keys.next(); // name of the class atom (only one)
-				System.out.println(key + "-----");
-				System.out.println(keyatom.getJSONObject(key).names());
+//				logger.info(key + "-----");
+//				logger.info(keyatom.getJSONObject(key).names());
 				Iterator<String> keys2 = keyatom.getJSONObject(key).keys();
 				String id = "";
 				ArrayList<String> others = new ArrayList<>();
@@ -126,8 +121,8 @@ public class LoadGraph {
 
 			while (keys.hasNext()) {
 				String from = keys.next(); // name of the main atom (only one)
-				System.out.println(from + "-----");
-				System.out.println(keyatom.getJSONObject(from).names());
+//				logger.info(from + "-----");
+//				logger.info(keyatom.getJSONObject(from).names());
 				Iterator<String> keys2 = keyatom.getJSONObject(from).keys();
 
 				while (keys2.hasNext()) { // all other atoms
@@ -135,7 +130,7 @@ public class LoadGraph {
 					double[] mult = Arrays.stream(keyatom.getJSONObject(from).getString(to).split("~"))
 							.mapToDouble(Double::parseDouble).toArray();
 
-					System.out.println(from + " and" + to + "  " + mult);
+//					logger.info(from + " and" + to + "  " + mult);
 					Graphoperations.makeRelation(graph, atomHandles, relHandles, from, to, mult);
 
 				}
@@ -143,8 +138,8 @@ public class LoadGraph {
 
 		}
 
-		System.out.println(relHandles);
-		graph.close();
+//		logger.info(relHandles);
+//		graph.close();
 	}
 
 	public static void LoadDesignFromCSV(List<CSVRow> rows, String name) {
@@ -168,7 +163,7 @@ public class LoadGraph {
 			ArrayList<String> done = new ArrayList<>();
 
 			rows.stream().filter(x -> x.getType().equals("Set")).forEach(y -> {
-				System.out.println(y.getNode());
+//				logger.info(y.getNode());
 				Pair p = Pair.of(y.getNode(), HyperedgeTypeEnum.Set);
 				if (!setnames.contains(y.getNode())) {
 					setnames.add(p);
@@ -186,15 +181,15 @@ public class LoadGraph {
 
 				while (!setnames.isEmpty()) {
 
-					System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUU");
-					System.out.println(setnames);
+//					logger.info("UUUUUUUUUUUUUUUUUUUUUUUUUUU");
+//					logger.info(setnames);
 
 					Pair p = setnames.poll();
 					String setName = (String) p.getLeft();
 					HyperedgeTypeEnum type = (HyperedgeTypeEnum) p.getRight();
 					String structName = type == HyperedgeTypeEnum.Struct ? setName : setName + "~struct";
 
-					System.out.println(setName + type);
+//					logger.info(setName + type);
 
 					// if the struct contains more sets not done dont continue
 					if (rows.stream().anyMatch(x -> x.getParent().equals(structName) && (x.getType().equals("Set"))
@@ -207,7 +202,7 @@ public class LoadGraph {
 						rows.stream().filter(x -> x.getParent().equals(structName) && (x.getType().equals("Struct"))
 								&& !done.contains(x.getNode())).forEach(y -> {
 									setnames.add(Pair.of(y.getNode(), HyperedgeTypeEnum.Struct));
-									System.out.println("addding   " + y.getNode());
+//									logger.info("addding   " + y.getNode());
 									structnames.add(y.getNode());
 								});
 
@@ -218,9 +213,9 @@ public class LoadGraph {
 						CSVRow relation = rows.stream()
 								.filter(x -> x.getParent().equals(setName) && x.getType().equals("Relationship"))
 								.findFirst().orElse(null);
-						System.out.println("RELATION" + relation);
+//						logger.info("RELATION" + relation);
 						Relationship rel = relation == null ? null
-								: (Relationship) Graphoperations.getElementbyHandle(
+								: (Relationship) Graphoperations.getElementbyHandle(graph,
 										Graphoperations.getRelationshipByNameandSource(graph, relation.getNode(),
 												Graphoperations.getAtomByName(graph, relation.getPos())));
 
@@ -230,7 +225,7 @@ public class LoadGraph {
 						String root = rows.stream()
 								.filter(x -> x.getParent().equals(structName) && x.getNode().contains("*")).findFirst()
 								.orElse(null).getNode().replace("*", "");
-						System.out.println("ROOOT" + root);
+//						logger.info("ROOOT" + root);
 
 						HGHandle keyHandle = atomHandles.get(root);
 						if (keyHandle == null) {
@@ -244,24 +239,24 @@ public class LoadGraph {
 
 									if (el.getType().equals("Class") || el.getType().equals("Attribute")) {
 										String attName = el.getNode();
-										System.out.println("Atname" + attName);
+//										logger.info("Atname" + attName);
 										HGHandle attributehandle = atomHandles.get(attName);
 										if (attributehandle == null) {
 											atomHandles.put(attName, Graphoperations.getAtomByName(graph, attName));
 											attributehandle = atomHandles.get(attName);
 										}
 
-										System.out.println("Athandle" + attributehandle);
+//										logger.info("Athandle" + attributehandle);
 										list.add(attributehandle);
 
 										HGHandle relHandle = relHandles.get(root, "has" + attName);
 										if (relHandle == null) {
-											System.out.println(atomHandles.get(root));
+//											logger.info(atomHandles.get(root));
 											relHandle = Graphoperations.getRelationshipByNameAtoms(graph,
 													"has" + attName, atomHandles.get(root), attributehandle);
-											System.out.println(root);
-											System.out.println("has" + attName);
-											System.out.println(relHandle);
+//											logger.info(root);
+//											logger.info("has" + attName);
+//											logger.info(relHandle);
 											relHandles.put(root, "has" + attName, relHandle);
 										}
 										if (relHandle == null) {
@@ -276,9 +271,9 @@ public class LoadGraph {
 										}
 									} else {
 
-										System.out.println(
-												list.size() + "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
-														+ el.getNode());
+//										logger.info(
+//												list.size() + "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"
+//														+ el.getNode());
 										if (el.getType().equals("Struct")) {
 											list.add(structHandles.get(el.getNode()));
 
@@ -288,7 +283,7 @@ public class LoadGraph {
 										if (el.getType().equals("Set")) {
 											list.add(setHandles.get(el.getNode()));
 
-											System.out.println(list.size());
+//											logger.info(list.size());
 
 											// TODO : add the reletionship to the structs of the sets
 										}
@@ -303,20 +298,20 @@ public class LoadGraph {
 									list.toArray(new HGHandle[list.size()]));
 							structHandles.put(structName, struct);
 							done.add(structName);
-							System.out.println(graph.get(struct).toString());
+//							logger.info(graph.get(struct).toString());
 							String[] names = setName.split("~");
 							setHandles.put(setName, Graphoperations.addSetHyperedgetoGraph(graph,
 									names[names.length - 1], rel, struct));
 							done.add(setName);
-							System.out.println("added ss  " + setName + setHandles.get(setName));
+//							logger.info("added ss  " + setName + setHandles.get(setName));
 						} else if (type == HyperedgeTypeEnum.Struct) {
 							String[] names = setName.split("~");
 							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
 									HyperedgeTypeEnum.Struct, list.toArray(new HGHandle[list.size()]));
 							structHandles.put(setName, struct);
 							done.add(setName);
-							System.out.println("Created struct XXXXXXXXXXXXX  " + setName);
-							System.out.println(graph.get(struct).toString());
+//							logger.info("Created struct XXXXXXXXXXXXX  " + setName);
+//							logger.info(graph.get(struct).toString());
 
 //						sets.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
 //								HyperedgeTypeEnum.FirstLevel, struct));
@@ -327,13 +322,13 @@ public class LoadGraph {
 									list.toArray(new HGHandle[list.size()]));
 							structHandles.put(structName, struct);
 							done.add(structName);
-							System.out.println("Created struct");
-							System.out.println(graph.get(struct).toString());
+//							logger.info("Created struct");
+//							logger.info(graph.get(struct).toString());
 							String[] names = setName.split("~");
 							sets.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
 									HyperedgeTypeEnum.FirstLevel, struct));
 							done.add(setName);
-							System.out.println("added xx  " + setName);
+//							logger.info("added xx  " + setName);
 						}
 					}
 
@@ -345,7 +340,7 @@ public class LoadGraph {
 				} else {
 					HGHandle designHandle = Graphoperations.addHyperedgetoGraph(graph, name, HyperedgeTypeEnum.Design,
 							sets.values().toArray(new HGHandle[sets.values().size()]));
-					HGHandle dbhandle = Graphoperations.getHyperedgebyNameType("MongoDB",
+					HGHandle dbhandle = Graphoperations.getHyperedgebyNameType(graph,"MongoDB",
 							HyperedgeTypeEnum.Database_Doc);
 
 					if (dbhandle == null) {
@@ -356,7 +351,7 @@ public class LoadGraph {
 					}
 				}
 			}
-			System.out.println("fuck this shit");
+			logger.info("fuck this shit");
 			Graphoperations.printDesign(graph);
 			graph.close();
 //				d++;
@@ -383,7 +378,7 @@ public class LoadGraph {
 			int d = 1;
 
 			while (jo.has(design)) {
-				System.out.println(design);
+				logger.info(design);
 				JSONObject dobj = jo.getJSONObject("design1");
 				Iterator<String> entitykeys = dobj.keys();
 
@@ -404,7 +399,7 @@ public class LoadGraph {
 					if (attributes.length() != 0) {
 						for (int i = 0; i < attributes.length(); i++) {
 							String attName = attributes.getString(i);
-							System.out.println(attName);
+							logger.info(attName);
 							HGHandle attributehandle = atomHandles.get(attName);
 							if (attributehandle == null) {
 								atomHandles.put(attributes.getString(i), Graphoperations.getAtomByName(graph, attName));
@@ -416,9 +411,9 @@ public class LoadGraph {
 							if (relHandle == null) {
 								relHandle = Graphoperations.getRelationshipByNameAtoms(graph, "has" + attName,
 										keyHandle, attributehandle);
-								System.out.println(root);
-								System.out.println("has" + attName);
-								System.out.println(relHandle);
+								logger.info(root);
+								logger.info("has" + attName);
+								logger.info(relHandle);
 								relHandles.put(root, "has" + attName, relHandle);
 							}
 							if (relHandle == null) {
@@ -431,13 +426,13 @@ public class LoadGraph {
 
 					HGHandle struct = Graphoperations.addHyperedgetoGraph(graph, "~" + UUID.randomUUID().toString(),
 							HyperedgeTypeEnum.SecondLevel, list.toArray(new HGHandle[list.size()]));
-					System.out.println(graph.get(struct).toString());
+					logger.info(graph.get(struct).toString());
 					sets.put(design, entitykey, Graphoperations.addHyperedgetoGraph(graph, entitykey,
 							HyperedgeTypeEnum.FirstLevel, struct));
 
 				}
 				for (HGHandle HNDL : sets.values()) {
-					System.out.println(graph.get(HNDL).toString());
+					logger.info(graph.get(HNDL).toString());
 				}
 
 //				if(na)
@@ -495,17 +490,17 @@ public class LoadGraph {
 
 				} else {
 					String original = ((Hyperedge) obj).getName();
-					System.out.println("original    " + original);
+					logger.info("original    " + original);
 					if (map.containsKey(original)) {
 						row.setNode(map.get(original));
 					} else {
 						lastindex = original.lastIndexOf("~");
-						System.out.println(lastindex);
+						logger.info(lastindex);
 						String childname = original;
 						if (lastindex >= 0) {
 							childname = original.substring(0, lastindex);
 						}
-						System.out.println("childname    " + childname);
+						logger.info("childname    " + childname);
 						String actname = childname.isEmpty() ? row.getParent() + "~struct" : childname;
 						if (map.values().contains(actname)) {
 							row.setNode(actname + i);
@@ -537,242 +532,243 @@ public class LoadGraph {
 		return handle;
 	}
 
-	public static void LoadDesignFromCSV2(List<CSVRow> rows, String name) {
-		// TODO Auto-generated method stub
-		try {
-			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-			HashMap<String, HGHandle> atomHandles = new HashMap<>();
-			Table<String, String, HGHandle> relHandles = HashBasedTable.create();
-			HashMap<String, HGHandle> sets = new HashMap<>();
-			HashMap<String, HGHandle> setHandles = new HashMap<>();
-			HashMap<String, HGHandle> structHandles = new HashMap<>();
-			HashMap<String, HGHandle> secondHandles = new HashMap<>();
-
-			Queue<CSVRow> setnames = new LinkedList<>();
-			ArrayList<String> structnames = new ArrayList<>();
-			ArrayList<String> done = new ArrayList<>();
-
-			rows.stream().filter(x -> x.getType().equals("Set")).forEach(y -> {
-				System.out.println(y.getNode());
-				if (!setnames.contains(y)) {
-					setnames.add(y);
-				}
-			});
-
-			rows.stream().filter(x -> x.getType().equals("FirstLevel")).forEach(y -> {
-				if (!setnames.contains(y)) {
-					setnames.add(y);
-				}
-			});
-
-			rows.stream().filter(x -> x.getType().equals("Struct")).forEach(y -> {
-				if (!setnames.contains(y)) {
-					setnames.add(y);
-				}
-			});
-
-			rows.stream().filter(x -> x.getType().equals("SecondLevel")).forEach(y -> {
-				if (!setnames.contains(y)) {
-					setnames.add(y);
-				}
-			});
-
-			synchronized (done) {
-
-				while (!setnames.isEmpty()) {
-
-					System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUU");
-					System.out.println(setnames);
-
-					CSVRow p = setnames.poll();
-					String setName = p.getNode(); // (String) p.getLeft();
-					HyperedgeTypeEnum type = HyperedgeTypeEnum.valueOf(p.getType());
-//				String structName = type == HyperedgeTypeEnum.Struct ? setName : setName + "~struct";
-
-					System.out.println(setName + type);
-
-					// if the struct contains more sets not done dont continue
-					if (rows.stream()
-							.anyMatch(
-									x -> x.getParent().equals(setName)
-											&& (x.getType().equals("Set") || x.getType().equals("Struct")
-													|| x.getType().equals("SecondLevel"))
-											&& !done.contains(x.getNode()))) {
-//						setnames.add(Pair.of(setName, HyperedgeTypeEnum.Set));
-//						setnames.add(x);
-						setnames.add(p);
-//					} 
-//					else if (rows.stream().anyMatch(x -> x.getParent().equals(setName)
-//							&& (x.getType().equals("Struct")) && !done.contains(x.getNode()))) {
-
-//						rows.stream().filter(x -> x.getParent().equals(setName) && (x.getType().equals("Struct"))
-//								&& !done.contains(x.getNode())).forEach(y -> {
-//									setnames.add(y);
-////									System.out.println("addding   " + y.getNode());
-//									structnames.add(y.getNode());
-//								});
-
+//	public static void LoadDesignFromCSV2(List<CSVRow> rows, String name) {
+//		// TODO Auto-generated method stub
+//		try {
+//			HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
+//			HashMap<String, HGHandle> atomHandles = new HashMap<>();
+//			Table<String, String, HGHandle> relHandles = HashBasedTable.create();
+//			HashMap<String, HGHandle> sets = new HashMap<>();
+//			HashMap<String, HGHandle> setHandles = new HashMap<>();
+//			HashMap<String, HGHandle> structHandles = new HashMap<>();
+//			HashMap<String, HGHandle> secondHandles = new HashMap<>();
+//
+//			Queue<CSVRow> setnames = new LinkedList<>();
+//			ArrayList<String> structnames = new ArrayList<>();
+//			ArrayList<String> done = new ArrayList<>();
+//
+//			rows.stream().filter(x -> x.getType().equals("Set")).forEach(y -> {
+//				logger.info(y.getNode());
+//				if (!setnames.contains(y)) {
+//					setnames.add(y);
+//				}
+//			});
+//
+//			rows.stream().filter(x -> x.getType().equals("FirstLevel")).forEach(y -> {
+//				if (!setnames.contains(y)) {
+//					setnames.add(y);
+//				}
+//			});
+//
+//			rows.stream().filter(x -> x.getType().equals("Struct")).forEach(y -> {
+//				if (!setnames.contains(y)) {
+//					setnames.add(y);
+//				}
+//			});
+//
+//			rows.stream().filter(x -> x.getType().equals("SecondLevel")).forEach(y -> {
+//				if (!setnames.contains(y)) {
+//					setnames.add(y);
+//				}
+//			});
+//
+//			synchronized (done) {
+//
+//				while (!setnames.isEmpty()) {
+//
+//					logger.info("UUUUUUUUUUUUUUUUUUUUUUUUUUU");
+//					logger.info(setnames);
+//
+//					CSVRow p = setnames.poll();
+//					String setName = p.getNode(); // (String) p.getLeft();
+//					HyperedgeTypeEnum type = HyperedgeTypeEnum.valueOf(p.getType());
+////				String structName = type == HyperedgeTypeEnum.Struct ? setName : setName + "~struct";
+//
+//					logger.info(setName + type);
+//
+//					// if the struct contains more sets not done dont continue
+//					if (rows.stream()
+//							.anyMatch(
+//									x -> x.getParent().equals(setName)
+//											&& (x.getType().equals("Set") || x.getType().equals("Struct")
+//													|| x.getType().equals("SecondLevel"))
+//											&& !done.contains(x.getNode()))) {
+////						setnames.add(Pair.of(setName, HyperedgeTypeEnum.Set));
+////						setnames.add(x);
 //						setnames.add(p);
-
-					} else {
-						ArrayList<HGHandle> list = new ArrayList<>();
-						ArrayList<Relationship> rels = new ArrayList<>();
-
-						rows.stream().filter(x -> x.getParent().equals(setName) && x.getType().equals("Relationship"))
-								.forEach(r -> {
-									System.out.println(r.getNode());
-									HGHandle relHandle = Graphoperations.getRelationshipByNameandSource(graph,
-											r.getNode(), Graphoperations.getAtomByName(graph, r.getPos()));
-									list.add(relHandle);
-									rels.add((Relationship) Graphoperations.getElementbyHandle(relHandle));
-								});
-
-//					list.add(rel);
-						// todo : for multiple structs in set modify. get the relationship and create
-						// the struct
-
-						rows.stream().filter(x -> x.getParent().equals(setName) && !x.getNode().contains("*"))
-								.forEach(el -> {
-
-									if (el.getType().equals("Class") || el.getType().equals("Attribute")) {
-										String attName = el.getNode();
-//										System.out.println("Atname" + attName);
-										HGHandle attributehandle = atomHandles.get(attName);
-										if (attributehandle == null) {
-											atomHandles.put(attName, Graphoperations.getAtomByName(graph, attName));
-											attributehandle = atomHandles.get(attName);
-										}
-
-//										System.out.println("Athandle" + attributehandle);
-										list.add(attributehandle);
-
-										if (type == HyperedgeTypeEnum.Struct || type == HyperedgeTypeEnum.SecondLevel) {
-											String root = rows.stream()
-													.filter(x -> x.getParent().equals(setName)
-															&& x.getNode().contains("*"))
-													.findFirst().orElse(null).getNode().replace("*", "");
-//											System.out.println("ROOOT" + root);
-
-											HGHandle keyHandle = atomHandles.get(root);
-											if (keyHandle == null) {
-												atomHandles.put(root, Graphoperations.getAtomByName(graph, root));
-												keyHandle = atomHandles.get(root);
-											}
-											list.add(keyHandle);
-
-											HGHandle relHandle = relHandles.get(root, "has" + attName);
-											if (relHandle == null) {
-//												System.out.println(atomHandles.get(root));
-												relHandle = Graphoperations.getRelationshipByNameAtoms(graph,
-														"has" + attName, atomHandles.get(root), attributehandle);
-//												System.out.println(root);
-//												System.out.println("has" + attName);
-//												System.out.println(relHandle);
-												relHandles.put(root, "has" + attName, relHandle);
-											}
-											if (relHandle == null) {
-												try {
-													throw new Exception("Non Existant relationship");
-												} catch (Exception e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}
-											} else {
-												list.add(relHandle);
-											}
-										}
-									}
-									if (el.getType().equals("Struct")) {
-										list.add(structHandles.get(el.getNode()));
-
-										// TODO : add the relationship to the root of the struct
-
-									}
-									if (el.getType().equals("Set")) {
-										list.add(setHandles.get(el.getNode()));
-
-									}
-									if (el.getType().equals("SecondLevel")) {
-										list.add(secondHandles.get(el.getNode()));
-
-									}
-								});
-
-						if (type == HyperedgeTypeEnum.Set) {
-
-//							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph,
-//									"~" + UUID.randomUUID().toString(), HyperedgeTypeEnum.Struct,
-//									list.toArray(new HGHandle[list.size()]));
-//							structHandles.put(structName, struct);
-//							done.add(structName);
-//							System.out.println(graph.get(struct).toString());
+////					} 
+////					else if (rows.stream().anyMatch(x -> x.getParent().equals(setName)
+////							&& (x.getType().equals("Struct")) && !done.contains(x.getNode()))) {
+//
+////						rows.stream().filter(x -> x.getParent().equals(setName) && (x.getType().equals("Struct"))
+////								&& !done.contains(x.getNode())).forEach(y -> {
+////									setnames.add(y);
+//////									logger.info("addding   " + y.getNode());
+////									structnames.add(y.getNode());
+////								});
+//
+////						setnames.add(p);
+//
+//					} else {
+//						ArrayList<HGHandle> list = new ArrayList<>();
+//						ArrayList<Relationship> rels = new ArrayList<>();
+//
+//						rows.stream().filter(x -> x.getParent().equals(setName) && x.getType().equals("Relationship"))
+//								.forEach(r -> {
+//									logger.info(r.getNode());
+//									HGHandle relHandle = Graphoperations.getRelationshipByNameandSource(graph,
+//											r.getNode(), Graphoperations.getAtomByName(graph, r.getPos()));
+//									list.add(relHandle);
+//									rels.add((Relationship) Graphoperations.getElementbyHandle(relHandle));
+//								});
+//
+////					list.add(rel);
+//						// todo : for multiple structs in set modify. get the relationship and create
+//						// the struct
+//
+//						rows.stream().filter(x -> x.getParent().equals(setName) && !x.getNode().contains("*"))
+//								.forEach(el -> {
+//
+//									if (el.getType().equals("Class") || el.getType().equals("Attribute")) {
+//										String attName = el.getNode();
+////										logger.info("Atname" + attName);
+//										HGHandle attributehandle = atomHandles.get(attName);
+//										if (attributehandle == null) {
+//											atomHandles.put(attName, Graphoperations.getAtomByName(graph, attName));
+//											attributehandle = atomHandles.get(attName);
+//										}
+//
+////										logger.info("Athandle" + attributehandle);
+//										list.add(attributehandle);
+//
+//										if (type == HyperedgeTypeEnum.Struct || type == HyperedgeTypeEnum.SecondLevel) {
+//											String root = rows.stream()
+//													.filter(x -> x.getParent().equals(setName)
+//															&& x.getNode().contains("*"))
+//													.findFirst().orElse(null).getNode().replace("*", "");
+////											logger.info("ROOOT" + root);
+//
+//											HGHandle keyHandle = atomHandles.get(root);
+//											if (keyHandle == null) {
+//												atomHandles.put(root, Graphoperations.getAtomByName(graph, root));
+//												keyHandle = atomHandles.get(root);
+//											}
+//											list.add(keyHandle);
+//
+//											HGHandle relHandle = relHandles.get(root, "has" + attName);
+//											if (relHandle == null) {
+////												logger.info(atomHandles.get(root));
+//												relHandle = Graphoperations.getRelationshipByNameAtoms(graph,
+//														"has" + attName, atomHandles.get(root), attributehandle);
+////												logger.info(root);
+////												logger.info("has" + attName);
+////												logger.info(relHandle);
+//												relHandles.put(root, "has" + attName, relHandle);
+//											}
+//											if (relHandle == null) {
+//												try {
+//													throw new Exception("Non Existant relationship");
+//												} catch (Exception e) {
+//													// TODO Auto-generated catch block
+//													e.printStackTrace();
+//												}
+//											} else {
+//												list.add(relHandle);
+//											}
+//										}
+//									}
+//									if (el.getType().equals("Struct")) {
+//										list.add(structHandles.get(el.getNode()));
+//
+//										// TODO : add the relationship to the root of the struct
+//
+//									}
+//									if (el.getType().equals("Set")) {
+//										list.add(setHandles.get(el.getNode()));
+//
+//									}
+//									if (el.getType().equals("SecondLevel")) {
+//										list.add(secondHandles.get(el.getNode()));
+//
+//									}
+//								});
+//
+//						if (type == HyperedgeTypeEnum.Set) {
+//
+////							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph,
+////									"~" + UUID.randomUUID().toString(), HyperedgeTypeEnum.Struct,
+////									list.toArray(new HGHandle[list.size()]));
+////							structHandles.put(structName, struct);
+////							done.add(structName);
+////							logger.info(graph.get(struct).toString());
+////							String[] names = setName.split("~");
+//							setHandles.put(setName, Graphoperations.addSetHyperedgetoGraph(graph, setName, rels,
+//									list.toArray(new HGHandle[list.size()])));
+//							done.add(setName);
+//							logger.info("added SET  " + setName + setHandles.get(setName));
+//						} else if (type == HyperedgeTypeEnum.Struct) {
 //							String[] names = setName.split("~");
-							setHandles.put(setName, Graphoperations.addSetHyperedgetoGraph(graph, setName, rels,
-									list.toArray(new HGHandle[list.size()])));
-							done.add(setName);
-							System.out.println("added SET  " + setName + setHandles.get(setName));
-						} else if (type == HyperedgeTypeEnum.Struct) {
-							String[] names = setName.split("~");
-							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph,
-									names[names.length - 1] + "~" + UUID.randomUUID().toString() + "~struct",
-									HyperedgeTypeEnum.Struct, list.toArray(new HGHandle[list.size()]));
-							structHandles.put(setName, struct);
-							done.add(setName);
-							System.out.println("Created struct XXXXXXXXXXXXX  " + setName);
-							System.out.println(graph.get(struct).toString());
+//							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph,
+//									names[names.length - 1] + "~" + UUID.randomUUID().toString() + "~struct",
+//									HyperedgeTypeEnum.Struct, list.toArray(new HGHandle[list.size()]));
+//							structHandles.put(setName, struct);
+//							done.add(setName);
+//							logger.info("Created struct XXXXXXXXXXXXX  " + setName);
+//							logger.info(graph.get(struct).toString());
+//
+////						sets.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
+////								HyperedgeTypeEnum.FirstLevel, struct));
+////						done.add(setName);
+//						} else if (type == HyperedgeTypeEnum.SecondLevel) {
+//							String[] names = setName.split("~");
+//							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph,
+//									names[names.length - 1] + "~" + UUID.randomUUID().toString() + "~struct",
+//									HyperedgeTypeEnum.SecondLevel, list.toArray(new HGHandle[list.size()]));
+//
+//							secondHandles.put(setName, struct);
+//							done.add(setName);
+//							logger.info("added SECOND LEVEL ");
+//							logger.info(graph.get(struct).toString());
+//						}
+//
+//						else {
+//							String[] names = setName.split("~");
+//							sets.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
+//									HyperedgeTypeEnum.FirstLevel, list.toArray(new HGHandle[list.size()])));
+//							done.add(setName);
+//							logger.info("added FIRST LEVEL  " + setName + "  " + list.size());
+//						}
+//					}
+//
+//				}
+//
+//				if (name == null) {
+//					Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
+//							sets.values().toArray(new HGHandle[sets.values().size()]));
+//				} else {
+//					HGHandle designHandle = Graphoperations.addHyperedgetoGraph(graph, name, HyperedgeTypeEnum.Design,
+//							sets.values().toArray(new HGHandle[sets.values().size()]));
+//					HGHandle dbhandle = Graphoperations.getHyperedgebyNameType("MongoDB",
+//							HyperedgeTypeEnum.Database_Doc);
+//
+//					if (dbhandle == null) {
+//						Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
+//								designHandle);
+//					} else {
+//
+//					}
+//				}
+//			}
+//			logger.info("fuck this shit");
+//			Graphoperations.printDesign(graph);
+//			graph.close();
+////				d++;
+////				design = "design" + d;
+//
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 
-//						sets.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
-//								HyperedgeTypeEnum.FirstLevel, struct));
-//						done.add(setName);
-						} else if (type == HyperedgeTypeEnum.SecondLevel) {
-							String[] names = setName.split("~");
-							HGHandle struct = Graphoperations.addHyperedgetoGraph(graph,
-									names[names.length - 1] + "~" + UUID.randomUUID().toString() + "~struct",
-									HyperedgeTypeEnum.SecondLevel, list.toArray(new HGHandle[list.size()]));
-
-							secondHandles.put(setName, struct);
-							done.add(setName);
-							System.out.println("added SECOND LEVEL ");
-							System.out.println(graph.get(struct).toString());
-						}
-
-						else {
-							String[] names = setName.split("~");
-							sets.put(setName, Graphoperations.addHyperedgetoGraph(graph, names[names.length - 1],
-									HyperedgeTypeEnum.FirstLevel, list.toArray(new HGHandle[list.size()])));
-							done.add(setName);
-							System.out.println("added FIRST LEVEL  " + setName + "  " + list.size());
-						}
-					}
-
-				}
-
-				if (name == null) {
-					Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
-							sets.values().toArray(new HGHandle[sets.values().size()]));
-				} else {
-					HGHandle designHandle = Graphoperations.addHyperedgetoGraph(graph, name, HyperedgeTypeEnum.Design,
-							sets.values().toArray(new HGHandle[sets.values().size()]));
-					HGHandle dbhandle = Graphoperations.getHyperedgebyNameType("MongoDB",
-							HyperedgeTypeEnum.Database_Doc);
-
-					if (dbhandle == null) {
-						Graphoperations.addHyperedgetoGraph(graph, "MongoDB", HyperedgeTypeEnum.Database_Doc,
-								designHandle);
-					} else {
-
-					}
-				}
-			}
-			System.out.println("fuck this shit");
-			Graphoperations.printDesign(graph);
-			graph.close();
-//				d++;
-//				design = "design" + d;
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

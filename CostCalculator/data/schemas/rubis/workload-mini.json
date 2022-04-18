@@ -1,0 +1,24 @@
+{
+  "queries": [{
+    "name": "User ",
+    "frequency": 0.25,
+    "projections": ["C_TITLE"],
+    "selectName": "C_ID"
+  },{
+    "name": "User Regions",
+    "frequency": 0.25,
+    "projections": ["I_ID","I_TITLE"],
+    "selectName": "C_ID"
+  },{
+    "name": "Regions",
+    "frequency": 0.25,
+    "projections": ["I_TITLE"],
+    "selectName": "I_ID"
+  },{
+    "name": "Region Users",
+    "frequency": 0.25,
+    "projections": ["C_ID","C_TITLE"],
+    "selectName": "I_ID"
+  }
+  ]
+}

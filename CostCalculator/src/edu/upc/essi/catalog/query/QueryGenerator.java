@@ -7,7 +7,6 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
-import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Triple;
@@ -79,7 +78,7 @@ public class QueryGenerator {
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateQueryFromMap(element, path, l));
+//			logger.info(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -94,14 +93,14 @@ public class QueryGenerator {
 			PrefixSuffix = new RelationalPrefixSuffix();
 			break;
 		case Database_Doc:
-			PrefixSuffix = new DocumentPrefixSuffix(true);
+			PrefixSuffix = new DocumentPrefixSuffix(false);
 			break;
 		default:
 			break;
 		}
 
 		for (Element element : l.getAjadacencyList(node)) {
-			System.out.println(CreateQueryFromMap(element, path, l));
+//			logger.info(CreateQueryFromMap(element, path, l));
 		}
 		// return CreateQueryFromMap(node, path, l) + "\n";
 	}
@@ -115,7 +114,8 @@ public class QueryGenerator {
 		if (node instanceof Hyperedge) {
 			Iterator<HGHandle> x = ((Hyperedge) node).iterator();
 			while (x.hasNext()) {
-				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(x.next()), pair.getPath());
+				HyperGraph graph= new HyperGraph();
+				Q = Q + CreateQuery(Graphoperations.getElementbyHandle(graph,x.next()), pair.getPath());
 			}
 		}
 		Q = Q + pair.getSuffix();
@@ -126,7 +126,7 @@ public class QueryGenerator {
 
 	public String CreateQueryFromMap(Element node, String path, AdjacencyList l) {
 
-//		System.out.println("node -> " + node + "path ->" + path + "l-->" + l);
+//		logger.info("node -> " + node + "path ->" + path + "l-->" + l);
 		String Q = "";
 
 		Triple pair = GetPrefixSuffix(node, path);

@@ -1,0 +1,33 @@
+{
+  "atoms": [{
+    "COMMENT": {
+      "*C_ID": {
+        "count": 5000000,
+        "size": 4
+      },
+      "C_TITLE": 20,
+      "C_TEXT": 70,
+      "C_DATE": 30
+    }
+  },  {
+      "ITEM": {
+        "*I_ID": {
+          "count": 2500000,
+          "size": 4
+        },
+        "I_TITLE": 10,
+        "I_PRICE": 4,
+        "I_TYPE": 5,
+        "I_DATE": 30,
+        "I_DESCRIPTION": 80
+
+      }
+    }
+  ],
+  "relationships": [{
+      "I_ID": {
+        "C_ID": "1~2"
+      }
+    }
+  ]
+}

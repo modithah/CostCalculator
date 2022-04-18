@@ -40,6 +40,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	private static final String REVIDX_NAME = "revsubgraph.index";
 	protected ArrayList<HGHandle> outgoingSet = new ArrayList<>();
 
+
 	@HGIgnore
 	protected HyperGraph graph;
 	protected HGHandle thisHandle;
@@ -88,12 +89,18 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	private void index(HGHandle h) {
 		getIndex().addEntry(thisHandle.getPersistent(), h.getPersistent());
 		getReverseIndex().addEntry(h.getPersistent(), thisHandle.getPersistent());
+//		idx.close();
+//		revIdx.close();
 	}
 
 	private void unindex(HGHandle h) {
+
 		outgoingSet.remove(h);
 		getIndex().removeEntry(thisHandle.getPersistent(), h.getPersistent());
+//		HGIndex<HGPersistentHandle, HGPersistentHandle> idx = getIndex();
 		getReverseIndex().removeEntry(h.getPersistent(), thisHandle.getPersistent());
+//		idx.close();
+//		revIdx.close();
 	}
 
 	public boolean isMember(HGHandle atom) {
@@ -121,7 +128,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 //		return graph.getTransactionManager().ensureTransaction(new Callable<HGHandle>() {
 //			public HGHandle call() {
 		index(atom);
-//		System.out.println("Adding" +atom);
+//		logger.info("Adding" +atom);
 		this.outgoingSet.add(atom);
 		return atom;
 //			}
@@ -208,7 +215,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	 * Removes the atom globally from the database as well as from the nested graph.
 	 * 
 	 * @param handle The atom to remove.
-	 * @return The result of {@link HyperGraph.remove}.
+	 * @return The result of {@link HyperGraph}.
 	 */
 	public boolean removeGlobally(HGHandle handle) {
 		unindex(handle);
@@ -222,7 +229,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	 * @param keepIncidentLinks - whether to also remove links pointing to the
 	 *                          removed atom. This parameter applies recursively to
 	 *                          the links removed.
-	 * @return The result of {@link HyperGraph.remove}.
+	 * @return The result of {@link HyperGraph}.
 	 */
 	public boolean removeGlobally(HGHandle handle, boolean keepIncidentLinks) {
 		unindex(handle);
@@ -232,7 +239,7 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 	/**
 	 * Removes an atom from this scope. The atom is not deleted from the global
 	 * {@link HyperGraph} database. If you wish to delete it globally, use
-	 * {@link HyperGraph.remove}.
+	 * {@link HyperGraph}.
 	 * 
 	 * @return Return value is unreliable
 	 */
@@ -304,6 +311,8 @@ public class HGSubgraph2 implements HyperNode, HGHandleHolder, HGGraphHolder {
 		// TODO Auto-generated method stub
 
 	}
+
+
 
 	public ArrayList<HGHandle> getOutgoingSet() {
 		return outgoingSet;
