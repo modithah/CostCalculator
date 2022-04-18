@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -10,30 +9,21 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import javax.management.relation.Relation;
-
 import org.apache.commons.io.FileUtils;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGSearchResult;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.algorithms.HGBreadthFirstTraversal;
 import org.hypergraphdb.algorithms.SimpleALGenerator;
-import org.hypergraphdb.query.HGQueryCondition;
 import org.hypergraphdb.util.Pair;
-
-import com.github.andrewoma.dexx.collection.HashMap;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
-import edu.upc.essi.catalog.core.constructs.HGSubgraph2;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import edu.upc.essi.catalog.loaders.LoadGraph;
 import edu.upc.essi.catalog.ops.Graphoperations;
-import edu.upc.essi.catalog.util.TargetSetALGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

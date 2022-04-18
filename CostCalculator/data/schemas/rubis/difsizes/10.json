@@ -1,0 +1,141 @@
+{
+	"atoms": [{
+			"dataObject_0": {
+				"*attribute_10": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_23": 4,
+				"attribute_30": 4,
+				"attribute_44": 4,
+				"attribute_54": 4,
+				"attribute_57": 4
+			}
+		}, {
+			"dataObject_1": {
+				"*attribute_34": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_33": 4,
+				"attribute_12": 4,
+				"attribute_42": 4,
+				"attribute_48": 4
+			}
+		}, {
+			"dataObject_2": {
+				"*attribute_51": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_22": 4,
+				"attribute_27": 4,
+				"attribute_31": 4,
+				"attribute_52": 4,
+				"attribute_49": 4
+			}
+		}, {
+			"dataObject_3": {
+				"*attribute_40": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_18": 4,
+				"attribute_36": 4,
+				"attribute_14": 4,
+				"attribute_16": 4
+			}
+		}, {
+			"dataObject_4": {
+				"*attribute_26": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_17": 4,
+				"attribute_21": 4,
+				"attribute_28": 4,
+				"attribute_29": 4
+			}
+		}, {
+			"dataObject_5": {
+				"*attribute_37": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_58": 4,
+				"attribute_59": 4
+			}
+		}, {
+			"dataObject_6": {
+				"*attribute_45": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_19": 4,
+				"attribute_11": 4
+			}
+		}, {
+			"dataObject_7": {
+				"*attribute_25": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_15": 4,
+				"attribute_32": 4,
+				"attribute_35": 4,
+				"attribute_38": 4,
+				"attribute_39": 4
+			}
+		}, {
+			"dataObject_8": {
+				"*attribute_43": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_20": 4,
+				"attribute_13": 4,
+				"attribute_47": 4,
+				"attribute_50": 4
+			}
+		}, {
+			"dataObject_9": {
+				"*attribute_24": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_41": 4,
+				"attribute_46": 4,
+				"attribute_53": 4,
+				"attribute_55": 4,
+				"attribute_56": 4
+			}
+		}
+	],
+	"relationships": [{
+			"attribute_40": {
+				"attribute_25": "10~1"
+			}
+		}, {
+			"attribute_45": {
+				"attribute_26": "10~1"
+			}
+		}, {
+			"attribute_37": {
+				"attribute_34": "10~1"
+			}
+		}, {
+			"attribute_43": {
+				"attribute_51": "10~1"
+			}
+		}, {
+			"attribute_40": {
+				"attribute_24": "10~1"
+			}
+		}, {
+			"attribute_26": {
+				"attribute_40": "1~10",
+				"attribute_10": "1~10"
+			}
+		}
+	]
+}

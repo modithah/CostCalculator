@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +12,12 @@ import org.json.JSONObject;
 
 import edu.upc.essi.catalog.IO.python.SolverCaller;
 import edu.upc.essi.catalog.IO.python.SolverWriter;
-import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.DataIndexMetadata;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.QueryFrequencies;
 import edu.upc.essi.catalog.cost.CostResult;
 import edu.upc.essi.catalog.core.constructs.DataIndexMetadata.DataType;
-import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.generators.GenerateRandomDesign;
 import edu.upc.essi.catalog.metadata.GenerateMetadata;
 import edu.upc.essi.catalog.ops.Graphoperations;
@@ -74,8 +71,8 @@ public class Workflow {
 			result.setStorageSize(collectionSize.getValue());
 			calculateQueryCosts(queryFrequencies, firstLevels, elmToString, missRates, result);
 			
-//			System.out.println("-----Final Result------");
-//			System.out.println(result);
+//			logger.info("-----Final Result------");
+//			logger.info(result);
 			
 			
 		} catch (Exception e) {
@@ -94,18 +91,18 @@ public class Workflow {
 			HashMap<Hyperedge, Map<Atom, Double>> costmap = pairs.getSecond();
 			double cost = 0.0;
 			for (Hyperedge hyp : firstLevels) {
-//					System.out.println(hyp.getName());
+//					logger.info(hyp.getName());
 				Map<Atom, Double> collectionMap = costmap.get(hyp);
 				cost += collectionMap.get(new Atom("~dummy")) * missRates.getDouble(elmToString.get(hyp.getName()));
-//					System.out.println("---" + cost);
+//					logger.info("---" + cost);
 				for (Atom at : collectionMap.keySet()) {
 					if (!at.getName().equals("~dummy")
 							&& elmToString.containsKey(hyp.getName() + "~" + at.getName())) {
-//							System.out.println(at);
-//							System.out.println(elmToString.get(hyp.getName() + "~" + at.getName()));
+//							logger.info(at);
+//							logger.info(elmToString.get(hyp.getName() + "~" + at.getName()));
 						cost += collectionMap.get(at)
 								* missRates.getDouble(elmToString.get(hyp.getName() + "~" + at.getName()));
-//							System.out.println("+++"+cost);
+//							logger.info("+++"+cost);
 					}
 
 				}
@@ -117,8 +114,8 @@ public class Workflow {
 	}
 
 	private static ArrayList<ArrayList<DataIndexMetadata>> generateSolverData(HyperGraph graph,
-			HashMap<Hyperedge, Map<Atom, Double>> global, List<Hyperedge> firstLevels,
-			HashMap<String, String> elmToString, MutableDouble collectionSize) {
+																			  HashMap<Hyperedge, Map<Atom, Double>> global, List<Hyperedge> firstLevels,
+																			  HashMap<String, String> elmToString, MutableDouble collectionSize) {
 		ArrayList<ArrayList<DataIndexMetadata>> schema = new ArrayList<>();
 		ArrayList<Hyperedge> notUsed = new ArrayList<>();
 
@@ -126,14 +123,14 @@ public class Workflow {
 		for (Hyperedge hyperedge : firstLevels) {
 
 			collectionSize.add(hyperedge.getSize());
-//			System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFF" + collectionSize);
+//			logger.info("FFFFFFFFFFFFFFFFFFFFFFFFFFFF" + collectionSize);
 			if (global.get(hyperedge).get(new Atom("~dummy")) != 0) {
 				collectionCounter++;
 				String collectionPrefix = "collection_" + collectionCounter;
 				elmToString.put(hyperedge.getName(), collectionPrefix);
 				ArrayList<DataIndexMetadata> col = new ArrayList<>();
 
-//				System.out.println(global.get(hyperedge));
+//				logger.info(global.get(hyperedge));
 
 				double hyperedgecount = 0.0;
 				List<HGHandle> secondLevels = hyperedge.findAll();
@@ -144,7 +141,7 @@ public class Workflow {
 					Atom secondLevelRoot = graph.get(secondlevelHyperedge.getRoot());
 					hyperedgecount = hyperedge.getMultipliers().get(secondLevelRoot);
 					if (global.get(hyperedge).get(secondLevelRoot) != 0) {
-//						System.out.println(global.get(hyperedge).get(secondLevelRoot));
+//						logger.info(global.get(hyperedge).get(secondLevelRoot));
 						col.add(new DataIndexMetadata(false, 1, hyperedgecount,
 								global.get(hyperedge).get(secondLevelRoot), DataType.UUID));
 
@@ -156,13 +153,13 @@ public class Workflow {
 					for (Atom atom : global.get(hyperedge).keySet()) {
 						if (!atom.getName().equals("~dummy") && !atom.getName().equals(secondLevelRoot.getName())
 								&& global.get(hyperedge).get(atom) != 0) {
-//						System.out.println(hyperedge.getMultipliers().get(atom));
+//						logger.info(hyperedge.getMultipliers().get(atom));
 							col.add(new DataIndexMetadata(false, hyperedge.getMultipliers().get(atom) / hyperedgecount,
 									hyperedge.getMultipliers().get(atom), global.get(hyperedge).get(atom),
 									DataType.INT));
 							elmToString.put(hyperedge.getName() + "~" + atom.getName(),
 									collectionPrefix + "_index_" + indexCount);
-//							System.out.println(collectionPrefix+"_index_"+indexCount);
+//							logger.info(collectionPrefix+"_index_"+indexCount);
 							indexCount++;
 						}
 					}
@@ -174,7 +171,7 @@ public class Workflow {
 
 				col.add(new DataIndexMetadata(true, hyperedge.getSize() / hyperedgecount, hyperedgecount,
 						global.get(hyperedge).get(new Atom("~dummy")), DataType.DATA));
-//				System.out.println(col);
+//				logger.info(col);
 				schema.add(col);
 			} else {
 				notUsed.add(hyperedge);

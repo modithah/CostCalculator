@@ -1,44 +1,34 @@
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.IncidenceSet;
-import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGPlainLink;
-import org.hypergraphdb.HGQuery.hg;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.AdjacencyList;
-import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.core.constructs.Element;
 import edu.upc.essi.catalog.core.constructs.Hyperedge;
-import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.cost.CostGenerator;
 import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import edu.upc.essi.catalog.estocada.CreateGraph;
 import edu.upc.essi.catalog.estocada.CreateGraph2;
-import edu.upc.essi.catalog.loaders.LoadGraph;
-import edu.upc.essi.catalog.ops.CostOperations;
 import edu.upc.essi.catalog.ops.Graphoperations;
-import edu.upc.essi.catalog.ops.SchemaOperations;
 import edu.upc.essi.catalog.query.QueryGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class run2 {
 
 	public run2() {
 		// TODO Auto-generated constructor stub
 	}
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		HyperGraph graph=new HyperGraph(Const.HG_LOCATION_BOOK);
 		List<String> atoms = Graphoperations.getAllAtoms(graph);
 
 		if (atoms.isEmpty()) {
-			System.out.println("No data available Creating the Graph");
+			logger.info("No data available Creating the Graph");
 			CreateGraph2.main(null);
 			try {
 				Thread.sleep(2000);
@@ -49,9 +39,9 @@ public class run2 {
 
 		}
 
-		System.out.println(
+		logger.info(
 				"The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
-		// System.out.println(atoms);
+		// logger.info(atoms);
 		CostGenerator c = new CostGenerator();
 		QueryGenerator q = new QueryGenerator();
 //		Scanner scanner = new Scanner(System.in);
@@ -62,11 +52,11 @@ public class run2 {
 //		String input = scanner.next();
 
 //		while (!input.equals("exit")) {
-//			System.out.println("------Queries for selected atoms------");
+//			logger.info("------Queries for selected atoms------");
 //
 		AdjacencyList map = Graphoperations.makeHashmap(input.split(","));
 
-		System.out.println(map);
+		logger.info(map.toString());
 //		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 		Set<Element> keys = map.getMap().keySet();
 
@@ -115,7 +105,7 @@ public class run2 {
 //			input = scanner.next();
 //		}
 
-//		System.out.println(g.CreateQuery(Graphoperations.getDBHyperedgebyType(HyperedgeTypeEnum.Database_Doc), ""));
+//		logger.info(g.CreateQuery(Graphoperations.getDBHyperedgebyType(HyperedgeTypeEnum.Database_Doc), ""));
 
 //		HyperGraph graph = Const.graph;
 //		HGHandle r = hg.findOne(graph, hg.and(hg.type(Hyperedge.class), hg.eq("type", HyperedgeTypeEnum.FirstLevel)));
@@ -128,7 +118,7 @@ public class run2 {
 //
 //		graph.getIncidenceSet(handle);
 
-		// System.out.println((Hyperedge) hg.getOne(graph,
+		// logger.info((Hyperedge) hg.getOne(graph,
 		// hg.and(hg.type(Hyperedge.class), hg.eq("type",
 		// HyperedgeTypeEnum.FirstLevel))));
 //
@@ -136,15 +126,15 @@ public class run2 {
 //		IncidenceSet incidence = graph.getIncidenceSet(r);
 //		
 //		for (HGHandle hgHandle : incidence) {
-//			System.out.println((Hyperedge)graph.get(hgHandle));
+//			logger.info((Hyperedge)graph.get(hgHandle));
 //		}
 //		HGHandle at=hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", "bid")));
 //		HGHandle at2=hg.findOne(graph, hg.and(hg.type(Atom.class), hg.eq("name", "pages")));
-//		System.out.println(at);
+//		logger.info(at);
 //		List<Object> y = hg.getAll(graph, hg.and(hg.type(Relationship.class), hg.orderedLink(at2,at)));
 //		
 //		for (Object object : y) {
-//			System.out.println(object);
+//			logger.info(object);
 //		}
 	}
 

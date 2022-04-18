@@ -1,0 +1,178 @@
+{
+	"atoms": [{
+			"WAREHOUSE": {
+				"*W_ID": {
+					"count": 10,
+					"size": 4
+				},
+				"W_NAME": 10,
+				"W_STREET_1": 20,
+				"W_STREET_2": 20,
+				"W_CITY": 20,
+				"W_STATE":2,
+				"W_ZIP": 9,
+				"W_TAX":4,
+				"W_YTD":4
+			}
+		}, {
+			"STOCK": {
+				"*S_ID": {
+					"count": 1000000,
+					"size": 4
+				},
+				"S_QUANTITY": 4,
+				"S_DIST_01" : 24,
+				"S_DIST_02" : 24,
+				"S_DIST_03" : 24,
+				"S_DIST_04" : 24,
+				"S_DIST_05" : 24,
+				"S_DIST_06" : 24,
+				"S_DIST_07" : 24,
+				"S_DIST_08" : 24,
+				"S_DIST_09" : 24,
+				"S_DIST_10" : 24,
+				"S_YTD" : 4,
+				"S_ORDER_CNT":4,
+				"S_REMOTE_CNT":4,
+				"S_DATA" 50
+			}
+		}, {
+			"ITEM": {
+				"*I_ID": {
+					"count": 100000,
+					"size": 4
+				},
+				"I_IM_ID": 4,
+				"I_NAME": 24,
+				"I_PRICE": 4,
+				"I_DATA" : 50
+			}
+		}, {
+			"HISTORY": {
+				"*H_ID": {
+					"count": 300000,
+					"size": 4
+				},
+				"H_C_ID":4,
+				"H_C_D_ID": 4,
+				"H_C_W_ID": 4,
+				"H_D_ID":4,
+				"H_W_ID": 4,
+				"H_DATE":10,
+				"H_AMOUNT": 4,
+				"H _DATA": 24
+			}
+		}, {
+			"NEWORDER": {
+				"*NO_ID": {
+					"count": 90000,
+					"size": 4
+				},
+				}
+		}, {
+			"ORDERLINE": {
+				"*OL_ID": {
+					"count": 3000000,
+					"size": 4
+				},
+				"OL_SUPPLY_W_ID": 4,
+				"OL_DELIVERY_D": 4,
+				"OL_QUANTITY" : 4,
+				"OL_AMOUNT" : 4,
+				"OL_DIST_INFO": 24
+			}
+		}, {
+			"DISTRICT": {
+				"*D_ID": {
+					"count": 20,
+					"size": 4
+				},
+				"D_N AME": 10,
+				"D_STREET_1": 20,
+				"D_STREET_2": 20,
+				"D_CITY": 20,
+				"D_STATE": 2,
+				"D_ZIP": 9,
+				"D_TAX": 4,
+				"D_YTD": 4,
+				"D_NEXT_O_ID": 4
+			}
+		}, {
+			"ORDER": {
+				"*O_ID": {
+					"count": 300000,
+					"size": 4
+				},
+				"O_ENTRY_D": 10,
+				"O_CARRIER_ID" :10,
+				"O_OL_CNT": 4,
+				"O_ALL_LOCAL": 1
+			}
+		}, {
+			"CUSTOMER": {
+				"*C_ID": {
+					"count": 300000,
+					"size": 4
+				},
+				"C_FIRS": 16,
+				"C_MIDDLE": 2,
+				"C_LAST": 16,
+				"C_STREET_1": 20,
+				"C_STREET_2": 20,
+				"C_CITY": 20,
+				"C_STATE": 2,
+				"C_ZIP": 9,
+				"C_PHONE":16,
+				"C_SINCE": 10,
+				"C_CREDIT": 2,
+				"C_CREDIT_LIM": 4,
+				"C_DISCOUNT": 4,
+				"C_BALANCE": 4,
+				"C_YTD_PAYMENT":4,
+				"C_PAYMENT_CNT": 4,
+				"C_DELIVERY_CNT": 4,
+				"C_DATA": 500
+			}
+		}
+	],
+	"relationships": [{
+			"D_ID": {
+				"W_ID": "10~2"
+			},
+			"C_ID":{
+				"D_ID": "300000~1"
+				"W_ID": "30000~1"
+			},
+			"H_ID":{
+				"C_ID":"1.05~1"
+			},
+			"S_ID":{
+				"W_ID": "100000~1",
+				"I_ID": "10~100000"
+			},
+			"NO_ID":{
+				"O_ID":"0.3~1"
+				"D_ID":"90000~1"
+				"W_ID":"9000~1"
+			},
+			"O_ID":{
+				"C_ID":"1.05~1"
+				"D_ID":"305000~1"
+				"W_ID":"30500~1"
+			},
+			"OL_ID":{
+				"O_ID":"10~1"
+			}
+			
+		}
+	]
+}
+
+C_ID, W_ID, C_DISCOUNT, C_LAST, C_CREDIT, W_TAX
+D_ID, D_NEXT_O_ID, D_TAX 
+D_ID, D_NEXT_O_ID
+O_ID, O_ENTRY_D, O_OL_CNT, O_ALL_LOCAL, NO_ID, W_ID, D_ID, C_ID,OL_ID,I_ID, I_PRICE, I_NAME, I_DATA, S_ID,S_QUANTITY,S_DATA, S_DIST_01,S_DIST_02,S_DIST_03,S_DIST_04,S_DIST_05,S_DIST_06,S_DIST_07,S_DIST_08,S_DIST_09,S_DIST_10
+
+
+
+

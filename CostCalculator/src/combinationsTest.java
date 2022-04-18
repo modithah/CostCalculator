@@ -28,12 +28,12 @@ public class combinationsTest {
 //		Iterator<Set<String>> comboIterator = combos.iterator();
 //		while (comboIterator.hasNext()) {
 //			Set<java.lang.String> set = (Set<java.lang.String>) comboIterator.next();
-//			System.out.println(set);
+//			logger.info(set);
 //		}
 //		
 //		
 		String a ="Hello world!";
-//		System.out.println(a.substring(6,12)+a.substring(12,6));
+//		logger.info(a.substring(6,12)+a.substring(12,6));
 	}
 	
 

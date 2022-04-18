@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +15,12 @@ import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
 import edu.upc.essi.catalog.ops.Graphoperations;
 import edu.upc.essi.catalog.ops.Transformations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CallingPythonTest {
 static int count =0;
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public CallingPythonTest() {
 		// TODO Auto-generated constructor stub
 	}
@@ -31,13 +35,13 @@ static int count =0;
 //				Process process = processBuilder.start();
 //				long start = System.nanoTime();
 //				InputStream stream = process.getInputStream();
-////				System.out.println(process.waitFor());
+////				logger.info(process.waitFor());
 ////				String y = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-////				System.out.println(y);
+////				logger.info(y);
 ////				StringWriter writer = new StringWriter();
 ////		        IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
-////		        System.out.println(writer.toString());
-//		        System.out.println((System.nanoTime() - start)/1E9);
+////		        logger.info(writer.toString());
+//		        logger.info((System.nanoTime() - start)/1E9);
 //			} catch (IOException e) {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
@@ -56,19 +60,19 @@ static int count =0;
 //		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
 //		Transformations.getCostMinMax(graph, getWorkload(graph));
 //		
-//		System.out.println(Boolean.parseBoolean("FalSe"));
+//		logger.info(Boolean.parseBoolean("FalSe"));
 //		List<Boolean> list= new ArrayList<>();
 //		B
 //		list.add("hekko");
 //		los
 ////		Atom entry = atomlist.get(0);
 		
-		System.out.println(1/0);
+		logger.info(String.valueOf(1/0));
 		
 	}
 	
 	static void print(String s){
-	System.out.println(s);
+	logger.info(s);
 	s+=" ";
 	}
 	private static ArrayList<Pair<Double, ArrayList<Atom>>> getWorkload(HyperGraph graph) {

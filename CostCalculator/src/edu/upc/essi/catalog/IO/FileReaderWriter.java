@@ -85,7 +85,7 @@ public final class FileReaderWriter {
 			for (int i = 0; i < queries.length(); i++) {
 				ArrayList<Atom> query = new ArrayList<>();
 				JSONObject qjson = queries.getJSONObject(i);
-//				System.out.println(qjson.getString("selectName")+"  "+qjson.getDouble("frequency"));
+				//				System.out.println(qjson.getString("selectName")+"  "+qjson.getDouble("frequency"));
 				JSONArray projections=qjson.getJSONArray("projections");
 				query.add(graph.get(Graphoperations.getAtomByName(graph, qjson.getString("selectName"))));
 				for (int j = 0; j < projections.length(); j++) {

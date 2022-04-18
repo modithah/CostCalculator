@@ -1,0 +1,244 @@
+{
+	"atoms": [{
+			"dataObject_0": {
+				"*attribute_77": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_49": 4,
+				"attribute_53": 4,
+				"attribute_62": 4,
+				"attribute_28": 4,
+				"attribute_81": 4
+			}
+		}, {
+			"dataObject_1": {
+				"*attribute_38": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_21": 4,
+				"attribute_17": 4,
+				"attribute_39": 4,
+				"attribute_47": 4,
+				"attribute_69": 4,
+				"attribute_84": 4
+			}
+		}, {
+			"dataObject_2": {
+				"*attribute_54": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_32": 4,
+				"attribute_85": 4
+			}
+		}, {
+			"dataObject_3": {
+				"*attribute_82": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_23": 4,
+				"attribute_33": 4,
+				"attribute_41": 4,
+				"attribute_45": 4,
+				"attribute_66": 4,
+				"attribute_75": 4,
+				"attribute_20": 4,
+				"attribute_88": 4
+			}
+		}, {
+			"dataObject_4": {
+				"*attribute_40": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_26": 4,
+				"attribute_64": 4,
+				"attribute_68": 4,
+				"attribute_83": 4
+			}
+		}, {
+			"dataObject_5": {
+				"*attribute_71": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_67": 4,
+				"attribute_16": 4,
+				"attribute_78": 4
+			}
+		}, {
+			"dataObject_6": {
+				"*attribute_37": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_31": 4,
+				"attribute_30": 4,
+				"attribute_44": 4,
+				"attribute_70": 4,
+				"attribute_79": 4,
+				"attribute_86": 4
+			}
+		}, {
+			"dataObject_7": {
+				"*attribute_89": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_48": 4,
+				"attribute_55": 4
+			}
+		}, {
+			"dataObject_8": {
+				"*attribute_74": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_29": 4,
+				"attribute_51": 4,
+				"attribute_18": 4,
+				"attribute_80": 4,
+				"attribute_87": 4
+			}
+		}, {
+			"dataObject_9": {
+				"*attribute_58": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_56": 4,
+				"attribute_60": 4,
+				"attribute_73": 4,
+				"attribute_42": 4
+			}
+		}, {
+			"dataObject_10": {
+				"*attribute_36": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_65": 4,
+				"attribute_59": 4,
+				"attribute_35": 4
+			}
+		}, {
+			"dataObject_11": {
+				"*attribute_46": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_24": 4,
+				"attribute_52": 4,
+				"attribute_63": 4
+			}
+		}, {
+			"dataObject_12": {
+				"*attribute_27": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_22": 4,
+				"attribute_15": 4,
+				"attribute_43": 4,
+				"attribute_57": 4,
+				"attribute_61": 4,
+				"attribute_72": 4
+			}
+		}, {
+			"dataObject_13": {
+				"*attribute_25": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_34": 4,
+				"attribute_50": 4,
+				"attribute_76": 4
+			}
+		}, {
+			"dataObject_14": {
+				"*attribute_19": {
+					"count": 10000,
+					"size": 4
+				},
+				"attribute_90": 4
+			}
+		}
+	],
+	"relationships": [{
+			"attribute_19": {
+				"attribute_25": "10~1",
+				"attribute_40": "10~1"
+			}
+		}, {
+			"attribute_40": {
+				"attribute_38": "10~1"
+			}
+		}, {
+			"attribute_27": {
+				"attribute_82": "10~1"
+			}
+		}, {
+			"attribute_38": {
+				"attribute_37": "10~1"
+			}
+		}, {
+			"attribute_37": {
+				"attribute_36": "10~1"
+			}
+		},  {
+			"attribute_38": {
+				"attribute_25": "10~1"
+			}
+		}, {
+			"attribute_25": {
+				"attribute_77": "10~1"
+			}
+		}, {
+			"attribute_46": {
+				"attribute_77": "1~10",
+				"attribute_54": "1~10"
+			}
+		}, {
+			"attribute_58": {
+				"attribute_36": "10~1",
+				"attribute_82": "10~1"
+			}
+		}, {
+			"attribute_58": {
+				"attribute_74": "10~1"
+			}
+		}, {
+			"attribute_27": {
+				"attribute_38": "10~1",
+				"attribute_36": "10~1"
+			}
+		}, {
+			"attribute_40": {
+				"attribute_58": "10~1"
+			}
+		}, {
+			"attribute_71": {
+				"attribute_37": "10~1"
+			}
+		}, {
+			"attribute_58": {
+				"attribute_82": "10~1"
+			}
+		}, {
+			"attribute_82": {
+				"attribute_74": "10~1"
+			}
+		}, {
+			"attribute_74": {
+				"attribute_77": "10~1"
+			}
+		}, {
+			"attribute_89": {
+				"attribute_27": "10~1"
+			}
+		}
+	]
+}

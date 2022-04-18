@@ -2,6 +2,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,8 +23,11 @@ import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 import edu.upc.essi.catalog.core.constructs.CSVRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class jsontest {
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public static void main(String[] args) throws JSONException, IOException {
 
 		CsvToBean<CSVRow> bb = new CsvToBeanBuilder<CSVRow>(new FileReader("C:\\Users\\Moditha\\Desktop\\Employee.csv"))
@@ -31,13 +35,13 @@ public class jsontest {
 
 		List<CSVRow> list = bb.parse();
 
-//		System.out.println(bb.);
+//		logger.info(bb.);
 //		for (CSVRow csvRow : list) {
-//			System.out.println(csvRow);
+//			logger.info(csvRow);
 //		}
 
 		list.stream().filter(x -> x.getType().equals("C_Atom")).forEach(y -> {
-			System.out.println(y.getNode());
+			logger.info(y.getNode());
 		});
 
 //		FileWriter writer = new FileWriter("C:\\Users\\Moditha\\Desktop\\Employee.csv");
