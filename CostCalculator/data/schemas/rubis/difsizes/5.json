@@ -1,0 +1,77 @@
+{
+  "atoms": [{
+    "dataObject_0": {
+      "*attribute_5": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_18": 4,
+      "attribute_19": 4,
+      "attribute_25": 4,
+      "attribute_27": 4
+    }
+  }, {
+    "dataObject_1": {
+      "*attribute_29": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_8": 4,
+      "attribute_12": 4,
+      "attribute_28": 4,
+      "attribute_7": 4
+    }
+  }, {
+    "dataObject_2": {
+      "*attribute_26": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_11": 4,
+      "attribute_17": 4,
+      "attribute_21": 4,
+      "attribute_22": 4,
+	  "attribute_9": 4
+    }
+  },
+  {
+    "dataObject_3": {
+      "*attribute_13": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_6": 4,
+      "attribute_14": 4,
+      "attribute_15": 4,
+      "attribute_23": 4
+    }
+  },{
+    "dataObject_4": {
+      "*attribute_10": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_12": 4,
+      "attribute_16": 4,
+      "attribute_20": 4,
+      "attribute_24": 4
+    }
+  }],
+  "relationships": [{
+    "attribute_5": {
+      "attribute_13": "10~1",
+	  "attribute_10": "10~1"
+    }
+  },{
+    "attribute_29": {
+      "attribute_13": "10~1",
+	  "attribute_5": "10~1"
+    }
+  },{
+    "attribute_26": {
+      "attribute_29": "1~10",
+	  "attribute_10": "1~10"
+    }
+  }
+  ]
+}

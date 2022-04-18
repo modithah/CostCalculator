@@ -1,0 +1,48 @@
+{
+  "atoms": [{
+    "dataObject_0": {
+      "*attribute_3": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_10": 4,
+      "attribute_13": 4,
+      "attribute_16": 4,
+      "attribute_17": 4,
+    }
+  }, {
+    "dataObject_1": {
+      "*attribute_6": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_5": 4,
+      "attribute_12": 4,
+      "attribute_8": 4,
+      "attribute_9": 4,
+    }
+  }, {
+    "dataObject_2": {
+      "*attribute_15": {
+        "count": 10000,
+        "size": 4
+      },
+      "attribute_7": 4,
+      "attribute_11": 4,
+      "attribute_14": 4,
+      "attribute_4": 4
+    }
+  }],
+  "relationships": [{
+    "attribute_6": {
+      "attribute_3": "1~10",
+	  "attribute_15": "1~10"
+    }
+  },
+    {
+    "attribute_3": {
+      "attribute_15": "1~10",
+    }
+  }
+  ]
+}

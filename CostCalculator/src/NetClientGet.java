@@ -2,6 +2,7 @@
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -9,51 +10,50 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.stream.Collectors;
 
+import edu.upc.essi.catalog.constants.Const;
+import edu.upc.essi.catalog.core.constructs.Relationship;
+import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
+import edu.upc.essi.catalog.generators.GenerateRandomDesign;
+import edu.upc.essi.catalog.ops.Graphoperations;
+import org.apache.commons.io.FileUtils;
+import org.hypergraphdb.HGIndex;
+import org.hypergraphdb.HGPersistentHandle;
+import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.storage.BAtoHandle;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class NetClientGet {
-
+	private static final String IDX_NAME = "subgraph.index";
+	private static final String REVIDX_NAME = "revsubgraph.index";
 	// http://localhost:8080/RESTfulExample/json/product/get
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
 
-	  try {
-
-		URL url = new URL("http://127.0.0.1:5000/api/v1/resources/books/all");
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
-		conn.setRequestProperty("Accept", "application/json");
-
-		if (conn.getResponseCode() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-					+ conn.getResponseCode());
+		try {
+			HyperGraph g = GenerateRandomDesign.get();
+			Graphoperations.printDesign(g);
+//			HGIndex<HGPersistentHandle, HGPersistentHandle> y = g.getStore().getIndex(IDX_NAME);
+//			y.close();
+//			Graphoperations.unindex(g);
+			g.close();
+			g.open(g.getLocation());
+			Graphoperations.printDesign(g);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(
-			(conn.getInputStream())));
+//		Graphoperations.addAtomtoGraph(g, new Relationship());
+//		Graphoperations.addSetHyperedgetoGraph(g, "Test");
+//		Thread.sleep(5000);
+//		logger.info(g.getIndexManager().toString());
+		;
+//		g.close();
+//		g.getStore().getIndex("subgraph.index").close();
+//		g.getStore().getIndex("revsubgraph.index").close();
 
-		String output;
-		System.out.println("Output from Server .... \n");
-		String x = br.lines().collect(Collectors.joining());
-		
-		
-		System.out.println(x);
+//		logger.info("sss");
 
-		JSONObject jsonObject = new JSONObject(x);
-		conn.disconnect();
-
-	  } catch (MalformedURLException e) {
-
-		e.printStackTrace();
-
-	  } catch (IOException e) {
-
-		e.printStackTrace();
-
-	  } catch (JSONException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+//		FileUtils.cleanDirectory(new File(Const.HG_LOCATION_BOOK));
 
 	}
 

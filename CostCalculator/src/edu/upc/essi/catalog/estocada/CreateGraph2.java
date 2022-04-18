@@ -3,26 +3,19 @@ package edu.upc.essi.catalog.estocada;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HGPlainLink;
-import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
-import org.hypergraphdb.indexing.ByPartIndexer;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
 import edu.upc.essi.catalog.constants.Const;
 import edu.upc.essi.catalog.core.constructs.Atom;
-import edu.upc.essi.catalog.core.constructs.Hyperedge;
 import edu.upc.essi.catalog.core.constructs.Relationship;
 import edu.upc.essi.catalog.enums.CardinalityEnum;
-import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
-import edu.upc.essi.catalog.ops.Graphoperations;
 
 public class CreateGraph2 {
 

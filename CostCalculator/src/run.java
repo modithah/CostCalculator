@@ -1,20 +1,16 @@
+import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
 
 import org.hypergraphdb.HyperGraph;
 
 import edu.upc.essi.catalog.constants.Const;
-import edu.upc.essi.catalog.core.constructs.AdjacencyList;
-import edu.upc.essi.catalog.core.constructs.Element;
-import edu.upc.essi.catalog.core.constructs.Hyperedge;
-import edu.upc.essi.catalog.enums.HyperedgeTypeEnum;
 import edu.upc.essi.catalog.estocada.CreateGraph;
 import edu.upc.essi.catalog.ops.Graphoperations;
-import edu.upc.essi.catalog.query.QueryGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class run {
-
+	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	public run() {
 		// TODO Auto-generated constructor stub
 	}
@@ -24,13 +20,13 @@ public class run {
 
 //		Graphoperations.printDesign();
 
-		System.out.println("FFFFFFFF");
+		logger.info("FFFFFFFF");
 		HyperGraph graph = new HyperGraph(Const.HG_LOCATION_BOOK);
-		System.out.println(Graphoperations.isConsistant(graph));
+		logger.info(String.valueOf(Graphoperations.isConsistant(graph)));
 		List<String> atoms = Graphoperations.getAllAtoms(graph);
 
 		if (atoms.isEmpty()) {
-			System.out.println("No data available Creating the Graph");
+			logger.info("No data available Creating the Graph");
 			CreateGraph.main(null);
 			try {
 				Thread.sleep(2000);
@@ -41,23 +37,23 @@ public class run {
 
 		}
 
-//		System.out.println(
+//		logger.info(
 //				"The following atoms are available. data in k-v stores cannot be prsented in a query (bid,bname)");
-//		System.out.println(atoms);
+//		logger.info(atoms);
 //		QueryGenerator g = new QueryGenerator();
 //		Scanner scanner = new Scanner(System.in);
 //		System.out.print("Enter the atom names you want to query seperated by commas (type exit to quit): ");
 
 //		String input = scanner.next();
 //		while (!input.equals("exit")) {
-//			System.out.println("------Queries for selected atoms------");
+//			logger.info("------Queries for selected atoms------");
 //
 ////			String input1 = "A_ID,B_ID,AB_ID";
 //			AdjacencyList map = Graphoperations.makeHashmap(input.split(","));
 //			
 //			Set<Element> keys = map.getMap().keySet();
 //
-//			System.out.println(keys);
+//			logger.info(keys);
 //			for (Element element : keys) {
 //				if (element instanceof Hyperedge) {
 ////					if (((Hyperedge) element).getType().equals(HyperedgeTypeEnum.Database_Doc)
@@ -66,7 +62,7 @@ public class run {
 ////						g.CreateSchemaFromMap(element, "", map, ((Hyperedge) element).getType());
 ////					((Hyperedge) element).print();
 ////					}
-//					System.out.println(element);
+//					logger.info(element);
 //				}
 //			}
 //			input = scanner.next();

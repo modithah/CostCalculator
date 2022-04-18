@@ -2,23 +2,23 @@
   "queries": [{
     "name": "User ",
     "frequency": 0.25,
-    "projections": ["C_TITLE"],
-    "selectName": "C_ID"
+    "projections": ["B_NAME"],
+    "selectName": "B_ID"
   },{
     "name": "User Regions",
     "frequency": 0.25,
-    "projections": ["I_ID","I_TITLE"],
-    "selectName": "C_ID"
+    "projections": ["B_ID","B_NAME"],
+    "selectName": "A_ID"
   },{
     "name": "Regions",
     "frequency": 0.25,
-    "projections": ["I_TITLE"],
-    "selectName": "I_ID"
+    "projections": ["A_NAME"],
+    "selectName": "A_ID"
   },{
     "name": "Region Users",
     "frequency": 0.25,
-    "projections": ["C_ID","C_TITLE"],
-    "selectName": "I_ID"
+    "projections": ["A_ID","A_NAME"],
+    "selectName": "B_ID"
   }
   ]
 }

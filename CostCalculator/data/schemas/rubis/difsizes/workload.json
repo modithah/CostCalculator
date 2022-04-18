@@ -1,0 +1,9 @@
+{
+  "queries": [{
+    "name": "User Bids Products Seller",
+    "frequency": 0.5,
+    "projections": ["attribute_160","attribute_77"],
+    "selectName": "attribute_160"
+  }
+  ]
+}

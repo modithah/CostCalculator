@@ -1,0 +1,208 @@
+reset
+fontSpec(s) = sprintf("Verdana, %d", s)
+set terminal postscript color eps 32 size 6, 5
+set output 'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-size.eps' 
+set style histogram title offset 0,-1
+set style data histogram
+set style histogram cluster gap 1
+set style fill pattern border -1
+set boxwidth 0.75
+set bmargin 4
+set rmargin 0
+set datafile separator ','  
+set ylabel offset 2,0
+set ylabel 'Storage size (MB)'
+set key left  title 'Length' 
+set xtics font ", 32"
+set ytics font ", 32"
+set key samplen 2
+
+plot newhistogram  "Postgres", \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-size.csv' index 0 u 2:xtic(1) title col fs pattern 1 lc 1, \
+     '' index 0 u 3 title col fs pattern 2 lc 2, \
+     '' index 0 u 4 title col fs pattern 7 lc 8, \
+     '' index 0 u 5 title col fs pattern 4 lc 4, \
+     '' index 0 u 6 title col fs pattern 5 lc 7, \
+     '' index 0 u 7 title col fs pattern lc 6,\
+     newhistogram "MongoDB" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-size.csv' index 1 u 2:xtic(1) notitle fs pattern 1 lc 1, \
+     '' index 1 u 3 notitle fs pattern 2 lc 2, \
+     '' index 1 u 4 notitle fs pattern 7 lc 8, \
+     '' index 1 u 5 notitle fs pattern 4 lc 4, \
+     '' index 1 u 6 notitle fs pattern 5 lc 7, \
+     '' index 1 u 7 notitle fs pattern 6 lc 6
+
+reset
+fontSpec(s) = sprintf("Verdana, %d", s)
+set terminal postscript color eps 32 size 6, 5
+set output 'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-sum.eps' 
+set style histogram title offset 0,-1
+set style data histogram
+set style histogram cluster gap 1
+set style fill pattern border -1
+set boxwidth 0.75
+set bmargin 4
+set rmargin 0
+set datafile separator ','  
+set ylabel 'Runtime (seconds)'
+set ylabel offset 2,0
+set key left title 'Length' 
+set xtics font ", 32"
+set ytics font ", 32"
+set key samplen 2
+
+
+plot newhistogram "Postgres" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-sum.csv' index 0 u 2:xtic(1) title col fs pattern 1 lc 1, \
+     '' index 0 u 3 title col fs pattern 2 lc 2, \
+     '' index 0 u 4 title col fs pattern 7 lc 8, \
+     '' index 0 u 5 title col fs pattern 4 lc 4, \
+     '' index 0 u 6 title col fs pattern 5 lc 7, \
+     '' index 0 u 7 title col fs pattern lc 6,\
+     newhistogram "MongoDB" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-sum.csv' index 1 u 2:xtic(1) notitle fs pattern 1 lc 1, \
+     '' index 1 u 3 notitle fs pattern 2 lc 2, \
+     '' index 1 u 4 notitle fs pattern 7 lc 8, \
+     '' index 1 u 5 notitle fs pattern 4 lc 4, \
+     '' index 1 u 6 notitle fs pattern 5 lc 7, \
+     '' index 1 u 7 notitle fs pattern 6 lc 6
+	 
+reset
+fontSpec(s) = sprintf("Verdana, %d", s)
+set terminal postscript color eps 32 size 6, 5
+set output 'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-insert.eps' 
+set style histogram title offset 0,-1
+set style data histogram
+set style histogram cluster gap 1
+set style fill pattern border -1
+set boxwidth 0.75
+set bmargin 4
+set rmargin 0
+set datafile separator ','  
+set ylabel 'Runtime (seconds)'
+set ylabel offset 2,0
+set key left  title 'Length' 
+set xtics font ", 32"
+set ytics font ", 32"
+set key samplen 2
+
+plot newhistogram "Postgres" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-insert.csv' index 0 u 2:xtic(1) title col fs pattern 1 lc 1, \
+     '' index 0 u 3 title col fs pattern 2 lc 2, \
+     '' index 0 u 4 title col fs pattern 7 lc 8, \
+     '' index 0 u 5 title col fs pattern 4 lc 4, \
+     '' index 0 u 6 title col fs pattern 5 lc 7, \
+     '' index 0 u 7 title col fs pattern lc 6,\
+     newhistogram "MongoDB" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e1-insert.csv' index 1 u 2:xtic(1) notitle fs pattern 1 lc 1, \
+     '' index 1 u 3 notitle fs pattern 2 lc 2, \
+     '' index 1 u 4 notitle fs pattern 7 lc 8, \
+     '' index 1 u 5 notitle fs pattern 4 lc 4, \
+     '' index 1 u 6 notitle fs pattern 5 lc 7, \
+     '' index 1 u 7 notitle fs pattern 6 lc 6
+	 
+	 
+reset
+fontSpec(s) = sprintf("Verdana, %d", s)
+set terminal postscript color eps 32 size 6, 5
+set output 'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-size.eps' 
+set style histogram title offset 0,-1
+set style data histogram
+set style histogram cluster gap 1
+set style fill pattern border -1
+set boxwidth 0.75
+set bmargin 4
+set rmargin 0
+set datafile separator ','  
+set ylabel offset 2,0
+set ylabel 'Storage size (MB)'
+set key left  title 'Levels' 
+set xtics font ", 28"
+set ytics font ", 32"
+set key samplen 2
+plot newhistogram "Postgres" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-size.csv' index 0 u 2:xtic(1) title col fs pattern 1 lc 1, \
+     '' index 0 u 3 title col fs pattern 2 lc 2, \
+     '' index 0 u 4 title col fs pattern 7 lc 8, \
+     '' index 0 u 5 title col fs pattern 4 lc 4, \
+     '' index 0 u 6 title col fs pattern 5 lc 7, \
+     '' index 0 u 7 title col fs pattern 6 lc 6,\
+	 '' index 0 u 8 title col fs pattern 11 lc 11,\
+     newhistogram "MongoDB" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-size.csv' index 1 u 2:xtic(1) notitle fs pattern 1 lc 1, \
+     '' index 1 u 3 notitle fs pattern 2 lc 2, \
+     '' index 1 u 4 notitle fs pattern 7 lc 8, \
+     '' index 1 u 5 notitle fs pattern 4 lc 4, \
+     '' index 1 u 6 notitle fs pattern 5 lc 7, \
+     '' index 1 u 7 notitle fs pattern 6 lc 6, \
+     '' index 1 u 8 notitle fs pattern 11 lc 11
+	 
+	 reset
+fontSpec(s) = sprintf("Verdana, %d", s)
+set terminal postscript color eps 32 size 6, 5
+set output 'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-sum.eps' 
+set style histogram title offset 0,-1
+set style data histogram
+set style histogram cluster gap 1
+set style fill pattern border -1
+set boxwidth 0.75
+set bmargin 4
+set rmargin 0
+set datafile separator ','  
+set ylabel offset 2,0
+set ylabel 'Runtime (seconds)'
+set key left title 'Levels' 
+set xtics font ", 28"
+set ytics font ", 32"
+set key samplen 2
+plot newhistogram "Postgres" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-sum.csv' index 0 u 2:xtic(1) title col fs pattern 1 lc 1, \
+     '' index 0 u 3 title col fs pattern 2 lc 2, \
+     '' index 0 u 4 title col fs pattern 7 lc 8, \
+     '' index 0 u 5 title col fs pattern 4 lc 4, \
+     '' index 0 u 6 title col fs pattern 5 lc 7, \
+     '' index 0 u 7 title col fs pattern 6 lc 6,\
+	 '' index 0 u 8 title col fs pattern 11 lc 11,\
+     newhistogram "MongoDB", \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-sum.csv' index 1 u 2:xtic(1) notitle fs pattern 1 lc 1, \
+     '' index 1 u 3 notitle fs pattern 2 lc 2, \
+     '' index 1 u 4 notitle fs pattern 7 lc 8, \
+     '' index 1 u 5 notitle fs pattern 4 lc 4, \
+     '' index 1 u 6 notitle fs pattern 5 lc 7, \
+     '' index 1 u 7 notitle fs pattern 6 lc 6, \
+     '' index 1 u 8 notitle fs pattern 11 lc 11
+	 
+	 reset
+fontSpec(s) = sprintf("Verdana, %d", s)
+set terminal postscript color eps 32 size 6, 5
+set output 'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-insert.eps' 
+set style histogram title offset 0,-1
+set style data histogram
+set style histogram cluster gap 1
+set style fill pattern border -1
+set boxwidth 0.75
+set bmargin 4
+set rmargin 0
+set datafile separator ','  
+set ylabel offset 2,0
+set ylabel 'Runtime (seconds)'
+set key left  title 'Levels' 
+set xtics font ", 28"
+set ytics font ", 32"
+set key samplen 2
+plot newhistogram "Postgres" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-insert.csv' index 0 u 2:xtic(1) title col fs pattern 1 lc 1, \
+     '' index 0 u 3 title col fs pattern 2 lc 2, \
+     '' index 0 u 4 title col fs pattern 7 lc 8, \
+     '' index 0 u 5 title col fs pattern 4 lc 4, \
+     '' index 0 u 6 title col fs pattern 5 lc 7, \
+     '' index 0 u 7 title col fs pattern 6 lc 6,\
+	 '' index 0 u 8 title col fs pattern 11 lc 11,\
+     newhistogram "MongoDB" , \
+     'C:\Users\Moditha\Documents\PhD\SVN\Papers\4. JSON performance analysis\Paper\graphs\e1,e2\e2-insert.csv' index 1 u 2:xtic(1) notitle fs pattern 1 lc 1, \
+     '' index 1 u 3 notitle fs pattern 2 lc 2, \
+     '' index 1 u 4 notitle fs pattern 7 lc 8, \
+     '' index 1 u 5 notitle fs pattern 4 lc 4, \
+     '' index 1 u 6 notitle fs pattern 5 lc 7, \
+     '' index 1 u 7 notitle fs pattern 6 lc 6, \
+     '' index 1 u 8 notitle fs pattern 11 lc 11
